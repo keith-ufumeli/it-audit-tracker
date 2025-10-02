@@ -12,6 +12,7 @@ import {
   FileText, 
   ClipboardCheck, 
   Activity,
+  BarChart3,
   LogOut,
   Menu,
   Bell,
@@ -30,8 +31,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard, permission: null },
     { name: "Audits", href: "/admin/audits", icon: ClipboardCheck, permission: "create_audit" },
     { name: "Reports", href: "/admin/reports", icon: FileText, permission: "view_reports" },
+    { name: "Schedule Reports", href: "/admin/reports/schedule", icon: Settings, permission: "view_reports" },
     { name: "Activity Logs", href: "/admin/activities", icon: Activity, permission: "view_logs" },
     { name: "Security Alerts", href: "/admin/alerts", icon: Shield, permission: "view_logs" },
+    { name: "Management", href: "/admin/management", icon: BarChart3, permission: "view_dashboards" },
   ]
 
   const filteredNavigation = navigation.filter(item => 
