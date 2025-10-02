@@ -1,0 +1,47 @@
+---
+globs: *.tsx,*.ts
+description: KPI Cards styling rule - no colored left borders
+---
+
+# KPI Cards Styling Rule
+
+## No Colored Left Borders on KPI Cards
+
+All KPI (Key Performance Indicator) cards must **NOT** have colored left borders. This includes:
+
+### ❌ Forbidden Patterns:
+```tsx
+// DON'T use colored left borders
+<Card className="border-l-4 border-l-orange-500">
+<Card className="border-l-4 border-l-green-500">
+<Card className="border-l-4 border-l-red-500">
+<Card className="border-l-4 border-l-blue-500">
+<Card className="border-l-4 border-l-purple-500">
+```
+
+### ✅ Correct Patterns:
+```tsx
+// DO use clean cards without colored left borders
+<Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+<Card className="hover:shadow-md transition-shadow">
+<Card className="border border-border">
+```
+
+### Implementation Guidelines:
+
+1. **Remove any `border-l-4 border-l-{color}-{shade}` classes** from KPI cards
+2. **Use subtle hover effects** instead of colored borders for visual hierarchy
+3. **Maintain consistent spacing and shadows** for card distinction
+4. **Use icons and typography** to differentiate card types rather than colored borders
+
+### Examples from Codebase:
+- [src/app/admin/dashboard/page.tsx](mdc:src/app/admin/dashboard/page.tsx) - Admin dashboard KPI cards
+- [src/app/client/dashboard/page.tsx](mdc:src/app/client/dashboard/page.tsx) - Client dashboard KPI cards
+
+### Visual Hierarchy Alternatives:
+- Use **icon colors** to indicate card type
+- Apply **hover animations** (translate, shadow changes)
+- Use **typography weight** and **spacing** for emphasis
+- Implement **gradient backgrounds** sparingly for special cards
+
+This rule ensures a clean, modern design without distracting colored left borders on KPI cards.

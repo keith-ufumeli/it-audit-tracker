@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -17,10 +17,8 @@ import {
   Clock,
   CheckCircle,
   AlertTriangle,
-  Info,
   Calendar,
   RefreshCw,
-  Mail,
   FileText,
   Shield
 } from "lucide-react"
@@ -187,7 +185,7 @@ export default function ClientNotificationsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
             </CardHeader>
@@ -195,7 +193,7 @@ export default function ClientNotificationsPage() {
               <div className="text-3xl font-bold text-blue-600">{notifications.length}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Unread</CardTitle>
             </CardHeader>
@@ -203,7 +201,7 @@ export default function ClientNotificationsPage() {
               <div className="text-3xl font-bold text-orange-600">{unreadCount}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">High Priority</CardTitle>
             </CardHeader>
@@ -213,7 +211,7 @@ export default function ClientNotificationsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">This Week</CardTitle>
             </CardHeader>
@@ -273,7 +271,7 @@ export default function ClientNotificationsPage() {
                       <Card 
                         key={notification.id}
                         className={`group hover:shadow-md transition-all duration-300 cursor-pointer animate-in slide-in-from-left ${
-                          notification.status === "unread" ? "bg-blue-50/50 border-l-4 border-l-blue-500" : ""
+                          notification.status === "unread" ? "bg-blue-50/50" : ""
                         }`}
                         style={{ animationDelay: `${index * 30}ms` }}
                         onClick={() => notification.status === "unread" && handleMarkAsRead(notification.id)}

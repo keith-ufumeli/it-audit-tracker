@@ -191,7 +191,7 @@ export default function ClientDocumentsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Requests</CardTitle>
             </CardHeader>
@@ -199,7 +199,7 @@ export default function ClientDocumentsPage() {
               <div className="text-3xl font-bold text-blue-600">{documents.length}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Pending</CardTitle>
             </CardHeader>
@@ -209,7 +209,7 @@ export default function ClientDocumentsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Submitted</CardTitle>
             </CardHeader>
@@ -219,7 +219,7 @@ export default function ClientDocumentsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Overdue</CardTitle>
             </CardHeader>

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -27,7 +27,6 @@ import {
   LogIn,
   Upload,
   Edit,
-  Trash,
   Shield,
   RefreshCw
 } from "lucide-react"
@@ -185,7 +184,7 @@ export default function ActivitiesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Activities</CardTitle>
             </CardHeader>
@@ -194,7 +193,7 @@ export default function ActivitiesPage() {
               <p className="text-xs text-muted-foreground mt-1">Last 50 events</p>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Info</CardTitle>
             </CardHeader>
@@ -205,7 +204,7 @@ export default function ActivitiesPage() {
               <p className="text-xs text-muted-foreground mt-1">Normal operations</p>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Warnings</CardTitle>
             </CardHeader>
@@ -216,7 +215,7 @@ export default function ActivitiesPage() {
               <p className="text-xs text-muted-foreground mt-1">Attention needed</p>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Critical</CardTitle>
             </CardHeader>
