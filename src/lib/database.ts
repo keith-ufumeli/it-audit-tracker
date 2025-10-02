@@ -90,13 +90,13 @@ export interface Notification {
   userRole: string
   title: string
   message: string
-  type: 'audit_request' | 'document_request' | 'audit_assignment' | 'report_ready' | 'security_alert' | 'system_update'
+  type: 'audit_request' | 'document_request' | 'document_upload' | 'audit_assignment' | 'report_ready' | 'security_alert' | 'system_update'
   status: 'unread' | 'read' | 'archived'
   priority: 'low' | 'medium' | 'high' | 'critical'
   createdAt: string
   readAt: string | null
-  expiresAt: string
-  metadata: Record<string, any>
+  expiresAt?: string
+  metadata?: Record<string, any>
 }
 
 // In-memory data storage (Edge Runtime compatible)
@@ -251,10 +251,13 @@ export class Database {
     return true
   }
 
-  static addNotification(notification: Omit<Notification, 'id'>): boolean {
+  static addNotification(notification: Omit<Notification, 'id' | 'status' | 'createdAt' | 'readAt'>): boolean {
     const newNotification: Notification = {
       ...notification,
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      status: "unread",
+      createdAt: new Date().toISOString(),
+      readAt: null
     }
     // Add to in-memory data
     InMemoryDatabase.notifications.push(newNotification)

@@ -148,7 +148,7 @@ export default function DashboardPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Audits</CardTitle>
               <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -166,7 +166,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-orange-500">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Documents</CardTitle>
               <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
@@ -182,7 +182,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-green-500">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
               <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -198,7 +198,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-red-500">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Alerts</CardTitle>
               <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">

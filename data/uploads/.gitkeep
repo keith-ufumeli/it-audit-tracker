@@ -1,0 +1,14 @@
+# Uploaded Documents Directory
+
+This directory stores uploaded documents from the client portal.
+Files are automatically uploaded here when clients/departments submit requested documents.
+
+## Structure
+- Files are named: `{documentId}_{timestamp}_{originalFilename}`
+- This ensures unique filenames and traceability
+
+## Security
+- Files are stored outside the public directory
+- Access is controlled through the API
+- Only authenticated users can upload/download files
+

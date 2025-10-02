@@ -24,9 +24,12 @@ export default function ClientPage() {
     // Check if user has client access
     const clientRoles = ["client", "department"]
     if (!clientRoles.includes(session.user.role)) {
-      router.push("/admin")
+      router.push("/admin/dashboard")
       return
     }
+
+    // Redirect to client dashboard
+    router.push("/client/dashboard")
   }, [session, status, router])
 
   if (status === "loading") {
