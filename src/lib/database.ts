@@ -123,7 +123,154 @@ class InMemoryDatabase {
   static documents: Document[] = [...documentsData] as Document[]
   static activities: Activity[] = [...activitiesData] as Activity[]
   static notifications: Notification[] = [...notificationsData] as Notification[]
-  static alerts: Alert[] = []
+  static alerts: Alert[] = [
+    {
+      id: 'alert-001',
+      ruleId: 'rule-001',
+      ruleName: 'Multiple Failed Login Attempts',
+      severity: 'error',
+      description: 'User has attempted to login 5 times in the last 15 minutes',
+      triggeredBy: '2',
+      triggeredByName: 'Jane Auditor',
+      triggeredAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(), // 10 minutes ago
+      status: 'active',
+      metadata: {
+        attemptCount: 5,
+        timeWindow: '15 minutes',
+        ipAddress: '192.168.1.100',
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    },
+    {
+      id: 'alert-002',
+      ruleId: 'rule-002',
+      ruleName: 'Suspicious Document Access',
+      severity: 'warning',
+      description: 'User has accessed 8 confidential documents in the last 30 minutes',
+      triggeredBy: '4',
+      triggeredByName: 'Client User',
+      triggeredAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(), // 25 minutes ago
+      status: 'acknowledged',
+      acknowledgedBy: '1',
+      acknowledgedAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+      metadata: {
+        documentCount: 8,
+        timeWindow: '30 minutes',
+        documentTypes: ['financial', 'confidential', 'legal'],
+        accessPattern: 'unusual'
+      }
+    },
+    {
+      id: 'alert-003',
+      ruleId: 'rule-003',
+      ruleName: 'Admin Privilege Escalation',
+      severity: 'critical',
+      description: 'Non-admin user attempted to access admin dashboard',
+      triggeredBy: '5',
+      triggeredByName: 'Department User',
+      triggeredAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
+      status: 'active',
+      metadata: {
+        attemptedAction: 'admin_dashboard_access',
+        userRole: 'department',
+        requestedResource: '/admin/dashboard',
+        ipAddress: '192.168.1.150'
+      }
+    },
+    {
+      id: 'alert-004',
+      ruleId: 'rule-004',
+      ruleName: 'Unusual Activity Pattern',
+      severity: 'warning',
+      description: 'User has performed 25 actions in the last hour',
+      triggeredBy: '3',
+      triggeredByName: 'Management User',
+      triggeredAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45 minutes ago
+      status: 'resolved',
+      resolvedBy: '1',
+      resolvedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      metadata: {
+        actionCount: 25,
+        timeWindow: '1 hour',
+        actionTypes: ['view', 'download', 'search'],
+        isNormal: true
+      }
+    },
+    {
+      id: 'alert-005',
+      ruleId: 'rule-001',
+      ruleName: 'Multiple Failed Login Attempts',
+      severity: 'error',
+      description: 'User has attempted to login 4 times in the last 10 minutes',
+      triggeredBy: '6',
+      triggeredByName: 'External User',
+      triggeredAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(), // 2 minutes ago
+      status: 'active',
+      metadata: {
+        attemptCount: 4,
+        timeWindow: '10 minutes',
+        ipAddress: '203.0.113.45',
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        isExternal: true
+      }
+    },
+    {
+      id: 'alert-006',
+      ruleId: 'rule-002',
+      ruleName: 'Suspicious Document Access',
+      severity: 'critical',
+      description: 'User has accessed 12 highly confidential documents in the last 20 minutes',
+      triggeredBy: '7',
+      triggeredByName: 'Unknown User',
+      triggeredAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
+      status: 'active',
+      metadata: {
+        documentCount: 12,
+        timeWindow: '20 minutes',
+        documentTypes: ['highly_confidential', 'restricted', 'classified'],
+        accessPattern: 'suspicious',
+        riskLevel: 'high'
+      }
+    },
+    {
+      id: 'alert-007',
+      ruleId: 'rule-003',
+      ruleName: 'Admin Privilege Escalation',
+      severity: 'critical',
+      description: 'Client user attempted to modify audit settings',
+      triggeredBy: '8',
+      triggeredByName: 'Client Admin',
+      triggeredAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(), // 8 minutes ago
+      status: 'acknowledged',
+      acknowledgedBy: '2',
+      acknowledgedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      metadata: {
+        attemptedAction: 'modify_audit_settings',
+        userRole: 'client',
+        requestedResource: '/admin/audits/settings',
+        ipAddress: '192.168.1.200',
+        severity: 'high'
+      }
+    },
+    {
+      id: 'alert-008',
+      ruleId: 'rule-004',
+      ruleName: 'Unusual Activity Pattern',
+      severity: 'info',
+      description: 'User has performed 15 actions in the last 30 minutes',
+      triggeredBy: '1',
+      triggeredByName: 'John Manager',
+      triggeredAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(), // 20 minutes ago
+      status: 'dismissed',
+      metadata: {
+        actionCount: 15,
+        timeWindow: '30 minutes',
+        actionTypes: ['view', 'export', 'generate_report'],
+        isNormal: true,
+        dismissedReason: 'Normal business activity'
+      }
+    }
+  ]
 
   // Note: In Edge Runtime, we can't write to files
   // This is a read-only implementation for demo purposes

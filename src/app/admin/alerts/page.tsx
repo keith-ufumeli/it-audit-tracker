@@ -60,6 +60,14 @@ export default function AdminAlertsPage() {
 
     loadAlerts()
     initializeWebSocket()
+
+    // Cleanup function
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmounting')
+        wsRef.current = null
+      }
+    }
   }, [session, status, router])
 
   useEffect(() => {
@@ -82,52 +90,82 @@ export default function AdminAlertsPage() {
 
   const initializeWebSocket = () => {
     try {
-      const ws = new WebSocket('ws://localhost:8080')
-      wsRef.current = ws
-      setWsConnection(ws)
-      setConnectionStatus('connecting')
-
-      ws.onopen = () => {
-        console.log('WebSocket connected')
-        setConnectionStatus('connected')
-        
-        // Subscribe to all alert types
-        ws.send(JSON.stringify({
-          type: 'subscribe',
-          alertTypes: ['all']
-        }))
+      // Close existing connection if any
+      if (wsRef.current) {
+        wsRef.current.close()
       }
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          console.log('WebSocket message received:', data)
+      // Try to start the WebSocket server first
+      fetch('/api/websocket', { method: 'GET' })
+        .then(() => {
+          console.log('WebSocket server started')
           
-          if (data.type === 'alert') {
-            // New alert received
-            setAlerts(prev => [data.data, ...prev])
-          }
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error)
-        }
-      }
+          // Wait a moment for server to be ready
+          setTimeout(() => {
+            const ws = new WebSocket('ws://localhost:8080')
+            wsRef.current = ws
+            setWsConnection(ws)
+            setConnectionStatus('connecting')
 
-      ws.onclose = () => {
-        console.log('WebSocket disconnected')
-        setConnectionStatus('disconnected')
-        
-        // Attempt to reconnect after 5 seconds
-        setTimeout(() => {
-          if (wsRef.current?.readyState === WebSocket.CLOSED) {
-            initializeWebSocket()
-          }
-        }, 5000)
-      }
+            ws.onopen = () => {
+              console.log('WebSocket connected successfully')
+              setConnectionStatus('connected')
+              
+              // Subscribe to all alert types
+              ws.send(JSON.stringify({
+                type: 'subscribe',
+                alertTypes: ['all']
+              }))
+            }
 
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error)
-        setConnectionStatus('disconnected')
-      }
+            ws.onmessage = (event) => {
+              try {
+                const data = JSON.parse(event.data)
+                console.log('WebSocket message received:', data)
+                
+                if (data.type === 'alert') {
+                  // New alert received
+                  setAlerts(prev => [data.data, ...prev])
+                } else if (data.type === 'connection') {
+                  console.log('WebSocket connection confirmed:', data.message)
+                }
+              } catch (error) {
+                console.error('Error parsing WebSocket message:', error)
+              }
+            }
+
+            ws.onclose = (event) => {
+              console.log('WebSocket disconnected:', event.code, event.reason)
+              setConnectionStatus('disconnected')
+              
+              // Attempt to reconnect after 5 seconds if not a manual close
+              if (event.code !== 1000) {
+                setTimeout(() => {
+                  if (wsRef.current?.readyState === WebSocket.CLOSED) {
+                    console.log('Attempting to reconnect WebSocket...')
+                    initializeWebSocket()
+                  }
+                }, 5000)
+              }
+            }
+
+            ws.onerror = (error) => {
+              console.error('WebSocket error:', error)
+              console.error('WebSocket readyState:', ws.readyState)
+              console.error('WebSocket url:', ws.url)
+              setConnectionStatus('disconnected')
+              
+              // Try to restart the WebSocket server
+              console.log('Attempting to restart WebSocket server...')
+              fetch('/api/websocket', { method: 'GET' })
+                .catch(err => console.error('Failed to restart WebSocket server:', err))
+            }
+          }, 1000)
+        })
+        .catch(error => {
+          console.error('Failed to start WebSocket server:', error)
+          setConnectionStatus('disconnected')
+        })
     } catch (error) {
       console.error('Failed to initialize WebSocket:', error)
       setConnectionStatus('disconnected')
