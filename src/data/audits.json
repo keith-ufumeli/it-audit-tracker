@@ -1,0 +1,91 @@
+[
+  {
+    "id": "audit-001",
+    "title": "Q1 2024 IT Security Audit",
+    "description": "Comprehensive security audit covering network infrastructure, access controls, and data protection measures.",
+    "status": "in_progress",
+    "priority": "high",
+    "auditManager": "1",
+    "assignedAuditors": ["2"],
+    "startDate": "2024-01-15T00:00:00Z",
+    "endDate": "2024-03-31T23:59:59Z",
+    "createdAt": "2024-01-10T10:00:00Z",
+    "updatedAt": "2024-01-20T14:30:00Z",
+    "scope": [
+      "Network Security",
+      "Access Controls",
+      "Data Protection",
+      "Incident Response"
+    ],
+    "complianceFrameworks": ["ISO 27001", "SOC 2"],
+    "findings": [
+      {
+        "id": "finding-001",
+        "title": "Weak Password Policy",
+        "severity": "medium",
+        "status": "open",
+        "description": "Current password policy does not meet industry standards",
+        "recommendation": "Implement stronger password requirements",
+        "assignedTo": "2",
+        "dueDate": "2024-02-15T00:00:00Z"
+      }
+    ],
+    "progress": 35
+  },
+  {
+    "id": "audit-002",
+    "title": "Data Privacy Compliance Review",
+    "description": "Review of data handling practices and GDPR compliance measures.",
+    "status": "planning",
+    "priority": "medium",
+    "auditManager": "1",
+    "assignedAuditors": ["2"],
+    "startDate": "2024-02-01T00:00:00Z",
+    "endDate": "2024-04-30T23:59:59Z",
+    "createdAt": "2024-01-18T09:00:00Z",
+    "updatedAt": "2024-01-18T09:00:00Z",
+    "scope": [
+      "Data Collection",
+      "Data Processing",
+      "Data Storage",
+      "Data Retention"
+    ],
+    "complianceFrameworks": ["GDPR", "CCPA"],
+    "findings": [],
+    "progress": 5
+  },
+  {
+    "id": "audit-003",
+    "title": "Infrastructure Security Assessment",
+    "description": "Assessment of server infrastructure, cloud services, and backup systems.",
+    "status": "completed",
+    "priority": "high",
+    "auditManager": "1",
+    "assignedAuditors": ["2"],
+    "startDate": "2023-12-01T00:00:00Z",
+    "endDate": "2023-12-31T23:59:59Z",
+    "createdAt": "2023-11-25T14:00:00Z",
+    "updatedAt": "2023-12-31T17:00:00Z",
+    "scope": [
+      "Server Security",
+      "Cloud Infrastructure",
+      "Backup Systems",
+      "Monitoring"
+    ],
+    "complianceFrameworks": ["ISO 27001"],
+    "findings": [
+      {
+        "id": "finding-002",
+        "title": "Outdated Server Software",
+        "severity": "high",
+        "status": "resolved",
+        "description": "Several servers running outdated software versions",
+        "recommendation": "Update all server software to latest versions",
+        "assignedTo": "2",
+        "dueDate": "2023-12-15T00:00:00Z",
+        "resolvedAt": "2023-12-14T16:30:00Z"
+      }
+    ],
+    "progress": 100
+  }
+]

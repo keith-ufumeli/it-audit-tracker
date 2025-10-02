@@ -1,0 +1,110 @@
+[
+  {
+    "id": "activity-001",
+    "userId": "1",
+    "userName": "John Manager",
+    "userRole": "audit_manager",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2024-01-20T14:30:00Z",
+    "ipAddress": "192.168.1.100",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_123456789",
+      "loginMethod": "credentials"
+    }
+  },
+  {
+    "id": "activity-002",
+    "userId": "2",
+    "userName": "Jane Auditor",
+    "userRole": "auditor",
+    "action": "document_request",
+    "description": "Requested document: Network Security Policy",
+    "timestamp": "2024-01-20T15:45:00Z",
+    "ipAddress": "192.168.1.101",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "document",
+    "metadata": {
+      "documentId": "doc-001",
+      "auditId": "audit-001",
+      "requestedFrom": "5"
+    }
+  },
+  {
+    "id": "activity-003",
+    "userId": "5",
+    "userName": "Charlie Department",
+    "userRole": "department",
+    "action": "document_upload",
+    "description": "Uploaded document: Network Security Policy",
+    "timestamp": "2024-01-20T16:30:00Z",
+    "ipAddress": "192.168.1.102",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "document",
+    "metadata": {
+      "documentId": "doc-001",
+      "fileSize": 2048576,
+      "fileName": "network_security_policy.pdf"
+    }
+  },
+  {
+    "id": "activity-004",
+    "userId": "2",
+    "userName": "Jane Auditor",
+    "userRole": "auditor",
+    "action": "audit_update",
+    "description": "Updated audit progress: Q1 2024 IT Security Audit",
+    "timestamp": "2024-01-20T17:15:00Z",
+    "ipAddress": "192.168.1.101",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "audit",
+    "metadata": {
+      "auditId": "audit-001",
+      "previousProgress": 30,
+      "newProgress": 35,
+      "changeReason": "Document review completed"
+    }
+  },
+  {
+    "id": "activity-005",
+    "userId": "1",
+    "userName": "John Manager",
+    "userRole": "audit_manager",
+    "action": "user_creation",
+    "description": "Created new user account",
+    "timestamp": "2024-01-20T18:00:00Z",
+    "ipAddress": "192.168.1.100",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "user_management",
+    "metadata": {
+      "newUserId": "6",
+      "newUserEmail": "newuser@audit.com",
+      "assignedRole": "auditor"
+    }
+  },
+  {
+    "id": "activity-006",
+    "userId": "3",
+    "userName": "Bob Executive",
+    "userRole": "management",
+    "action": "report_generation",
+    "description": "Generated executive summary report",
+    "timestamp": "2024-01-20T19:30:00Z",
+    "ipAddress": "192.168.1.103",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "severity": "info",
+    "resource": "report",
+    "metadata": {
+      "reportType": "executive_summary",
+      "reportPeriod": "Q1 2024",
+      "auditIds": ["audit-001", "audit-003"]
+    }
+  }
+]

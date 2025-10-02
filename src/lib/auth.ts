@@ -1,60 +1,10 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
+import { Database, User } from "./database"
 
 // Define user roles
 export type UserRole = "audit_manager" | "auditor" | "management" | "client" | "department"
-
-// Define user interface
-export interface User {
-  id: string
-  email: string
-  name: string
-  role: UserRole
-  department?: string
-  permissions: string[]
-}
-
-// Mock user database (in production, this would be a real database)
-const mockUsers: User[] = [
-  {
-    id: "1",
-    email: "manager@audit.com",
-    name: "John Manager",
-    role: "audit_manager",
-    permissions: ["create_audit", "assign_tasks", "view_reports", "manage_users"]
-  },
-  {
-    id: "2",
-    email: "auditor@audit.com",
-    name: "Jane Auditor",
-    role: "auditor",
-    department: "IT Security",
-    permissions: ["view_logs", "submit_reports", "request_documents", "flag_activities"]
-  },
-  {
-    id: "3",
-    email: "management@audit.com",
-    name: "Bob Executive",
-    role: "management",
-    permissions: ["view_dashboards", "approve_reports", "view_summaries"]
-  },
-  {
-    id: "4",
-    email: "client@company.com",
-    name: "Alice Client",
-    role: "client",
-    permissions: ["view_notifications", "respond_requests"]
-  },
-  {
-    id: "5",
-    email: "dept@company.com",
-    name: "Charlie Department",
-    role: "department",
-    department: "HR",
-    permissions: ["upload_documents", "view_requests"]
-  }
-]
 
 // Hash passwords for mock users (in production, these would be stored hashed)
 const mockPasswords: Record<string, string> = {
@@ -78,9 +28,9 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Find user by email
-        const user = mockUsers.find(u => u.email === credentials.email)
-        if (!user) {
+        // Find user by email from JSON database
+        const user = Database.getUserByEmail(credentials.email)
+        if (!user || !user.isActive) {
           return null
         }
 
@@ -95,11 +45,32 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Update last login
+        Database.updateUser(user.id, { lastLogin: new Date().toISOString() })
+
+        // Log login activity
+        Database.addActivity({
+          userId: user.id,
+          userName: user.name,
+          userRole: user.role,
+          action: "login",
+          description: "User logged into the system",
+          timestamp: new Date().toISOString(),
+          ipAddress: "127.0.0.1", // In production, get from request
+          userAgent: "NextAuth.js", // In production, get from request
+          severity: "info",
+          resource: "authentication",
+          metadata: {
+            sessionId: `sess_${Date.now()}`,
+            loginMethod: "credentials"
+          }
+        })
+
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
+          role: user.role as UserRole,
           department: user.department,
           permissions: user.permissions
         }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { FullPageLoader } from "@/components/ui/loader"
 import { Shield, Building, ArrowRight, Users, FileText, BarChart3 } from "lucide-react"
 import Link from "next/link"
 
@@ -28,12 +29,11 @@ export default function Home() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
-          <p className="mt-2 text-oxford_blue-200">Loading...</p>
-        </div>
-      </div>
+      <FullPageLoader 
+        text="Initializing Audit Tracker..." 
+        variant="white"
+        className="bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700"
+      />
     )
   }
 

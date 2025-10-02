@@ -1,0 +1,102 @@
+[
+  {
+    "id": "notif-001",
+    "userId": "4",
+    "userName": "Alice Client",
+    "userRole": "client",
+    "title": "New Audit Request",
+    "message": "A new audit has been initiated for your organization. Please review the requirements and prepare necessary documentation.",
+    "type": "audit_request",
+    "status": "unread",
+    "priority": "high",
+    "createdAt": "2024-01-20T10:00:00Z",
+    "readAt": null,
+    "expiresAt": "2024-01-27T10:00:00Z",
+    "metadata": {
+      "auditId": "audit-001",
+      "auditTitle": "Q1 2024 IT Security Audit",
+      "dueDate": "2024-03-31T23:59:59Z"
+    }
+  },
+  {
+    "id": "notif-002",
+    "userId": "5",
+    "userName": "Charlie Department",
+    "userRole": "department",
+    "title": "Document Request",
+    "message": "Jane Auditor has requested the Network Security Policy document. Please upload by January 20, 2024.",
+    "type": "document_request",
+    "status": "read",
+    "priority": "medium",
+    "createdAt": "2024-01-17T14:00:00Z",
+    "readAt": "2024-01-17T14:15:00Z",
+    "expiresAt": "2024-01-20T17:00:00Z",
+    "metadata": {
+      "documentId": "doc-001",
+      "requestedBy": "2",
+      "requestedByName": "Jane Auditor",
+      "dueDate": "2024-01-20T17:00:00Z"
+    }
+  },
+  {
+    "id": "notif-003",
+    "userId": "2",
+    "userName": "Jane Auditor",
+    "userRole": "auditor",
+    "title": "Audit Assignment",
+    "message": "You have been assigned to the Q1 2024 IT Security Audit. Please review the scope and begin your assessment.",
+    "type": "audit_assignment",
+    "status": "read",
+    "priority": "high",
+    "createdAt": "2024-01-15T09:00:00Z",
+    "readAt": "2024-01-15T09:30:00Z",
+    "expiresAt": "2024-01-22T09:00:00Z",
+    "metadata": {
+      "auditId": "audit-001",
+      "auditTitle": "Q1 2024 IT Security Audit",
+      "assignedBy": "1",
+      "assignedByName": "John Manager"
+    }
+  },
+  {
+    "id": "notif-004",
+    "userId": "3",
+    "userName": "Bob Executive",
+    "userRole": "management",
+    "title": "Audit Report Ready",
+    "message": "The Infrastructure Security Assessment report is ready for your review and approval.",
+    "type": "report_ready",
+    "status": "unread",
+    "priority": "medium",
+    "createdAt": "2024-01-20T16:00:00Z",
+    "readAt": null,
+    "expiresAt": "2024-01-27T16:00:00Z",
+    "metadata": {
+      "auditId": "audit-003",
+      "auditTitle": "Infrastructure Security Assessment",
+      "reportId": "report-003",
+      "preparedBy": "2",
+      "preparedByName": "Jane Auditor"
+    }
+  },
+  {
+    "id": "notif-005",
+    "userId": "1",
+    "userName": "John Manager",
+    "userRole": "audit_manager",
+    "title": "System Alert",
+    "message": "Multiple failed login attempts detected for user account. Please review security logs.",
+    "type": "security_alert",
+    "status": "unread",
+    "priority": "high",
+    "createdAt": "2024-01-20T20:15:00Z",
+    "readAt": null,
+    "expiresAt": "2024-01-21T20:15:00Z",
+    "metadata": {
+      "alertType": "failed_login",
+      "targetUser": "unknown",
+      "attempts": 5,
+      "ipAddress": "192.168.1.200"
+    }
+  }
+]
