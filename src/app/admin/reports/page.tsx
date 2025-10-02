@@ -298,7 +298,7 @@ export default function ReportsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Reports</CardTitle>
             </CardHeader>
@@ -306,7 +306,7 @@ export default function ReportsPage() {
               <div className="text-3xl font-bold text-blue-600">{reports.length}</div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-gray-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Draft</CardTitle>
             </CardHeader>
@@ -316,7 +316,7 @@ export default function ReportsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-orange-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
             </CardHeader>
@@ -326,7 +326,7 @@ export default function ReportsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow border-l-4 border-l-green-500">
+          <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Approved</CardTitle>
             </CardHeader>
@@ -345,6 +345,7 @@ export default function ReportsPage() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
+                  aria-label="Search reports"
                   placeholder="Search reports..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
