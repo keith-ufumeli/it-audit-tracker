@@ -99,6 +99,23 @@ export interface Notification {
   metadata?: Record<string, any>
 }
 
+export interface Alert {
+  id: string
+  ruleId: string
+  ruleName: string
+  severity: 'info' | 'warning' | 'error' | 'critical'
+  description: string
+  triggeredBy: string
+  triggeredByName: string
+  triggeredAt: string
+  status: 'active' | 'acknowledged' | 'resolved' | 'dismissed'
+  acknowledgedBy?: string
+  acknowledgedAt?: string
+  resolvedBy?: string
+  resolvedAt?: string
+  metadata?: Record<string, any>
+}
+
 // In-memory data storage (Edge Runtime compatible)
 class InMemoryDatabase {
   static users: User[] = [...usersData] as User[]
@@ -106,6 +123,7 @@ class InMemoryDatabase {
   static documents: Document[] = [...documentsData] as Document[]
   static activities: Activity[] = [...activitiesData] as Activity[]
   static notifications: Notification[] = [...notificationsData] as Notification[]
+  static alerts: Alert[] = []
 
   // Note: In Edge Runtime, we can't write to files
   // This is a read-only implementation for demo purposes
@@ -239,6 +257,54 @@ export class Database {
   static getUnreadNotificationsByUser(userId: string): Notification[] {
     const notifications = this.getNotificationsByUser(userId)
     return notifications.filter(notif => notif.status === 'unread')
+  }
+
+  // Alert management methods
+  static getAlerts(): Alert[] {
+    return InMemoryDatabase.alerts
+  }
+
+  static getActiveAlerts(): Alert[] {
+    return InMemoryDatabase.alerts.filter(alert => alert.status === 'active')
+  }
+
+  static getAlertsBySeverity(severity: string): Alert[] {
+    return InMemoryDatabase.alerts.filter(alert => alert.severity === severity)
+  }
+
+  static addAlert(alert: Alert): boolean {
+    InMemoryDatabase.alerts.push(alert)
+    return true
+  }
+
+  static updateAlert(alertId: string, updates: Partial<Alert>): boolean {
+    const alertIndex = InMemoryDatabase.alerts.findIndex(alert => alert.id === alertId)
+    if (alertIndex === -1) return false
+
+    InMemoryDatabase.alerts[alertIndex] = { ...InMemoryDatabase.alerts[alertIndex], ...updates }
+    return true
+  }
+
+  static acknowledgeAlert(alertId: string, acknowledgedBy: string): boolean {
+    return this.updateAlert(alertId, {
+      status: 'acknowledged',
+      acknowledgedBy,
+      acknowledgedAt: new Date().toISOString()
+    })
+  }
+
+  static resolveAlert(alertId: string, resolvedBy: string): boolean {
+    return this.updateAlert(alertId, {
+      status: 'resolved',
+      resolvedBy,
+      resolvedAt: new Date().toISOString()
+    })
+  }
+
+  static dismissAlert(alertId: string): boolean {
+    return this.updateAlert(alertId, {
+      status: 'dismissed'
+    })
   }
 
   static updateNotification(id: string, updates: Partial<Notification>): boolean {

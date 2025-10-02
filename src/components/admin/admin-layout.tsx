@@ -31,6 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Audits", href: "/admin/audits", icon: ClipboardCheck, permission: "create_audit" },
     { name: "Reports", href: "/admin/reports", icon: FileText, permission: "view_reports" },
     { name: "Activity Logs", href: "/admin/activities", icon: Activity, permission: "view_logs" },
+    { name: "Security Alerts", href: "/admin/alerts", icon: Shield, permission: "view_logs" },
   ]
 
   const filteredNavigation = navigation.filter(item => 
