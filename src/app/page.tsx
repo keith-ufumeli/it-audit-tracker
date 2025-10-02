@@ -20,7 +20,7 @@ export default function Home() {
       // Redirect authenticated users to their appropriate portal
       const role = session.user.role
       if (["audit_manager", "auditor", "management"].includes(role)) {
-        router.push("/admin")
+        router.push("/admin/dashboard")
       } else {
         router.push("/client")
       }

@@ -64,18 +64,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Logo */}
       <div className="p-6 border-b">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
             <Shield className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="font-bold text-lg">Audit Tracker</h1>
+            <h1 className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+              Audit Tracker
+            </h1>
             <p className="text-xs text-muted-foreground">Admin Portal</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-2">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -87,10 +89,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               }}
               className={`
                 w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium
-                transition-all duration-200 group
+                transition-all duration-200 group relative
                 ${isActive 
-                  ? "bg-primary text-primary-foreground shadow-md" 
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg" 
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md"
                 }
               `}
             >
@@ -105,9 +107,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* User Info */}
-      <div className="p-4 border-t">
-        <div className="flex items-center space-x-3 p-3 rounded-lg bg-accent/50">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+      <div className="p-4 border-t bg-muted/30">
+        <div className="flex items-center space-x-3 p-3 rounded-lg bg-background border shadow-sm">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md">
             <User className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
@@ -119,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <Button 
           variant="ghost" 
-          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive"
+          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4 mr-2" />

@@ -122,7 +122,7 @@ export function getPortalRoute(role: UserRole): string {
     case "audit_manager":
     case "auditor":
     case "management":
-      return "/admin"
+      return "/admin/dashboard"
     case "client":
     case "department":
       return "/client"

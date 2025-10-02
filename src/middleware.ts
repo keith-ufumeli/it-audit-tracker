@@ -7,13 +7,6 @@ export default withAuth(
     const token = req.nextauth.token
     const { pathname } = req.nextUrl
 
-    // If no token, redirect to sign in
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/signin", req.url))
-    }
-
-    const userRole = token.role as UserRole
-
     // Define route access rules
     const adminRoutes = ["/admin"]
     const clientRoutes = ["/client"]
@@ -24,12 +17,24 @@ export default withAuth(
     const isClientRoute = clientRoutes.some(route => pathname.startsWith(route))
     const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route))
 
+    // If accessing public routes, allow
+    if (isPublicRoute) {
+      return NextResponse.next()
+    }
+
+    // If no token and trying to access protected routes, redirect to sign in
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/signin", req.url))
+    }
+
+    const userRole = token.role as UserRole
+
     // Admin role access
     const adminRoles: UserRole[] = ["audit_manager", "auditor", "management"]
     // Client role access
     const clientRoles: UserRole[] = ["client", "department"]
 
-    // Redirect logic
+    // Redirect logic for role-based access
     if (isAdminRoute && !adminRoles.includes(userRole)) {
       // User doesn't have admin access, redirect to their appropriate portal
       const redirectUrl = getPortalRoute(userRole)
@@ -42,12 +47,6 @@ export default withAuth(
       return NextResponse.redirect(new URL(redirectUrl, req.url))
     }
 
-    // If user is on root and authenticated, redirect to their portal
-    if (pathname === "/" && token) {
-      const redirectUrl = getPortalRoute(userRole)
-      return NextResponse.redirect(new URL(redirectUrl, req.url))
-    }
-
     return NextResponse.next()
   },
   {
@@ -56,7 +55,7 @@ export default withAuth(
         const { pathname } = req.nextUrl
         const publicRoutes = ["/", "/auth"]
 
-        // Allow access to public routes
+        // Allow access to public routes without authentication
         if (publicRoutes.some(route => pathname === route || pathname.startsWith(route))) {
           return true
         }
