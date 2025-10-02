@@ -1,15 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-
-// Database file paths
-const DATA_DIR = path.join(process.cwd(), 'src', 'data')
-const DB_FILES = {
-  users: path.join(DATA_DIR, 'users.json'),
-  audits: path.join(DATA_DIR, 'audits.json'),
-  documents: path.join(DATA_DIR, 'documents.json'),
-  activities: path.join(DATA_DIR, 'activities.json'),
-  notifications: path.join(DATA_DIR, 'notifications.json'),
-} as const
+// Import JSON data directly (Edge Runtime compatible)
+import usersData from '@/data/users.json'
+import auditsData from '@/data/audits.json'
+import documentsData from '@/data/documents.json'
+import activitiesData from '@/data/activities.json'
+import notificationsData from '@/data/notifications.json'
 
 // Types for our database entities
 export interface User {
@@ -105,31 +99,24 @@ export interface Notification {
   metadata: Record<string, any>
 }
 
-// Generic database operations
+// In-memory data storage (Edge Runtime compatible)
+class InMemoryDatabase {
+  static users: User[] = [...usersData] as User[]
+  static audits: Audit[] = [...auditsData] as Audit[]
+  static documents: Document[] = [...documentsData] as Document[]
+  static activities: Activity[] = [...activitiesData] as Activity[]
+  static notifications: Notification[] = [...notificationsData] as Notification[]
+
+  // Note: In Edge Runtime, we can't write to files
+  // This is a read-only implementation for demo purposes
+  // In production, you would use a real database or API calls
+}
+
+// Generic database operations (Edge Runtime compatible)
 export class Database {
-  private static readFile<T>(filePath: string): T[] {
-    try {
-      const data = fs.readFileSync(filePath, 'utf8')
-      return JSON.parse(data)
-    } catch (error) {
-      console.error(`Error reading database file ${filePath}:`, error)
-      return []
-    }
-  }
-
-  private static writeFile<T>(filePath: string, data: T[]): boolean {
-    try {
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
-      return true
-    } catch (error) {
-      console.error(`Error writing database file ${filePath}:`, error)
-      return false
-    }
-  }
-
   // User operations
   static getUsers(): User[] {
-    return this.readFile<User>(DB_FILES.users)
+    return [...InMemoryDatabase.users]
   }
 
   static getUserById(id: string): User | null {
@@ -147,13 +134,14 @@ export class Database {
     const index = users.findIndex(user => user.id === id)
     if (index === -1) return false
 
-    users[index] = { ...users[index], ...updates }
-    return this.writeFile(DB_FILES.users, users)
+    // Update in-memory data
+    InMemoryDatabase.users[index] = { ...users[index], ...updates }
+    return true
   }
 
   // Audit operations
   static getAudits(): Audit[] {
-    return this.readFile<Audit>(DB_FILES.audits)
+    return [...InMemoryDatabase.audits]
   }
 
   static getAuditById(id: string): Audit | null {
@@ -176,13 +164,14 @@ export class Database {
     const index = audits.findIndex(audit => audit.id === id)
     if (index === -1) return false
 
-    audits[index] = { ...audits[index], ...updates, updatedAt: new Date().toISOString() }
-    return this.writeFile(DB_FILES.audits, audits)
+    // Update in-memory data
+    InMemoryDatabase.audits[index] = { ...audits[index], ...updates, updatedAt: new Date().toISOString() }
+    return true
   }
 
   // Document operations
   static getDocuments(): Document[] {
-    return this.readFile<Document>(DB_FILES.documents)
+    return [...InMemoryDatabase.documents]
   }
 
   static getDocumentById(id: string): Document | null {
@@ -205,13 +194,14 @@ export class Database {
     const index = documents.findIndex(doc => doc.id === id)
     if (index === -1) return false
 
-    documents[index] = { ...documents[index], ...updates }
-    return this.writeFile(DB_FILES.documents, documents)
+    // Update in-memory data
+    InMemoryDatabase.documents[index] = { ...documents[index], ...updates }
+    return true
   }
 
   // Activity operations
   static getActivities(): Activity[] {
-    return this.readFile<Activity>(DB_FILES.activities)
+    return [...InMemoryDatabase.activities]
   }
 
   static getActivitiesByUser(userId: string): Activity[] {
@@ -227,18 +217,18 @@ export class Database {
   }
 
   static addActivity(activity: Omit<Activity, 'id'>): boolean {
-    const activities = this.getActivities()
     const newActivity: Activity = {
       ...activity,
       id: `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     }
-    activities.push(newActivity)
-    return this.writeFile(DB_FILES.activities, activities)
+    // Add to in-memory data
+    InMemoryDatabase.activities.push(newActivity)
+    return true
   }
 
   // Notification operations
   static getNotifications(): Notification[] {
-    return this.readFile<Notification>(DB_FILES.notifications)
+    return [...InMemoryDatabase.notifications]
   }
 
   static getNotificationsByUser(userId: string): Notification[] {
@@ -256,18 +246,19 @@ export class Database {
     const index = notifications.findIndex(notif => notif.id === id)
     if (index === -1) return false
 
-    notifications[index] = { ...notifications[index], ...updates }
-    return this.writeFile(DB_FILES.notifications, notifications)
+    // Update in-memory data
+    InMemoryDatabase.notifications[index] = { ...notifications[index], ...updates }
+    return true
   }
 
   static addNotification(notification: Omit<Notification, 'id'>): boolean {
-    const notifications = this.getNotifications()
     const newNotification: Notification = {
       ...notification,
       id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     }
-    notifications.push(newNotification)
-    return this.writeFile(DB_FILES.notifications, notifications)
+    // Add to in-memory data
+    InMemoryDatabase.notifications.push(newNotification)
+    return true
   }
 
   // Utility methods
