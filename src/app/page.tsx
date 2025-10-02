@@ -1,103 +1,177 @@
-import Image from "next/image";
+"use client"
+
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Shield, Building, ArrowRight, Users, FileText, BarChart3 } from "lucide-react"
+import Link from "next/link"
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    if (status === "loading") return // Still loading
+
+    if (session?.user?.role) {
+      // Redirect authenticated users to their appropriate portal
+      const role = session.user.role
+      if (["audit_manager", "auditor", "management"].includes(role)) {
+        router.push("/admin")
+      } else {
+        router.push("/client")
+      }
+    }
+  }, [session, status, router])
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+          <p className="mt-2 text-oxford_blue-200">Loading...</p>
         </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700">
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Shield className="h-8 w-8 text-orange_web-500" />
+            <h1 className="text-2xl font-bold text-white">IT Audit Trail Tracker</h1>
+          </div>
+          <Button asChild variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+            <Link href="/auth/signin">
+              Sign In
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold text-white mb-6">
+            Comprehensive Audit Management
+          </h2>
+          <p className="text-xl text-oxford_blue-200 mb-8 max-w-3xl mx-auto">
+            Enhance transparency, accountability, and security with our systematic audit trail tracking system. 
+            Manage audits, monitor activities, and ensure compliance across your organization.
+          </p>
+          <Button asChild size="lg" className="bg-orange_web-500 hover:bg-orange_web-600 text-white">
+            <Link href="/auth/signin">
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardHeader>
+              <Shield className="h-8 w-8 text-orange_web-500 mb-2" />
+              <CardTitle className="text-white">Admin Portal</CardTitle>
+              <CardDescription className="text-oxford_blue-200">
+                For Audit Managers, Auditors, and Management
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-oxford_blue-200">
+                <li>• Create and assign audit tasks</li>
+                <li>• Monitor system activities</li>
+                <li>• Generate comprehensive reports</li>
+                <li>• Manage user permissions</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardHeader>
+              <Building className="h-8 w-8 text-orange_web-500 mb-2" />
+              <CardTitle className="text-white">Client Portal</CardTitle>
+              <CardDescription className="text-oxford_blue-200">
+                For Clients and Departments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-oxford_blue-200">
+                <li>• Receive audit notifications</li>
+                <li>• Upload requested documents</li>
+                <li>• Track audit progress</li>
+                <li>• Respond to audit requests</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardHeader>
+              <BarChart3 className="h-8 w-8 text-orange_web-500 mb-2" />
+              <CardTitle className="text-white">Analytics & Reporting</CardTitle>
+              <CardDescription className="text-oxford_blue-200">
+                Comprehensive insights and compliance tracking
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-2 text-sm text-oxford_blue-200">
+                <li>• Real-time activity monitoring</li>
+                <li>• Compliance score tracking</li>
+                <li>• Automated report generation</li>
+                <li>• Risk assessment tools</li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Demo Accounts */}
+        <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white text-center">Try Demo Accounts</CardTitle>
+            <CardDescription className="text-oxford_blue-200 text-center">
+              Explore different user roles and permissions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="text-center p-4 bg-white/5 rounded-lg">
+                <Users className="h-6 w-6 text-orange_web-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-white">Audit Manager</p>
+                <p className="text-xs text-oxford_blue-300">manager@audit.com</p>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-lg">
+                <FileText className="h-6 w-6 text-orange_web-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-white">Auditor</p>
+                <p className="text-xs text-oxford_blue-300">auditor@audit.com</p>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-lg">
+                <Shield className="h-6 w-6 text-orange_web-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-white">Management</p>
+                <p className="text-xs text-oxford_blue-300">management@audit.com</p>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-lg">
+                <Building className="h-6 w-6 text-orange_web-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-white">Client</p>
+                <p className="text-xs text-oxford_blue-300">client@company.com</p>
+              </div>
+              <div className="text-center p-4 bg-white/5 rounded-lg">
+                <Building className="h-6 w-6 text-orange_web-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-white">Department</p>
+                <p className="text-xs text-oxford_blue-300">dept@company.com</p>
+              </div>
+            </div>
+            <p className="text-center text-sm text-oxford_blue-300 mt-4">
+              Password for all accounts: <strong>password</strong>
+            </p>
+          </CardContent>
+        </Card>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
