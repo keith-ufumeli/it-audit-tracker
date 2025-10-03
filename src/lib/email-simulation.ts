@@ -14,7 +14,7 @@ export interface EmailNotification {
   subject: string
   message: string
   type: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface SimulatedEmail extends EmailNotification {
@@ -23,6 +23,65 @@ export interface SimulatedEmail extends EmailNotification {
   sentAt: string
   status: "sent" | "failed"
 }
+
+interface DocumentUploadData {
+  documentTitle: string
+  uploadedByName: string
+  uploadedAt: string
+  notes?: string
+}
+
+interface AuditUpdateData {
+  auditTitle: string
+  updatedByName: string
+  updatedAt: string
+  changes: string
+}
+
+interface ReportGeneratedData {
+  reportTitle: string
+  reportType: string
+  generatedByName: string
+  generatedAt: string
+  downloadUrl?: string
+}
+
+interface SecurityAlertData {
+  alertType: string
+  severity: string
+  triggeredByName: string
+  triggeredAt: string
+  description: string
+}
+
+interface DocumentRequestData {
+  documentTitle: string
+  description: string
+  dueDate: string
+  requestedByName: string
+}
+
+interface AuditAssignmentData {
+  auditTitle: string
+  assignedByName: string
+  assignedAt: string
+  dueDate: string
+  description: string
+  startDate: string
+  endDate: string
+}
+
+interface ReportReadyData {
+  auditTitle: string
+  reportTitle: string
+  generatedByName: string
+  generatedAt: string
+  downloadUrl?: string
+  preparedByName: string
+  submittedAt: string
+}
+
+type EmailTemplateData = DocumentUploadData | DocumentRequestData | AuditAssignmentData | ReportReadyData | AuditUpdateData | ReportGeneratedData | SecurityAlertData
 
 // In-memory storage for simulated emails
 const simulatedEmails: SimulatedEmail[] = []
@@ -112,7 +171,7 @@ export function clearSimulatedEmails(): void {
  * Email templates for different notification types
  */
 export const emailTemplates = {
-  document_upload: (data: any) => ({
+  document_upload: (data: DocumentUploadData) => ({
     subject: `Document Uploaded: ${data.documentTitle}`,
     message: `
 Hello,
@@ -132,7 +191,7 @@ IT Audit Trail Tracker
     `.trim()
   }),
 
-  document_request: (data: any) => ({
+  document_request: (data: DocumentRequestData) => ({
     subject: `Document Request: ${data.documentTitle}`,
     message: `
 Hello,
@@ -152,7 +211,7 @@ IT Audit Trail Tracker
     `.trim()
   }),
 
-  audit_assignment: (data: any) => ({
+  audit_assignment: (data: AuditAssignmentData) => ({
     subject: `Audit Assignment: ${data.auditTitle}`,
     message: `
 Hello,
@@ -172,7 +231,7 @@ IT Audit Trail Tracker
     `.trim()
   }),
 
-  report_ready: (data: any) => ({
+  report_ready: (data: ReportReadyData) => ({
     subject: `Audit Report Ready: ${data.auditTitle}`,
     message: `
 Hello,
@@ -197,15 +256,15 @@ IT Audit Trail Tracker
 export async function sendTemplatedEmail(
   to: string,
   type: keyof typeof emailTemplates,
-  data: any
+  data: EmailTemplateData
 ): Promise<SimulatedEmail> {
-  const template = emailTemplates[type](data)
+  const template = emailTemplates[type](data as any)
   
   return sendEmailNotification({
     to,
     ...template,
     type,
-    metadata: data
+    metadata: data as unknown as Record<string, unknown>
   })
 }
 
