@@ -119,9 +119,9 @@ export default function SignInPage() {
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
+          {/* <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>Demo password: <span className="font-medium">password</span></p>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>

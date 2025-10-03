@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -157,7 +157,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },

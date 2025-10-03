@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +15,6 @@ import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Calendar,
   Clock,
-  Users,
   FileText,
   Download,
   Play,
@@ -66,6 +67,8 @@ interface ReportJob {
 }
 
 export default function ReportSchedulePage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([])
   const [reportJobs, setReportJobs] = useState<ReportJob[]>([])
@@ -89,8 +92,21 @@ export default function ReportSchedulePage() {
   })
 
   useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
     loadScheduledReports()
-  }, [])
+  }, [session, status, router])
 
   const loadScheduledReports = async () => {
     startLoading("Loading scheduled reports...")
