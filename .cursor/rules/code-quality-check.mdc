@@ -1,0 +1,94 @@
+---
+alwaysApply: true
+description: Code quality and functionality preservation checks
+---
+
+# Code Quality & Functionality Preservation Rule
+
+## Post-Change Verification Checklist
+
+After making any code changes, always perform these checks to ensure code quality and preserve existing functionality:
+
+### 1. Linting & Error Checks
+- **Always run linter checks** on modified files using `read_lints` tool
+- **Fix critical errors** (not just warnings) before considering changes complete
+- **Address TypeScript errors** that could break compilation
+- **Resolve import/export issues** that could cause runtime failures
+
+### 2. Functionality Preservation
+- **Verify API response formats** match frontend expectations
+- **Check data flow consistency** between components and APIs
+- **Ensure state management** remains stable (no infinite re-renders)
+- **Validate user permissions** and access controls still work
+- **Test critical user flows** like authentication and data loading
+
+### 3. React-Specific Checks
+- **Prevent infinite re-render loops** by properly memoizing functions with `useCallback`
+- **Fix hydration mismatches** by using consistent date formatting and avoiding client-only code in SSR
+- **Ensure proper dependency arrays** in `useEffect` hooks
+- **Use `React.memo`** for expensive components to prevent unnecessary re-renders
+
+### 4. API Consistency
+- **Standardize response formats** across all API endpoints
+- **Use consistent error handling** patterns
+- **Maintain backward compatibility** when changing API contracts
+- **Validate request/response schemas** match frontend expectations
+
+### 5. Common Issues to Watch For
+- **Date formatting inconsistencies** between server and client
+- **Missing null checks** that could cause runtime errors
+- **Incorrect API response parsing** (e.g., `data.users` vs `data.data`)
+- **Unstable function references** in dependency arrays
+- **Missing error boundaries** for graceful failure handling
+
+### 6. Testing Strategy
+- **Check console for errors** after changes
+- **Verify data loads correctly** in affected components
+- **Test edge cases** like missing data or failed API calls
+- **Ensure UI renders properly** with both populated and empty states
+
+## Implementation Examples
+
+### Good: Stable Function with Proper Memoization
+```tsx
+const loadData = useCallback(async () => {
+  // Implementation
+}, [dependency1, dependency2]) // Stable dependencies
+
+useEffect(() => {
+  loadData()
+}, [loadData]) // Safe to include in dependencies
+```
+
+### Good: Consistent API Response Format
+```tsx
+// API returns
+return NextResponse.json({ 
+  success: true, 
+  data: result 
+})
+
+// Frontend expects
+if (result.success && result.data) {
+  const data = result.data
+}
+```
+
+### Good: Safe Date Formatting
+```tsx
+// Use utility functions for consistent formatting
+import { formatDate, formatDateTime } from "@/lib/utils"
+
+// Instead of direct toLocaleDateString() calls
+{formatDate(audit.startDate)}
+```
+
+## Error Prevention Patterns
+
+1. **Always use optional chaining** for potentially undefined values
+2. **Provide fallback UI** for missing data states
+3. **Add error boundaries** around critical components
+4. **Use TypeScript strict mode** to catch type errors early
+5. **Implement proper loading states** to prevent race conditions
+
+This rule ensures that all code changes maintain high quality standards and preserve existing functionality while preventing common React and API integration issues.
