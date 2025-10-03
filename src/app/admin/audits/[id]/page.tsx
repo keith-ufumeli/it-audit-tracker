@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
-import { Audit } from "@/lib/database"
+import { Audit, User } from "@/lib/database"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,9 +60,9 @@ export default function AuditDetailPage() {
     dueDate: ""
   })
   const [selectedAuditor, setSelectedAuditor] = useState("")
-  const [availableAuditors, setAvailableAuditors] = useState<any[]>([])
-  const [auditManager, setAuditManager] = useState<any>(null)
-  const [assignedAuditors, setAssignedAuditors] = useState<any[]>([])
+  const [availableAuditors, setAvailableAuditors] = useState<User[]>([])
+  const [auditManager, setAuditManager] = useState<User | null>(null)
+  const [assignedAuditors, setAssignedAuditors] = useState<User[]>([])
 
   const loadAudit = useCallback(async () => {
     startLoading("Loading audit details...")
@@ -98,7 +98,7 @@ export default function AuditDetailPage() {
     } finally {
       stopLoading()
     }
-  }, [startLoading, stopLoading, auditId])
+  }, [startLoading, stopLoading, auditId, router])
 
   useEffect(() => {
     if (status === "loading") return
@@ -117,7 +117,7 @@ export default function AuditDetailPage() {
     loadAudit()
   }, [session, status, router, auditId, loadAudit])
 
-  const loadUserData = async (auditData: any) => {
+  const loadUserData = async (auditData: Audit) => {
     try {
       // Fetch all users from API
       const response = await fetch("/api/users")
@@ -127,13 +127,13 @@ export default function AuditDetailPage() {
           const users = result.data
           
           // Find audit manager
-          const manager = users.find((user: any) => user.id === auditData.auditManager)
+          const manager = users.find((user: User) => user.id === auditData.auditManager)
           setAuditManager(manager || null)
           
           // Find assigned auditors
           const auditors = auditData.assignedAuditors
-            .map((id: string) => users.find((user: any) => user.id === id))
-            .filter(Boolean)
+            .map((id: string) => users.find((user: User) => user.id === id))
+            .filter((user): user is User => user !== undefined)
           setAssignedAuditors(auditors)
         }
       }
@@ -149,7 +149,7 @@ export default function AuditDetailPage() {
       if (response.ok) {
         const result = await response.json()
         if (result.success && result.data) {
-          const auditors = result.data.filter((user: any) => 
+          const auditors = result.data.filter((user: User) => 
             user.role === "auditor" && 
             audit && 
             !audit.assignedAuditors.includes(user.id)
@@ -802,7 +802,7 @@ export default function AuditDetailPage() {
               <CardContent>
                 {audit.findings && audit.findings.length > 0 ? (
                   <div className="space-y-4">
-                    {audit.findings.map((finding, index) => (
+                    {audit.findings.map((finding) => (
                       <div 
                         key={finding.id}
                         className="p-4 border rounded-lg hover:shadow-md transition-all"
@@ -921,7 +921,7 @@ export default function AuditDetailPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   {availableAuditors.length > 0 ? (
-                                    availableAuditors.map((user: any) => (
+                                    availableAuditors.map((user: User) => (
                                       <SelectItem key={user.id} value={user.id}>
                                         {user.name} ({user.email})
                                       </SelectItem>

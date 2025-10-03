@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -39,37 +39,7 @@ export default function AdminAlertsPage() {
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected')
   const wsRef = useRef<WebSocket | null>(null)
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const adminRoles = ["audit_manager", "auditor", "management"]
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
-    }
-
-    loadAlerts()
-    initializeWebSocket()
-
-    // Cleanup function
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close(1000, 'Component unmounting')
-        wsRef.current = null
-      }
-    }
-  }, [session, status, router])
-
-  useEffect(() => {
-    filterAlerts()
-  }, [alerts, searchQuery, selectedSeverity, selectedStatus])
-
-  const loadAlerts = async () => {
+  const loadAlerts = useCallback(async () => {
     startLoading("Loading alerts...")
     try {
       await new Promise(resolve => setTimeout(resolve, 500))
@@ -81,9 +51,9 @@ export default function AdminAlertsPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading])
 
-  const initializeWebSocket = () => {
+  const initializeWebSocket = useCallback(() => {
     try {
       // Close existing connection if any
       if (wsRef.current) {
@@ -164,9 +134,9 @@ export default function AdminAlertsPage() {
       console.error('Failed to initialize WebSocket:', error)
       setConnectionStatus('disconnected')
     }
-  }
+  }, [])
 
-  const filterAlerts = () => {
+  const filterAlerts = useCallback(() => {
     let filtered = alerts
 
     // Search filter
@@ -189,7 +159,37 @@ export default function AdminAlertsPage() {
     }
 
     setFilteredAlerts(filtered)
-  }
+  }, [alerts, searchQuery, selectedSeverity, selectedStatus])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
+    loadAlerts()
+    initializeWebSocket()
+
+    // Cleanup function
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmounting')
+        wsRef.current = null
+      }
+    }
+  }, [session, status, router, loadAlerts, initializeWebSocket])
+
+  useEffect(() => {
+    filterAlerts()
+  }, [filterAlerts])
 
   const handleAcknowledgeAlert = async (alertId: string) => {
     try {

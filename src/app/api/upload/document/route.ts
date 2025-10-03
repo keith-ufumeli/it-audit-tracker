@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         documentId,
         fileName: originalName,
         fileSize: file.size,
-        notes: notes || undefined,
+        notes: notes || null,
       }
     })
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           documentTitle: document.title,
           uploadedBy: session.user.name,
           uploadedAt: new Date().toISOString(),
-          notes: notes || undefined,
+          notes: notes || null,
         }
       })
     }
