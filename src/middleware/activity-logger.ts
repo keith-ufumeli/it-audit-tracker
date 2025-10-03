@@ -167,7 +167,7 @@ function extractResourceId(request: NextRequest): string | undefined {
 // Enhanced logging for specific security events
 export async function logSecurityEvent(
   event: string,
-  details: Record<string, any>,
+  details: Record<string, unknown>,
   request: NextRequest,
   userId?: string,
   userName?: string,

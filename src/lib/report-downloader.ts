@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf'
+import { Report } from './database'
 
 export interface ReportDownloadOptions {
   format: 'pdf' | 'csv' | 'txt'
@@ -11,7 +12,7 @@ export class ReportDownloader {
   /**
    * Download report as PDF
    */
-  static async downloadAsPDF(report: any, options: ReportDownloadOptions = { format: 'pdf' }): Promise<void> {
+  static async downloadAsPDF(report: Report, options: ReportDownloadOptions = { format: 'pdf' }): Promise<void> {
     try {
       const doc = new jsPDF()
       let yPosition = 20
@@ -86,7 +87,7 @@ export class ReportDownloader {
       }
 
       // Footer
-      const pageCount = (doc as any).internal.getNumberOfPages()
+      const pageCount = (doc as unknown as { internal: { getNumberOfPages(): number } }).internal.getNumberOfPages()
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i)
         doc.setFontSize(8)
@@ -109,7 +110,7 @@ export class ReportDownloader {
   /**
    * Download report as CSV
    */
-  static async downloadAsCSV(report: any, options: ReportDownloadOptions = { format: 'csv' }): Promise<void> {
+  static async downloadAsCSV(report: Report, options: ReportDownloadOptions = { format: 'csv' }): Promise<void> {
     try {
       const csvRows: string[] = []
       
@@ -180,7 +181,7 @@ export class ReportDownloader {
   /**
    * Download report as plain text
    */
-  static async downloadAsText(report: any, options: ReportDownloadOptions = { format: 'txt' }): Promise<void> {
+  static async downloadAsText(report: Report, options: ReportDownloadOptions = { format: 'txt' }): Promise<void> {
     try {
       const textRows: string[] = []
       
@@ -259,7 +260,7 @@ export class ReportDownloader {
   /**
    * Download report in specified format
    */
-  static async downloadReport(report: any, format: 'pdf' | 'csv' | 'txt', options?: Partial<ReportDownloadOptions>): Promise<void> {
+  static async downloadReport(report: Report, format: 'pdf' | 'csv' | 'txt', options?: Partial<ReportDownloadOptions>): Promise<void> {
     const downloadOptions: ReportDownloadOptions = {
       format,
       includeMetadata: true,

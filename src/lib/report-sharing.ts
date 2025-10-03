@@ -6,11 +6,11 @@ export interface SharedReport {
   reportName: string
   reportType: 'audit' | 'compliance' | 'activity' | 'custom'
   reportData: {
-    audits?: any[]
-    documents?: any[]
-    activities?: any[]
-    alerts?: any[]
-    summary?: any
+    audits?: Record<string, unknown>[]
+    documents?: Record<string, unknown>[]
+    activities?: Record<string, unknown>[]
+    alerts?: Record<string, unknown>[]
+    summary?: Record<string, unknown>
   }
   sharedBy: string
   sharedByName: string
@@ -139,7 +139,7 @@ export class ReportSharingManager {
   }
 
   public shareReport(
-    reportData: any,
+    reportData: Record<string, unknown>,
     sharedBy: string,
     recipients: { userIds: string[]; emailAddresses: string[] },
     options: {

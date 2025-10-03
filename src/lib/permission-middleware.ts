@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions, isSuperAdmin, hasAdminAccess } from "./auth"
+import { getServerSession, Session } from "next-auth"
+import { authOptions, isSuperAdmin, hasAdminAccess, UserRole } from "./auth"
 import { PermissionManager } from "./permission-manager"
+
+type ApiHandler = (request: NextRequest, ...args: unknown[]) => Promise<NextResponse>
 
 const permissionManager = PermissionManager.getInstance()
 
@@ -60,7 +62,7 @@ export function withPermissionCheck(
         )
         
         if (!hasAllPermissions) {
-          const userPermissions = permissionManager.getRolePermissions(session.user.role as any)
+          const userPermissions = permissionManager.getRolePermissions(session.user.role as UserRole)
           const missingPermissions = requiredPermissions.filter(
             permission => !userPermissions.includes(permission)
           )
@@ -92,7 +94,7 @@ export function requireSuperAdmin(
 }
 
 export function requireAdminAccess(
-  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>
+  handler: ApiHandler
 ) {
   return withPermissionCheck(handler, { 
     allowSuperAdmin: true,
@@ -102,7 +104,7 @@ export function requireAdminAccess(
 
 export function requirePermissions(
   permissions: string[],
-  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>
+  handler: ApiHandler
 ) {
   return withPermissionCheck(handler, { 
     requiredPermissions: permissions,
@@ -112,7 +114,7 @@ export function requirePermissions(
 
 export function requireRoles(
   roles: string[],
-  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>
+  handler: ApiHandler
 ) {
   return withPermissionCheck(handler, { 
     requiredRoles: roles,
@@ -124,7 +126,7 @@ export function requireRoles(
 export async function checkPermissions(
   request: NextRequest,
   options: PermissionCheckOptions = {}
-): Promise<{ allowed: boolean; error?: NextResponse; session?: any }> {
+): Promise<{ allowed: boolean; error?: NextResponse; session?: Session | null }> {
   try {
     const session = await getServerSession(authOptions)
     
@@ -169,12 +171,12 @@ export async function checkPermissions(
     // Check required permissions
     if (requiredPermissions.length > 0) {
       const hasAllPermissions = permissionManager.hasAllPermissions(
-        session.user.role as any, 
+        session.user.role as UserRole, 
         requiredPermissions
       )
       
       if (!hasAllPermissions) {
-        const userPermissions = permissionManager.getRolePermissions(session.user.role as any)
+        const userPermissions = permissionManager.getRolePermissions(session.user.role as UserRole)
         const missingPermissions = requiredPermissions.filter(
           permission => !userPermissions.includes(permission)
         )
