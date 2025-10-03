@@ -42,6 +42,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.3",
     "lucide-react": "^0.544.0",
+    "mammoth": "^1.11.0",
     "next": "15.5.4",
     "next-auth": "^4.24.11",
     "postcss": "^8.5.6",
@@ -49,6 +50,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.63.0",
     "react-markdown": "^10.1.0",
+    "react-pdf": "^10.1.0",
     "recharts": "^3.2.1",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
@@ -57,6 +59,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.18.3",
+    "xlsx": "^0.18.5",
     "zod": "^4.1.11",
     "zustand": "^5.0.8"
   },

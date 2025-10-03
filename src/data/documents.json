@@ -14,8 +14,13 @@
     "dueDate": "2024-01-20T17:00:00Z",
     "fileSize": 2048576,
     "fileName": "network_security_policy.pdf",
+    "filePath": "doc-001_1737204600000_network_security_policy.pdf",
     "version": "2.1",
-    "tags": ["network", "security", "policy"],
+    "tags": [
+      "network",
+      "security",
+      "policy"
+    ],
     "isConfidential": true
   },
   {
@@ -29,7 +34,11 @@
     "status": "pending",
     "requestedAt": "2024-01-19T09:15:00Z",
     "dueDate": "2024-01-22T17:00:00Z",
-    "tags": ["access", "logs", "users"],
+    "tags": [
+      "access",
+      "logs",
+      "users"
+    ],
     "isConfidential": true
   },
   {
@@ -43,7 +52,11 @@
     "status": "draft",
     "requestedAt": "2024-01-20T11:00:00Z",
     "dueDate": "2024-01-25T17:00:00Z",
-    "tags": ["data", "classification", "privacy"],
+    "tags": [
+      "data",
+      "classification",
+      "privacy"
+    ],
     "isConfidential": false
   },
   {
@@ -61,8 +74,13 @@
     "dueDate": "2024-01-21T17:00:00Z",
     "fileSize": 1536000,
     "fileName": "incident_response_plan_v3.pdf",
+    "filePath": "doc-004_1737301500000_incident_response_plan_v3.pdf",
     "version": "3.0",
-    "tags": ["incident", "response", "security"],
+    "tags": [
+      "incident",
+      "response",
+      "security"
+    ],
     "isConfidential": true
   },
   {
@@ -73,11 +91,21 @@
     "auditId": "audit-001",
     "requestedBy": "2",
     "requestedFrom": "4",
-    "status": "pending",
+    "status": "submitted",
     "requestedAt": "2024-01-21T08:30:00Z",
     "dueDate": "2024-01-24T17:00:00Z",
-    "tags": ["employee", "handbook", "security", "training"],
-    "isConfidential": false
+    "tags": [
+      "employee",
+      "handbook",
+      "security",
+      "training"
+    ],
+    "isConfidential": false,
+    "uploadedBy": "4",
+    "uploadedAt": "2025-10-03T18:36:04.467Z",
+    "fileName": "OS_UPDATE_PLAN_Q3_2025_latest_22-08-2024.pdf",
+    "fileSize": 791568,
+    "filePath": "doc-005_1759516564460_OS_UPDATE_PLAN_Q3_2025_latest_22-08-2024.pdf"
   },
   {
     "id": "doc-006",
@@ -94,8 +122,14 @@
     "dueDate": "2024-01-23T17:00:00Z",
     "fileSize": 3072000,
     "fileName": "backup_recovery_procedures_v2.pdf",
+    "filePath": "doc-006_1737384000000_backup_recovery_procedures_v2.pdf",
     "version": "2.0",
-    "tags": ["backup", "recovery", "disaster", "procedures"],
+    "tags": [
+      "backup",
+      "recovery",
+      "disaster",
+      "procedures"
+    ],
     "isConfidential": true
   },
   {
@@ -109,7 +143,12 @@
     "status": "pending",
     "requestedAt": "2024-01-22T11:45:00Z",
     "dueDate": "2024-01-26T17:00:00Z",
-    "tags": ["vendor", "security", "assessment", "third-party"],
+    "tags": [
+      "vendor",
+      "security",
+      "assessment",
+      "third-party"
+    ],
     "isConfidential": true
   },
   {
@@ -127,8 +166,14 @@
     "dueDate": "2024-01-23T17:00:00Z",
     "fileSize": 1024000,
     "fileName": "password_policy_2024.pdf",
+    "filePath": "doc-008_1737471300000_password_policy_2024.pdf",
     "version": "1.3",
-    "tags": ["password", "policy", "authentication", "security"],
+    "tags": [
+      "password",
+      "policy",
+      "authentication",
+      "security"
+    ],
     "isConfidential": false
   },
   {
@@ -142,7 +187,12 @@
     "status": "pending",
     "requestedAt": "2024-01-23T13:20:00Z",
     "dueDate": "2024-01-27T17:00:00Z",
-    "tags": ["architecture", "infrastructure", "system", "documentation"],
+    "tags": [
+      "architecture",
+      "infrastructure",
+      "system",
+      "documentation"
+    ],
     "isConfidential": true
   },
   {
@@ -160,8 +210,14 @@
     "dueDate": "2024-01-25T17:00:00Z",
     "fileSize": 512000,
     "fileName": "security_training_records_q1_2024.xlsx",
+    "filePath": "doc-010_1737559500000_security_training_records_q1_2024.xlsx",
     "version": "1.0",
-    "tags": ["training", "security", "employees", "compliance"],
+    "tags": [
+      "training",
+      "security",
+      "employees",
+      "compliance"
+    ],
     "isConfidential": false
   },
   {
@@ -175,7 +231,12 @@
     "status": "draft",
     "requestedAt": "2024-01-24T10:30:00Z",
     "dueDate": "2024-01-28T17:00:00Z",
-    "tags": ["risk", "assessment", "security", "report"],
+    "tags": [
+      "risk",
+      "assessment",
+      "security",
+      "report"
+    ],
     "isConfidential": true
   },
   {
@@ -189,7 +250,12 @@
     "status": "pending",
     "requestedAt": "2024-01-25T09:00:00Z",
     "dueDate": "2024-01-29T17:00:00Z",
-    "tags": ["software", "licenses", "inventory", "compliance"],
+    "tags": [
+      "software",
+      "licenses",
+      "inventory",
+      "compliance"
+    ],
     "isConfidential": false
   },
   {
@@ -203,7 +269,12 @@
     "status": "pending",
     "requestedAt": "2024-01-26T10:00:00Z",
     "dueDate": "2024-01-30T17:00:00Z",
-    "tags": ["executive", "summary", "management", "report"],
+    "tags": [
+      "executive",
+      "summary",
+      "management",
+      "report"
+    ],
     "isConfidential": true
   },
   {
@@ -221,8 +292,14 @@
     "dueDate": "2024-01-28T17:00:00Z",
     "fileSize": 768000,
     "fileName": "compliance_checklist_2024.pdf",
+    "filePath": "doc-014_1737735000000_compliance_checklist_2024.pdf",
     "version": "1.0",
-    "tags": ["compliance", "checklist", "audit", "procedures"],
+    "tags": [
+      "compliance",
+      "checklist",
+      "audit",
+      "procedures"
+    ],
     "isConfidential": false
   }
 ]

@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +16,7 @@ import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
 import { Database, Document } from "@/lib/database"
 import ClientLayout from "@/components/client/client-layout"
+import { DocumentViewer } from "@/components/ui/document-viewer"
 import { 
   FileText,
   Upload,
@@ -30,7 +31,8 @@ import {
   Send,
   X,
   FileCheck,
-  Paperclip
+  Paperclip,
+  RefreshCw
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
 
@@ -47,9 +49,45 @@ export default function ClientDocumentsPage() {
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [uploadNotes, setUploadNotes] = useState("")
   const [uploadSuccess, setUploadSuccess] = useState(false)
-  const [viewDialogOpen, setViewDialogOpen] = useState(false)
   const [viewingDocument, setViewingDocument] = useState<Document | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const loadDocuments = useCallback(async () => {
+    startLoading("Loading documents...")
+    try {
+      // Fetch fresh data from API instead of using cached data
+      const response = await fetch("/api/audits")
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        // Get all documents from all audits
+        const allDocuments = result.data.flatMap((audit: any) => audit.documents || [])
+        
+        // Filter documents for current user
+        const userDocs = allDocuments.filter((doc: any) => 
+          doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
+        )
+        setDocuments(userDocs)
+      } else {
+        // Fallback to in-memory database if API fails
+        const allDocuments = Database.getDocuments()
+        const userDocs = allDocuments.filter(doc => 
+          doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
+        )
+        setDocuments(userDocs)
+      }
+    } catch (error) {
+      console.error("Error loading documents:", error)
+      // Fallback to in-memory database
+      const allDocuments = Database.getDocuments()
+      const userDocs = allDocuments.filter(doc => 
+        doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
+      )
+      setDocuments(userDocs)
+    } finally {
+      stopLoading()
+    }
+  }, [session?.user?.id, startLoading, stopLoading])
 
   useEffect(() => {
     if (status === "loading") return
@@ -66,25 +104,7 @@ export default function ClientDocumentsPage() {
     }
 
     loadDocuments()
-  }, [session, status, router])
-
-  const loadDocuments = async () => {
-    startLoading("Loading documents...")
-    try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      
-      const allDocuments = Database.getDocuments()
-      // Filter documents for current user
-      const userDocs = allDocuments.filter(doc => 
-        doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
-      )
-      setDocuments(userDocs)
-    } catch (error) {
-      console.error("Error loading documents:", error)
-    } finally {
-      stopLoading()
-    }
-  }
+  }, [session, status, router, loadDocuments])
 
   const handleUploadClick = (doc: Document) => {
     setSelectedDocument(doc)
@@ -129,9 +149,21 @@ export default function ClientDocumentsPage() {
         title: "Upload Successful",
         description: "Document uploaded successfully and auditor has been notified.",
       })
+      
+      // Immediately update the document status in the local state
+      if (selectedDocument) {
+        setDocuments(prevDocs => 
+          prevDocs.map(doc => 
+            doc.id === selectedDocument.id 
+              ? { ...doc, status: "submitted", uploadedBy: session?.user?.id, uploadedAt: new Date().toISOString() }
+              : doc
+          )
+        )
+      }
+      
       setTimeout(() => {
         setIsUploadDialogOpen(false)
-        loadDocuments()
+        loadDocuments() // Refresh to get the latest data from server
       }, 1500)
     } catch (error) {
       console.error("Error uploading document:", error)
@@ -154,7 +186,6 @@ export default function ClientDocumentsPage() {
       }
       
       setViewingDocument(doc)
-      setViewDialogOpen(true)
     } catch (error) {
       console.error("Error viewing document:", error)
       toast({
@@ -267,6 +298,15 @@ export default function ClientDocumentsPage() {
               Manage and upload requested documents
             </p>
           </div>
+          <Button 
+            variant="outline" 
+            onClick={loadDocuments}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -573,42 +613,15 @@ export default function ClientDocumentsPage() {
           </DialogContent>
         </Dialog>
 
-        {/* View Document Dialog */}
-        <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh]">
-            <DialogHeader>
-              <DialogTitle>View Document</DialogTitle>
-              <DialogDescription>
-                {viewingDocument?.title}
-              </DialogDescription>
-            </DialogHeader>
-            
-            {viewingDocument && (
-              <div className="flex-1 overflow-hidden">
-                <iframe
-                  src={`/api/documents/${viewingDocument.id}/view`}
-                  className="w-full h-[70vh] border rounded"
-                  title={viewingDocument.title}
-                />
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                Close
-              </Button>
-              {viewingDocument && (
-                <Button 
-                  onClick={() => handleDownloadDocument(viewingDocument)}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* Document Viewer */}
+        {viewingDocument && (
+          <DocumentViewer
+            documentId={viewingDocument.id}
+            documentTitle={viewingDocument.title}
+            fileType={viewingDocument.fileName?.split('.').pop() || 'unknown'}
+            onClose={() => setViewingDocument(null)}
+          />
+        )}
       </div>
     </ClientLayout>
   )

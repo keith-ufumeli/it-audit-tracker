@@ -5,6 +5,7 @@ import { writeFile, mkdir } from "fs/promises"
 import { existsSync } from "fs"
 import path from "path"
 import { Database } from "@/lib/database"
+import { PersistentDatabase } from "@/lib/persistent-database"
 import { sendEmailNotification } from "@/lib/email-simulation"
 
 export async function POST(request: NextRequest) {
@@ -56,8 +57,18 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     await writeFile(filepath, buffer)
 
-    // Update document in database
+    // Update document in database (both in-memory and persistent)
     Database.updateDocument(documentId, {
+      status: "submitted",
+      uploadedBy: session.user.id,
+      uploadedAt: new Date().toISOString(),
+      fileName: originalName,
+      fileSize: file.size,
+      filePath: filename
+    })
+    
+    // Also update in persistent database
+    await PersistentDatabase.updateDocument(documentId, {
       status: "submitted",
       uploadedBy: session.user.id,
       uploadedAt: new Date().toISOString(),
