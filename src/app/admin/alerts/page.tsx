@@ -244,21 +244,21 @@ export default function AdminAlertsPage() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical": return "text-red-600 bg-red-100 border-red-200"
-      case "high": return "text-orange-600 bg-orange-100 border-orange-200"
-      case "medium": return "text-yellow-600 bg-yellow-100 border-yellow-200"
-      case "low": return "text-blue-600 bg-blue-100 border-blue-200"
-      default: return "text-gray-600 bg-gray-100 border-gray-200"
+      case "critical": return "text-red-600 bg-red-100 border-red-200 hover:bg-red-200 hover:text-red-800 hover:border-red-400"
+      case "high": return "text-orange-600 bg-orange-100 border-orange-200 hover:bg-orange-200 hover:text-orange-800 hover:border-orange-400"
+      case "medium": return "text-yellow-600 bg-yellow-100 border-yellow-200 hover:bg-yellow-200 hover:text-yellow-800 hover:border-yellow-400"
+      case "low": return "text-blue-600 bg-blue-100 border-blue-200 hover:bg-blue-200 hover:text-blue-800 hover:border-blue-400"
+      default: return "text-gray-600 bg-gray-100 border-gray-200 hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400"
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "text-red-600 bg-red-100"
-      case "acknowledged": return "text-yellow-600 bg-yellow-100"
-      case "resolved": return "text-green-600 bg-green-100"
-      case "dismissed": return "text-gray-600 bg-gray-100"
-      default: return "text-gray-600 bg-gray-100"
+      case "active": return "text-red-600 bg-red-100 hover:bg-red-200 hover:text-red-800"
+      case "acknowledged": return "text-yellow-600 bg-yellow-100 hover:bg-yellow-200 hover:text-yellow-800"
+      case "resolved": return "text-green-600 bg-green-100 hover:bg-green-200 hover:text-green-800"
+      case "dismissed": return "text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900"
+      default: return "text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900"
     }
   }
 

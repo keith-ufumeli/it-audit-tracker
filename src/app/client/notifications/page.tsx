@@ -148,10 +148,10 @@ export default function ClientNotificationsPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "text-red-600 bg-red-100"
-      case "medium": return "text-orange-600 bg-orange-100"
-      case "low": return "text-blue-600 bg-blue-100"
-      default: return "text-gray-600 bg-gray-100"
+      case "high": return "text-red-600 bg-red-100 hover:bg-red-200 hover:text-red-800"
+      case "medium": return "text-orange-600 bg-orange-100 hover:bg-orange-200 hover:text-orange-800"
+      case "low": return "text-blue-600 bg-blue-100 hover:bg-blue-200 hover:text-blue-800"
+      default: return "text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900"
     }
   }
 
