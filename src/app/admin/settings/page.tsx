@@ -109,7 +109,7 @@ export default function SettingsPage() {
 
       if (usersRes.ok) {
         const usersData = await usersRes.json()
-        setUsers(usersData.users)
+        setUsers(usersData.data)
       }
     } catch (error) {
       console.error("Error loading data:", error)

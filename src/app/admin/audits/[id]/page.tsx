@@ -126,11 +126,15 @@ export default function AuditDetailPage() {
       const response = await fetch("/api/users")
       if (response.ok) {
         const result = await response.json()
+        console.log("Users API response:", result)
         if (result.success && result.data) {
           const users = result.data
+          console.log("Available users:", users)
+          console.log("Looking for audit manager with ID:", auditData.auditManager)
           
           // Find audit manager
           const manager = users.find((user: any) => user.id === auditData.auditManager)
+          console.log("Found audit manager:", manager)
           setAuditManager(manager || null)
           
           // Find assigned auditors
@@ -138,7 +142,11 @@ export default function AuditDetailPage() {
             .map((id: string) => users.find((user: any) => user.id === id))
             .filter(Boolean)
           setAssignedAuditors(auditors)
+        } else {
+          console.error("API response format error:", result)
         }
+      } else {
+        console.error("Failed to fetch users:", response.status, response.statusText)
       }
     } catch (error) {
       console.error("Error loading user data:", error)
@@ -866,17 +874,29 @@ export default function AuditDetailPage() {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="text-sm font-semibold mb-2">Audit Manager</h4>
-                  <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
-                    <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <span className="text-orange-600 font-semibold">
-                        {auditManager?.name.charAt(0)}
-                      </span>
+                  {auditManager ? (
+                    <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
+                      <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                        <span className="text-orange-600 font-semibold">
+                          {auditManager.name.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-50">{auditManager.name}</p>
+                        <p className="text-xs text-gray-100">{auditManager.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-50">{auditManager?.name}</p>
-                      <p className="text-xs text-gray-100">{auditManager?.email}</p>
+                  ) : (
+                    <div className="flex items-center space-x-3 p-3 bg-accent rounded-lg">
+                      <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-500 font-semibold">?</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-500">Audit Manager Not Found</p>
+                        <p className="text-xs text-gray-400">User ID: {audit?.auditManager}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div>

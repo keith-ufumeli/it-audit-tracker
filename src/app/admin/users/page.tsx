@@ -83,7 +83,7 @@ export default function UsersPage() {
       const response = await fetch("/api/users")
       if (response.ok) {
         const data = await response.json()
-        setUsers(data.users)
+        setUsers(data.data)
       } else {
         toast({
           title: "Error",

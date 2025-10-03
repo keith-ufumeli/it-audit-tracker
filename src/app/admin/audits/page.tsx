@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
-import { Database, Audit } from "@/lib/database"
+import { Audit } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Plus,
@@ -22,7 +22,6 @@ import {
   Calendar,
   Users,
   FileText,
-  Clock,
   CheckCircle2,
   AlertCircle,
   PlayCircle,
@@ -30,7 +29,6 @@ import {
   Target,
   TrendingUp,
   Edit,
-  Trash2,
   Eye,
   UserPlus
 } from "lucide-react"
