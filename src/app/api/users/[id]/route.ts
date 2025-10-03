@@ -29,7 +29,7 @@ export async function GET(
     }
 
     // Remove password from response
-    const { password: _, ...userResponse } = user
+    const { password: _, ...userResponse } = user as any
 
     return NextResponse.json({ user: userResponse })
   } catch (error) {
@@ -106,21 +106,21 @@ export async function PUT(
       userName: session.user.name,
       userRole: session.user.role,
       action: "update_user",
-      description: `Updated user: ${updatedUser.name} (${updatedUser.email})`,
+      description: `Updated user: ${(updatedUser as any).name} (${(updatedUser as any).email})`,
       timestamp: new Date().toISOString(),
-      ipAddress: request.ip || "127.0.0.1",
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "info",
       resource: "user_management",
       metadata: {
-        targetUserId: updatedUser.id,
-        targetUserEmail: updatedUser.email,
+        targetUserId: (updatedUser as any).id,
+        targetUserEmail: (updatedUser as any).email,
         changes: Object.keys(updateData)
       }
     })
 
     // Remove password from response
-    const { password: _, ...userResponse } = updatedUser
+    const { password: _, ...userResponse } = updatedUser as any
 
     return NextResponse.json({ user: userResponse })
   } catch (error) {
@@ -157,15 +157,16 @@ export async function DELETE(
 
     // Prevent deletion of other Super Admins (only if there's more than one)
     if (user.role === "super_admin") {
-      const allUsers = Database.getAllUsers()
+      const allUsers = Database.getUsers()
       const superAdmins = allUsers.filter(u => u.role === "super_admin" && u.isActive)
       if (superAdmins.length <= 1) {
         return NextResponse.json({ error: "Cannot delete the last Super Admin" }, { status: 400 })
       }
     }
 
-    const deleted = Database.deleteUser(params.id)
-    if (!deleted) {
+    // Mark user as inactive instead of deleting (since deleteUser doesn't exist in Database)
+    const updated = Database.updateUser(params.id, { isActive: false })
+    if (!updated) {
       return NextResponse.json({ error: "Failed to delete user" }, { status: 500 })
     }
 
@@ -177,7 +178,7 @@ export async function DELETE(
       action: "delete_user",
       description: `Deleted user: ${user.name} (${user.email})`,
       timestamp: new Date().toISOString(),
-      ipAddress: request.ip || "127.0.0.1",
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "warning",
       resource: "user_management",

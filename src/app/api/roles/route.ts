@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest) {
       action: "update_role_permissions",
       description: `Updated permissions for role: ${role}`,
       timestamp: new Date().toISOString(),
-      ipAddress: request.ip || "127.0.0.1",
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "info",
       resource: "permission_management",
