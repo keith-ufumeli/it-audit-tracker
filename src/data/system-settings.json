@@ -1,0 +1,66 @@
+{
+  "database": {
+    "backupEnabled": true,
+    "backupFrequency": "daily",
+    "backupRetentionDays": 30,
+    "autoCleanupEnabled": true,
+    "cleanupFrequency": "weekly",
+    "maxLogRetentionDays": 90,
+    "maxActivityRetentionDays": 180
+  },
+  "security": {
+    "sessionTimeoutMinutes": 60,
+    "maxLoginAttempts": 5,
+    "lockoutDurationMinutes": 15,
+    "passwordMinLength": 8,
+    "requirePasswordComplexity": true,
+    "twoFactorAuthEnabled": false,
+    "ipWhitelistEnabled": false,
+    "allowedIPs": []
+  },
+  "notifications": {
+    "emailNotificationsEnabled": true,
+    "systemNotificationsEnabled": true,
+    "auditReminderEnabled": true,
+    "auditReminderDays": 3,
+    "reportGenerationNotifications": true,
+    "securityAlertNotifications": true
+  },
+  "audit": {
+    "defaultAuditDurationDays": 30,
+    "autoCloseInactiveAudits": true,
+    "inactiveAuditThresholdDays": 90,
+    "requireApprovalForAuditClosure": true,
+    "allowBulkAuditOperations": true,
+    "maxConcurrentAudits": 50
+  },
+  "reporting": {
+    "defaultReportFormat": "pdf",
+    "autoGenerateReports": false,
+    "reportRetentionDays": 365,
+    "allowCustomReportTemplates": true,
+    "maxReportSizeMB": 100,
+    "enableReportScheduling": true
+  },
+  "system": {
+    "maintenanceMode": false,
+    "debugMode": false,
+    "logLevel": "info",
+    "maxFileUploadSizeMB": 50,
+    "allowedFileTypes": ["pdf", "doc", "docx", "xls", "xlsx", "txt", "jpg", "png"],
+    "enableActivityLogging": true,
+    "enablePerformanceMonitoring": true
+  },
+  "integrations": {
+    "emailServiceEnabled": false,
+    "emailServiceProvider": "smtp",
+    "smtpHost": "",
+    "smtpPort": 587,
+    "smtpUsername": "",
+    "smtpPassword": "",
+    "webhookNotificationsEnabled": false,
+    "webhookUrl": "",
+    "apiAccessEnabled": true,
+    "apiRateLimit": 1000
+  }
+}

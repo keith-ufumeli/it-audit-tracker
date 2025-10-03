@@ -1,5 +1,31 @@
 [
   {
+    "id": "0",
+    "email": "superadmin@audit.com",
+    "name": "Super Administrator",
+    "role": "super_admin",
+    "department": "System Administration",
+    "permissions": [
+      "super_admin_access",
+      "manage_all_users",
+      "manage_permissions",
+      "manage_system_settings",
+      "manage_database_config",
+      "view_all_logs",
+      "export_all_data",
+      "create_audit",
+      "assign_tasks",
+      "view_reports",
+      "approve_audits",
+      "manage_notifications",
+      "manage_reports",
+      "manage_alerts"
+    ],
+    "createdAt": "2024-01-01T00:00:00Z",
+    "lastLogin": "2024-01-20T14:30:00Z",
+    "isActive": true
+  },
+  {
     "id": "1",
     "email": "manager@audit.com",
     "name": "John Manager",

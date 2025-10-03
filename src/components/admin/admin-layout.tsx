@@ -18,7 +18,9 @@ import {
   Bell,
   User,
   Settings,
-  ChevronRight
+  ChevronRight,
+  Users,
+  Key
 } from "lucide-react"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +37,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Activity Logs", href: "/admin/activities", icon: Activity, permission: "view_logs" },
     { name: "Security Alerts", href: "/admin/alerts", icon: Shield, permission: "view_logs" },
     { name: "Management", href: "/admin/management", icon: BarChart3, permission: "view_dashboards" },
+    { name: "User Management", href: "/admin/users", icon: Users, permission: "manage_all_users" },
+    { name: "Permissions", href: "/admin/permissions", icon: Key, permission: "manage_permissions" },
+    { name: "System Settings", href: "/admin/settings", icon: Settings, permission: "manage_system_settings" },
   ]
 
   const filteredNavigation = navigation.filter(item => 
@@ -43,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const getRoleColor = (role: string) => {
     switch (role) {
+      case "super_admin": return "bg-red-500"
       case "audit_manager": return "bg-orange-500"
       case "auditor": return "bg-blue-500"
       case "management": return "bg-green-500"
@@ -52,6 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
+      case "super_admin": return "Super Admin"
       case "audit_manager": return "Audit Manager"
       case "auditor": return "Auditor"
       case "management": return "Management"

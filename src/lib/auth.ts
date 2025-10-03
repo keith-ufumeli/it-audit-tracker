@@ -4,10 +4,11 @@ import bcrypt from "bcryptjs"
 import { Database, User } from "./database"
 
 // Define user roles
-export type UserRole = "audit_manager" | "auditor" | "management" | "client" | "department"
+export type UserRole = "super_admin" | "audit_manager" | "auditor" | "management" | "client" | "department"
 
 // Hash passwords for mock users (in production, these would be stored hashed)
 const mockPasswords: Record<string, string> = {
+  "superadmin@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
   "manager@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
   "auditor@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
   "management@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
@@ -119,6 +120,7 @@ export function hasRole(userRole: UserRole, requiredRoles: UserRole[]): boolean 
 // Helper function to get portal route based on role
 export function getPortalRoute(role: UserRole): string {
   switch (role) {
+    case "super_admin":
     case "audit_manager":
     case "auditor":
     case "management":
@@ -129,4 +131,14 @@ export function getPortalRoute(role: UserRole): string {
     default:
       return "/"
   }
+}
+
+// Helper function to check if user is Super Admin
+export function isSuperAdmin(userRole: UserRole): boolean {
+  return userRole === "super_admin"
+}
+
+// Helper function to check if user has admin access
+export function hasAdminAccess(userRole: UserRole): boolean {
+  return ["super_admin", "audit_manager", "auditor", "management"].includes(userRole)
 }

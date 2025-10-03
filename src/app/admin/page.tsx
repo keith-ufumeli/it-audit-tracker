@@ -22,7 +22,7 @@ export default function AdminPage() {
     }
 
     // Check if user has admin access
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       router.push("/client")
       return
@@ -48,6 +48,8 @@ export default function AdminPage() {
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
+      case "super_admin":
+        return "Super Admin"
       case "audit_manager":
         return "Audit Manager"
       case "auditor":
@@ -61,8 +63,10 @@ export default function AdminPage() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
+      case "super_admin":
+        return "bg-red-500"
       case "audit_manager":
-        return "bg-orange_web-500"
+        return "bg-orange-500"
       case "auditor":
         return "bg-blue-500"
       case "management":

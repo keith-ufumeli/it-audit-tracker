@@ -1,0 +1,247 @@
+[
+  {
+    "id": "super_admin_access",
+    "name": "Super Admin Access",
+    "description": "Full system access including user and permission management",
+    "category": "system",
+    "isSystemPermission": true
+  },
+  {
+    "id": "manage_all_users",
+    "name": "Manage All Users",
+    "description": "Create, read, update, and delete any user account",
+    "category": "user_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_permissions",
+    "name": "Manage Permissions",
+    "description": "Create, modify, and assign permissions to users and roles",
+    "category": "user_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_system_settings",
+    "name": "Manage System Settings",
+    "description": "Configure system-wide settings and preferences",
+    "category": "system",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_database_config",
+    "name": "Manage Database Configuration",
+    "description": "Configure database settings and perform maintenance operations",
+    "category": "system",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_all_logs",
+    "name": "View All Logs",
+    "description": "Access to all system and user activity logs",
+    "category": "monitoring",
+    "isSystemPermission": false
+  },
+  {
+    "id": "export_all_data",
+    "name": "Export All Data",
+    "description": "Export any data from the system",
+    "category": "data_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "create_audit",
+    "name": "Create Audit",
+    "description": "Create new audit tasks and assignments",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "assign_tasks",
+    "name": "Assign Tasks",
+    "description": "Assign audit tasks to team members",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_reports",
+    "name": "View Reports",
+    "description": "Access to audit reports and analytics",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "approve_audits",
+    "name": "Approve Audits",
+    "description": "Approve completed audit tasks",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_notifications",
+    "name": "Manage Notifications",
+    "description": "Configure and manage system notifications",
+    "category": "system",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_reports",
+    "name": "Manage Reports",
+    "description": "Create, modify, and schedule reports",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_alerts",
+    "name": "Manage Alerts",
+    "description": "Configure and manage system alerts",
+    "category": "monitoring",
+    "isSystemPermission": false
+  },
+  {
+    "id": "manage_users",
+    "name": "Manage Users",
+    "description": "Manage user accounts within assigned scope",
+    "category": "user_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "export_data",
+    "name": "Export Data",
+    "description": "Export data within assigned scope",
+    "category": "data_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_logs",
+    "name": "View Logs",
+    "description": "View activity logs within assigned scope",
+    "category": "monitoring",
+    "isSystemPermission": false
+  },
+  {
+    "id": "submit_reports",
+    "name": "Submit Reports",
+    "description": "Submit audit reports for review",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "request_documents",
+    "name": "Request Documents",
+    "description": "Request documents from clients or departments",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "flag_activities",
+    "name": "Flag Activities",
+    "description": "Flag suspicious or important activities",
+    "category": "monitoring",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_assigned_audits",
+    "name": "View Assigned Audits",
+    "description": "View audits assigned to the user",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "upload_evidence",
+    "name": "Upload Evidence",
+    "description": "Upload evidence and supporting documents",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_dashboards",
+    "name": "View Dashboards",
+    "description": "Access to management dashboards",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "approve_reports",
+    "name": "Approve Reports",
+    "description": "Approve submitted audit reports",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_summaries",
+    "name": "View Summaries",
+    "description": "View audit summaries and executive reports",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_compliance_scores",
+    "name": "View Compliance Scores",
+    "description": "View compliance scores and metrics",
+    "category": "reporting",
+    "isSystemPermission": false
+  },
+  {
+    "id": "export_executive_reports",
+    "name": "Export Executive Reports",
+    "description": "Export executive-level reports",
+    "category": "data_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_notifications",
+    "name": "View Notifications",
+    "description": "View system notifications",
+    "category": "system",
+    "isSystemPermission": false
+  },
+  {
+    "id": "respond_requests",
+    "name": "Respond to Requests",
+    "description": "Respond to audit requests and inquiries",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_audit_status",
+    "name": "View Audit Status",
+    "description": "View status of ongoing audits",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "download_reports",
+    "name": "Download Reports",
+    "description": "Download available reports",
+    "category": "data_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "upload_documents",
+    "name": "Upload Documents",
+    "description": "Upload documents for audit purposes",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "view_requests",
+    "name": "View Requests",
+    "description": "View audit requests and requirements",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "respond_to_auditors",
+    "name": "Respond to Auditors",
+    "description": "Respond to auditor inquiries and requests",
+    "category": "audit_management",
+    "isSystemPermission": false
+  },
+  {
+    "id": "track_submissions",
+    "name": "Track Submissions",
+    "description": "Track document and response submissions",
+    "category": "audit_management",
+    "isSystemPermission": false
+  }
+]
