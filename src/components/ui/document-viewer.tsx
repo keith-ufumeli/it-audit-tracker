@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 import { Button } from "./button";
@@ -368,10 +369,13 @@ export function DocumentViewer({
       case ".gif":
         return (
           <div className="flex justify-center">
-            <img
+            <Image
               src={state.content || ""}
               alt={documentTitle}
+              width={800}
+              height={600}
               className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
+              unoptimized
             />
           </div>
         );
