@@ -219,7 +219,7 @@ export class CSVExporter {
       user.department,
       user.permissions.join('; '),
       user.createdAt,
-      user.lastLogin,
+      user.lastLogin || '',
       user.isActive ? 'Yes' : 'No'
     ])
 
