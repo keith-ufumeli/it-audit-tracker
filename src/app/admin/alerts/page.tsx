@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useLoading } from "@/hooks/use-loading"
 import { Database, Alert as AlertType } from "@/lib/database"
@@ -24,10 +23,7 @@ import {
   Shield,
   Activity,
   RefreshCw,
-  Zap,
-  Users,
-  FileText,
-  Settings
+  Users
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
 

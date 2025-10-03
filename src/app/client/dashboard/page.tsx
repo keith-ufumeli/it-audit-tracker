@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -31,24 +31,7 @@ export default function ClientDashboardPage() {
   const [documents, setDocuments] = useState<Document[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const clientRoles = ["client", "department"]
-    if (!clientRoles.includes(session.user.role)) {
-      router.push("/admin/dashboard")
-      return
-    }
-
-    loadDashboardData()
-  }, [session, status, router])
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     startLoading("Loading dashboard...")
     try {
       await new Promise(resolve => setTimeout(resolve, 600))
@@ -68,7 +51,24 @@ export default function ClientDashboardPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [session?.user?.id, startLoading, stopLoading])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const clientRoles = ["client", "department"]
+    if (!clientRoles.includes(session.user.role)) {
+      router.push("/admin/dashboard")
+      return
+    }
+
+    loadDashboardData()
+  }, [session, status, router, loadDashboardData])
 
   if (status === "loading" || isLoading) {
     return (

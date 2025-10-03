@@ -14,21 +14,16 @@ import { reportGenerator } from "@/lib/report-generator"
 import { csvExporter } from "@/lib/csv-exporter"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
-  TrendingUp,
-  TrendingDown,
   Users,
   Shield,
   FileText,
   AlertTriangle,
-  CheckCircle,
   Clock,
   Download,
   BarChart3,
   PieChart,
   Activity,
-  Target,
   Award,
-  Calendar,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
@@ -91,7 +86,7 @@ export default function ManagementDashboardPage() {
       const documents = Database.getDocuments()
       const alerts = Database.getAlerts()
       const activities = Database.getActivities()
-      const users = Database.getUsers()
+      // const users = Database.getUsers() // Unused variable
 
       // Calculate metrics
       const totalAudits = audits.length

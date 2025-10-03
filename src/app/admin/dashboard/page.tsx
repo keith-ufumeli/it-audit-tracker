@@ -2,11 +2,11 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Loader, CardSkeleton } from "@/components/ui/loader"
+import { CardSkeleton } from "@/components/ui/loader"
 import { useLoading } from "@/hooks/use-loading"
 import { Database, Audit, Activity, Notification } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
@@ -35,24 +35,7 @@ export default function DashboardPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [audits, setAudits] = useState<Audit[]>([])
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
-    }
-
-    loadDashboardData()
-  }, [session, status, router])
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     startLoading("Loading dashboard data...")
     
     try {
@@ -72,7 +55,24 @@ export default function DashboardPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [session?.user?.id, startLoading, stopLoading])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
+    loadDashboardData()
+  }, [session, status, router, loadDashboardData])
 
   if (status === "loading" || isLoading) {
     return (

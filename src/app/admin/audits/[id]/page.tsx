@@ -2,11 +2,10 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter, useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
 import { Audit } from "@/lib/database"
@@ -65,24 +64,7 @@ export default function AuditDetailPage() {
   const [auditManager, setAuditManager] = useState<any>(null)
   const [assignedAuditors, setAssignedAuditors] = useState<any[]>([])
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
-    }
-
-    loadAudit()
-  }, [session, status, router, auditId])
-
-  const loadAudit = async () => {
+  const loadAudit = useCallback(async () => {
     startLoading("Loading audit details...")
     try {
       // Fetch fresh data from API instead of using cached data
@@ -116,7 +98,24 @@ export default function AuditDetailPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading, auditId])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
+    loadAudit()
+  }, [session, status, router, auditId, loadAudit])
 
   const loadUserData = async (auditData: any) => {
     try {

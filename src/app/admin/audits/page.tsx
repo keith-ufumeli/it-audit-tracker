@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -54,24 +54,7 @@ export default function AuditsPage() {
     scope: "",
   })
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
-    }
-
-    loadAudits()
-  }, [session, status, router])
-
-  const loadAudits = async () => {
+  const loadAudits = useCallback(async () => {
     startLoading("Loading audits...")
     try {
       // Fetch fresh data from API instead of using cached data
@@ -88,7 +71,24 @@ export default function AuditsPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
+    loadAudits()
+  }, [session, status, router, loadAudits])
 
   const handleCreateAudit = async () => {
     if (!newAudit.title || !newAudit.description || !newAudit.startDate || !newAudit.endDate) {
