@@ -275,6 +275,13 @@ class InMemoryDatabase {
   // Note: In Edge Runtime, we can't write to files
   // This is a read-only implementation for demo purposes
   // In production, you would use a real database or API calls
+
+  // Method to reload data from files (for development)
+  static reloadFromFiles() {
+    // This would require file system access which is not available in Edge Runtime
+    // In a real implementation, you would reload from the actual data source
+    console.log('Data reload requested - in production this would reload from database')
+  }
 }
 
 // Generic database operations (Edge Runtime compatible)
@@ -295,12 +302,11 @@ export class Database {
   }
 
   static updateUser(id: string, updates: Partial<User>): boolean {
-    const users = this.getUsers()
-    const index = users.findIndex(user => user.id === id)
+    const index = InMemoryDatabase.users.findIndex(user => user.id === id)
     if (index === -1) return false
 
     // Update in-memory data
-    InMemoryDatabase.users[index] = { ...users[index], ...updates }
+    InMemoryDatabase.users[index] = { ...InMemoryDatabase.users[index], ...updates }
     return true
   }
 
@@ -335,12 +341,11 @@ export class Database {
   }
 
   static updateAudit(id: string, updates: Partial<Audit>): boolean {
-    const audits = this.getAudits()
-    const index = audits.findIndex(audit => audit.id === id)
+    const index = InMemoryDatabase.audits.findIndex(audit => audit.id === id)
     if (index === -1) return false
 
     // Update in-memory data
-    InMemoryDatabase.audits[index] = { ...audits[index], ...updates, updatedAt: new Date().toISOString() }
+    InMemoryDatabase.audits[index] = { ...InMemoryDatabase.audits[index], ...updates, updatedAt: new Date().toISOString() }
     return true
   }
 
@@ -365,12 +370,11 @@ export class Database {
   }
 
   static updateDocument(id: string, updates: Partial<Document>): boolean {
-    const documents = this.getDocuments()
-    const index = documents.findIndex(doc => doc.id === id)
+    const index = InMemoryDatabase.documents.findIndex(doc => doc.id === id)
     if (index === -1) return false
 
     // Update in-memory data
-    InMemoryDatabase.documents[index] = { ...documents[index], ...updates }
+    InMemoryDatabase.documents[index] = { ...InMemoryDatabase.documents[index], ...updates }
     return true
   }
 
@@ -465,12 +469,11 @@ export class Database {
   }
 
   static updateNotification(id: string, updates: Partial<Notification>): boolean {
-    const notifications = this.getNotifications()
-    const index = notifications.findIndex(notif => notif.id === id)
+    const index = InMemoryDatabase.notifications.findIndex(notif => notif.id === id)
     if (index === -1) return false
 
     // Update in-memory data
-    InMemoryDatabase.notifications[index] = { ...notifications[index], ...updates }
+    InMemoryDatabase.notifications[index] = { ...InMemoryDatabase.notifications[index], ...updates }
     return true
   }
 

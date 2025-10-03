@@ -83,13 +83,16 @@ export default function AuditDetailPage() {
   const loadAudit = async () => {
     startLoading("Loading audit details...")
     try {
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Fetch fresh data from API instead of using cached data
+      const response = await fetch(`/api/audits/${auditId}`)
+      const result = await response.json()
       
-      const auditData = Database.getAuditById(auditId)
-      if (!auditData) {
+      if (!result.success || !result.data) {
         router.push("/admin/audits")
         return
       }
+      
+      const auditData = result.data
       setAudit(auditData)
       
       // Initialize edit form with current audit data

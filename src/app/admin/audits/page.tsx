@@ -76,9 +76,15 @@ export default function AuditsPage() {
   const loadAudits = async () => {
     startLoading("Loading audits...")
     try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      const allAudits = Database.getAudits()
-      setAudits(allAudits)
+      // Fetch fresh data from API instead of using cached data
+      const response = await fetch("/api/audits")
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        setAudits(result.data)
+      } else {
+        console.error("Failed to load audits:", result.error)
+      }
     } catch (error) {
       console.error("Error loading audits:", error)
     } finally {

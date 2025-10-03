@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Database } from "@/lib/database"
+import { PersistentDatabase } from "@/lib/persistent-database"
 
 export async function GET(request: NextRequest) {
   try {
@@ -105,8 +106,8 @@ export async function POST(request: NextRequest) {
       progress: 0
     }
 
-    // Add to database
-    const success = Database.addAudit(newAudit)
+    // Add to database with persistence
+    const success = await PersistentDatabase.addAudit(newAudit)
 
     if (!success) {
       return NextResponse.json(
@@ -115,8 +116,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Log activity
-    Database.addActivity({
+    // Log activity with persistence
+    await PersistentDatabase.addActivity({
       userId: session.user.id,
       userName: session.user.name,
       userRole: session.user.role,
@@ -138,8 +139,8 @@ export async function POST(request: NextRequest) {
 
     // Send notifications to assigned auditors
     if (assignedAuditors && assignedAuditors.length > 0) {
-      assignedAuditors.forEach((auditorId: string) => {
-        Database.addNotification({
+      for (const auditorId of assignedAuditors) {
+        await PersistentDatabase.addNotification({
           userId: auditorId,
           userName: session.user.name,
           userRole: session.user.role,
@@ -155,7 +156,7 @@ export async function POST(request: NextRequest) {
             endDate
           }
         })
-      })
+      }
     }
 
     return NextResponse.json({
@@ -221,8 +222,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Update audit
-    const success = Database.updateAudit(auditId, updates)
+    // Update audit with persistence
+    const success = await PersistentDatabase.updateAudit(auditId, updates)
 
     if (!success) {
       return NextResponse.json(
@@ -231,8 +232,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Log activity
-    Database.addActivity({
+    // Log activity with persistence
+    await PersistentDatabase.addActivity({
       userId: session.user.id,
       userName: session.user.name,
       userRole: session.user.role,

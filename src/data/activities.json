@@ -104,7 +104,36 @@
     "metadata": {
       "reportType": "executive_summary",
       "reportPeriod": "Q1 2024",
-      "auditIds": ["audit-001", "audit-003"]
+      "auditIds": [
+        "audit-001",
+        "audit-003"
+      ]
     }
+  },
+  {
+    "userId": "1",
+    "userName": "John Manager",
+    "userRole": "audit_manager",
+    "action": "update_audit",
+    "description": "Updated audit: Data Privacy Compliance Review",
+    "timestamp": "2025-10-03T01:15:25.270Z",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "severity": "info",
+    "resource": "audit",
+    "metadata": {
+      "auditId": "audit-002",
+      "auditTitle": "Data Privacy Compliance Review",
+      "updates": [
+        "title",
+        "description",
+        "startDate",
+        "endDate",
+        "priority",
+        "scope",
+        "complianceFrameworks"
+      ]
+    },
+    "id": "activity-1759454125275-1186ok80f"
   }
 ]
