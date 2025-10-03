@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -15,17 +15,14 @@ import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Calendar,
   Clock,
-  FileText,
   Download,
   Play,
   Pause,
-  Edit,
   Trash2,
   Plus,
   CheckCircle,
   XCircle,
-  AlertCircle,
-  Settings
+  AlertCircle
 } from "lucide-react"
 
 interface ScheduledReport {
@@ -91,6 +88,23 @@ export default function ReportSchedulePage() {
     }
   })
 
+  const loadScheduledReports = useCallback(async () => {
+    startLoading("Loading scheduled reports...")
+    try {
+      const response = await fetch("/api/reports/schedule")
+      const data = await response.json()
+
+      if (data.success) {
+        setScheduledReports(data.data.scheduledReports)
+        setReportJobs(data.data.reportJobs)
+      }
+    } catch (error) {
+      console.error("Error loading scheduled reports:", error)
+    } finally {
+      stopLoading()
+    }
+  }, [startLoading, stopLoading])
+
   useEffect(() => {
     if (status === "loading") return
 
@@ -106,24 +120,7 @@ export default function ReportSchedulePage() {
     }
 
     loadScheduledReports()
-  }, [session, status, router])
-
-  const loadScheduledReports = async () => {
-    startLoading("Loading scheduled reports...")
-    try {
-      const response = await fetch("/api/reports/schedule")
-      const data = await response.json()
-
-      if (data.success) {
-        setScheduledReports(data.data.scheduledReports)
-        setReportJobs(data.data.reportJobs)
-      }
-    } catch (error) {
-      console.error("Error loading scheduled reports:", error)
-    } finally {
-      stopLoading()
-    }
-  }
+  }, [session, status, router, loadScheduledReports])
 
   const handleCreateReport = async () => {
     try {

@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -86,24 +86,7 @@ export default function ReportsPage() {
     findings: "",
   });
 
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (!session) {
-      router.push("/auth/signin");
-      return;
-    }
-
-    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"];
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client");
-      return;
-    }
-
-    loadData();
-  }, [session, status, router]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     startLoading("Loading reports...");
     try {
       await new Promise((resolve) => setTimeout(resolve, 600));
@@ -121,7 +104,24 @@ export default function ReportsPage() {
     } finally {
       stopLoading();
     }
-  };
+  }, [startLoading, stopLoading]);
+
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (!session) {
+      router.push("/auth/signin");
+      return;
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"];
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client");
+      return;
+    }
+
+    loadData();
+  }, [session, status, router, loadData]);
 
   const handleCreateReport = async () => {
     if (!newReport.auditId || !newReport.title) {

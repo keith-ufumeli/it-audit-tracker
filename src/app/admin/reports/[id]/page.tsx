@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter, useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -57,24 +57,7 @@ export default function ReportDetailPage() {
   const [report, setReport] = useState<Report | null>(null)
   const [isDownloading, setIsDownloading] = useState(false)
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
-    if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
-    }
-
-    loadReport()
-  }, [session, status, router, reportId])
-
-  const loadReport = async () => {
+  const loadReport = useCallback(async () => {
     startLoading("Loading report details...")
     try {
       const response = await fetch("/api/reports")
@@ -96,7 +79,24 @@ export default function ReportDetailPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading, reportId])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
+    if (!adminRoles.includes(session.user.role)) {
+      router.push("/client")
+      return
+    }
+
+    loadReport()
+  }, [session, status, router, reportId, loadReport])
 
   const handleDownload = async (format: 'pdf' | 'csv' | 'txt') => {
     if (!report) return
