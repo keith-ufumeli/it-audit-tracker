@@ -64,7 +64,7 @@ export default function AuditsPage() {
       return
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       router.push("/client")
       return

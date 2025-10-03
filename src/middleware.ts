@@ -31,7 +31,7 @@ export default withAuth(
     const userRole = token.role as UserRole
 
     // Admin role access
-    const adminRoles: UserRole[] = ["audit_manager", "auditor", "management"]
+    const adminRoles: UserRole[] = ["super_admin", "audit_manager", "auditor", "management"]
     // Client role access
     const clientRoles: UserRole[] = ["client", "department"]
 

@@ -38,7 +38,7 @@ export default function SignInPage() {
         if (session?.user?.role) {
           // Redirect based on role
           const role = session.user.role
-          if (["audit_manager", "auditor", "management"].includes(role)) {
+          if (["super_admin", "audit_manager", "auditor", "management"].includes(role)) {
             router.push("/admin/dashboard")
           } else {
             router.push("/client")

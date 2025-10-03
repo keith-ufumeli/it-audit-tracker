@@ -17,7 +17,7 @@ export async function GET(
       )
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["super_admin", "audit_manager", "auditor", "management"]
     if (!adminRoles.includes(session.user.role)) {
       return NextResponse.json(
         { error: "Forbidden" },
