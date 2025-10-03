@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
+import { ReportDownloader } from "@/lib/report-downloader"
 
 interface Report {
   id: string
@@ -55,6 +56,7 @@ export default function ReportDetailPage() {
   const reportId = params.id as string
   const { isLoading, startLoading, stopLoading } = useLoading()
   const [report, setReport] = useState<Report | null>(null)
+  const [isDownloading, setIsDownloading] = useState(false)
 
   useEffect(() => {
     if (status === "loading") return
@@ -94,6 +96,28 @@ export default function ReportDetailPage() {
       router.push("/admin/reports")
     } finally {
       stopLoading()
+    }
+  }
+
+  const handleDownload = async (format: 'pdf' | 'csv' | 'txt') => {
+    if (!report) return
+
+    setIsDownloading(true)
+    try {
+      await ReportDownloader.downloadReport(report, format)
+      toast({
+        title: "Download Started",
+        description: `Report is being downloaded as ${format.toUpperCase()}`,
+      })
+    } catch (error) {
+      console.error("Error downloading report:", error)
+      toast({
+        title: "Download Failed",
+        description: "Failed to download report. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsDownloading(false)
     }
   }
 
@@ -164,10 +188,28 @@ export default function ReportDetailPage() {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Download
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" disabled={isDownloading}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {isDownloading ? "Downloading..." : "Download"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleDownload('pdf')}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Download as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDownload('csv')}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Download as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDownload('txt')}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Download as Text
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {canEdit && report.status === 'draft' && (
               <>
                 <Button variant="outline" size="sm">
