@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -61,23 +61,7 @@ export default function UsersPage() {
     isActive: true
   })
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    if (!isSuperAdmin(session.user.role)) {
-      router.push("/admin/dashboard")
-      return
-    }
-
-    loadUsers()
-  }, [session, status, router])
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch("/api/users")
@@ -101,7 +85,23 @@ export default function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    if (!isSuperAdmin(session.user.role)) {
+      router.push("/admin/dashboard")
+      return
+    }
+
+    loadUsers()
+  }, [session, status, router, loadUsers])
 
   const handleCreateUser = async () => {
     try {

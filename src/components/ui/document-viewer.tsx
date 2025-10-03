@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 import { Button } from "./button";
@@ -66,39 +66,7 @@ export function DocumentViewer({
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (isClient) {
-      loadPdfLibraries();
-      loadDocument();
-    }
-  }, [documentId, isClient]);
-
-  const loadPdfLibraries = async () => {
-    if (typeof window === "undefined") return;
-
-    console.log("[PDF VIEWER] Loading PDF libraries...");
-    try {
-      const {
-        Document: PDFDocument,
-        Page: PDFPage,
-        pdfjs: PDFjs,
-      } = await import("react-pdf");
-      Document = PDFDocument;
-      Page = PDFPage;
-      pdfjs = PDFjs;
-
-      // Set up PDF.js worker
-      pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-
-      console.log("[PDF VIEWER] PDF libraries loaded successfully");
-      setPdfLibrariesLoaded("loaded");
-    } catch (error) {
-      console.error("[PDF VIEWER] Failed to load PDF libraries:", error);
-      setPdfLibrariesLoaded("failed");
-    }
-  };
-
-  const loadDocument = async () => {
+  const loadDocument = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -178,7 +146,39 @@ export function DocumentViewer({
           error instanceof Error ? error.message : "Failed to load document",
       }));
     }
+  }, [documentId, fileType]);
+
+  const loadPdfLibraries = async () => {
+    if (typeof window === "undefined") return;
+
+    console.log("[PDF VIEWER] Loading PDF libraries...");
+    try {
+      const {
+        Document: PDFDocument,
+        Page: PDFPage,
+        pdfjs: PDFjs,
+      } = await import("react-pdf");
+      Document = PDFDocument;
+      Page = PDFPage;
+      pdfjs = PDFjs;
+
+      // Set up PDF.js worker
+      pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
+      console.log("[PDF VIEWER] PDF libraries loaded successfully");
+      setPdfLibrariesLoaded("loaded");
+    } catch (error) {
+      console.error("[PDF VIEWER] Failed to load PDF libraries:", error);
+      setPdfLibrariesLoaded("failed");
+    }
   };
+
+  useEffect(() => {
+    if (isClient) {
+      loadPdfLibraries();
+      loadDocument();
+    }
+  }, [documentId, isClient, loadDocument]);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     console.log(

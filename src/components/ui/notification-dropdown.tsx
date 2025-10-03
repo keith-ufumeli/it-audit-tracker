@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -34,17 +34,17 @@ export function NotificationDropdown({ userId, userRole, portalType }: Notificat
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
 
-  useEffect(() => {
-    loadNotifications()
-  }, [userId])
-
-  const loadNotifications = () => {
+  const loadNotifications = useCallback(() => {
     const userNotifications = Database.getNotificationsByUser(userId)
     const unreadNotifications = userNotifications.filter(n => n.status === "unread")
     
     setNotifications(userNotifications.slice(0, 5)) // Show latest 5
     setUnreadCount(unreadNotifications.length)
-  }
+  }, [userId])
+
+  useEffect(() => {
+    loadNotifications()
+  }, [loadNotifications])
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {

@@ -170,7 +170,7 @@ export default function SettingsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     if (status === "loading") return

@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -68,13 +68,7 @@ export default function SharedReportPage() {
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  useEffect(() => {
-    if (params.token) {
-      loadSharedReport(params.token as string)
-    }
-  }, [params.token])
-
-  const loadSharedReport = async (token: string) => {
+  const loadSharedReport = useCallback(async (token: string) => {
     startLoading("Loading shared report...")
     try {
       const response = await fetch(`/api/reports/share?token=${token}`)
@@ -96,7 +90,13 @@ export default function SharedReportPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading])
+
+  useEffect(() => {
+    if (params.token) {
+      loadSharedReport(params.token as string)
+    }
+  }, [params.token, loadSharedReport])
 
   const loadComments = async (sharedReportId: string) => {
     try {

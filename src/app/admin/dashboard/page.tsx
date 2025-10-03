@@ -134,7 +134,7 @@ export default function DashboardPage() {
               Welcome back, {session.user.name}
             </p>
             <p className="text-sm text-muted-foreground">
-              Here's what's happening with your audits today
+              Here&apos;s what&apos;s happening with your audits today
             </p>
           </div>
           <Button 
