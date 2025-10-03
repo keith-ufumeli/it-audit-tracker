@@ -8,6 +8,10 @@ module.exports = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+  			mono: ['var(--font-geist-mono)', 'Consolas', 'monospace'],
+  		},
   		spacing: {
   			'18': '4.5rem',
   			'88': '22rem',
