@@ -10,6 +10,10 @@ import { Loader, CardSkeleton } from "@/components/ui/loader"
 import { useLoading } from "@/hooks/use-loading"
 import { Database, Audit, Document, Activity, Notification } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
+import AuditStatusChart from "@/components/charts/AuditStatusChart"
+import AuditTrendChart from "@/components/charts/AuditTrendChart"
+import ActivityBarChart from "@/components/charts/ActivityBarChart"
+import PriorityDistributionChart from "@/components/charts/PriorityDistributionChart"
 import { 
   Shield, 
   Users, 
@@ -283,6 +287,53 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Analytics Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-orange-600" />
+                Audit Status Distribution
+              </CardTitle>
+              <CardDescription>
+                Overview of audits by current status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AuditStatusChart
+                data={[
+                  { name: "In Progress", value: stats.audits.byStatus.in_progress || 0, color: "#3b82f6" },
+                  { name: "Planning", value: stats.audits.byStatus.planning || 0, color: "#a855f7" },
+                  { name: "Completed", value: stats.audits.byStatus.completed || 0, color: "#22c55e" },
+                  { name: "Cancelled", value: stats.audits.byStatus.cancelled || 0, color: "#ef4444" },
+                ]}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-red-600" />
+                Priority Distribution
+              </CardTitle>
+              <CardDescription>
+                Audit priority breakdown
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PriorityDistributionChart
+                data={[
+                  { name: "Critical", value: audits.filter(a => a.priority === "critical").length, color: "#dc2626" },
+                  { name: "High", value: audits.filter(a => a.priority === "high").length, color: "#f97316" },
+                  { name: "Medium", value: audits.filter(a => a.priority === "medium").length, color: "#eab308" },
+                  { name: "Low", value: audits.filter(a => a.priority === "low").length, color: "#22c55e" },
+                ]}
+              />
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activities */}

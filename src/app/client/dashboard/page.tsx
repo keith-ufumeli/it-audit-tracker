@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
 import { Database, Document, Notification } from "@/lib/database"
 import ClientLayout from "@/components/client/client-layout"
+import PriorityDistributionChart from "@/components/charts/PriorityDistributionChart"
+import AuditStatusChart from "@/components/charts/AuditStatusChart"
 import { 
   Bell,
   FileText,
@@ -19,7 +21,8 @@ import {
   Calendar,
   ArrowRight,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
+  BarChart3
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
 
@@ -176,6 +179,51 @@ export default function ClientDashboardPage() {
               <p className="text-xs text-muted-foreground mt-2">
                 Unread messages
               </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Document Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+                Document Status Overview
+              </CardTitle>
+              <CardDescription>
+                Your document submission status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AuditStatusChart
+                data={[
+                  { name: "Submitted", value: documents.filter(d => d.status === "submitted").length, color: "#22c55e" },
+                  { name: "Pending", value: documents.filter(d => d.status === "pending").length, color: "#f97316" },
+                  { name: "Draft", value: documents.filter(d => d.status === "draft").length, color: "#6b7280" },
+                ]}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-orange-600" />
+                Notification Priority
+              </CardTitle>
+              <CardDescription>
+                Breakdown by priority level
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PriorityDistributionChart
+                data={[
+                  { name: "High", value: notifications.filter(n => n.priority === "high").length, color: "#ef4444" },
+                  { name: "Medium", value: notifications.filter(n => n.priority === "medium").length, color: "#f97316" },
+                  { name: "Low", value: notifications.filter(n => n.priority === "low").length, color: "#3b82f6" },
+                ]}
+              />
             </CardContent>
           </Card>
         </div>
