@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
-import { Database, Document, Notification } from "@/lib/database"
+import { ClientDatabase, Document, Notification } from "@/lib/client-database"
 import ClientLayout from "@/components/client/client-layout"
 import PriorityDistributionChart from "@/components/charts/PriorityDistributionChart"
 import AuditStatusChart from "@/components/charts/AuditStatusChart"
@@ -36,8 +36,11 @@ export default function ClientDashboardPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 600))
       
-      const allDocuments = Database.getDocuments()
-      const userNotifications = Database.getUnreadNotificationsByUser(session?.user?.id || "")
+      const allDocuments = await ClientDatabase.getDocuments()
+      const allNotifications = await ClientDatabase.getNotifications()
+      const userNotifications = allNotifications.filter(notif => 
+        notif.userId === session?.user?.id && notif.status === 'unread'
+      )
       
       // Filter documents for current user
       const userDocs = allDocuments.filter(doc => 

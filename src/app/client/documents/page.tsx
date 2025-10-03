@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
-import { Database, Document } from "@/lib/database"
+import { ClientDatabase, Document } from "@/lib/client-database"
 import ClientLayout from "@/components/client/client-layout"
 import { DocumentViewer } from "@/components/ui/document-viewer"
 import { 
@@ -62,8 +62,8 @@ export default function ClientDocumentsPage() {
       if (result.success && result.data) {
         setDocuments(result.data)
       } else {
-        // Fallback to in-memory database if API fails
-        const allDocuments = Database.getDocuments()
+        // Fallback to client database if API fails
+        const allDocuments = await ClientDatabase.getDocuments()
         const userDocs = allDocuments.filter(doc => 
           doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
         )
@@ -71,12 +71,17 @@ export default function ClientDocumentsPage() {
       }
     } catch (error) {
       console.error("Error loading documents:", error)
-      // Fallback to in-memory database
-      const allDocuments = Database.getDocuments()
-      const userDocs = allDocuments.filter(doc => 
-        doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
-      )
-      setDocuments(userDocs)
+      // Fallback to client database
+      try {
+        const allDocuments = await ClientDatabase.getDocuments()
+        const userDocs = allDocuments.filter(doc => 
+          doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
+        )
+        setDocuments(userDocs)
+      } catch (fallbackError) {
+        console.error("Fallback database error:", fallbackError)
+        setDocuments([])
+      }
     } finally {
       stopLoading()
     }
