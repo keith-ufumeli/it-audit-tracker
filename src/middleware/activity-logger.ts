@@ -183,7 +183,7 @@ export function logSecurityEvent(
                request.headers.get('x-real-ip') || 
                '127.0.0.1',
     userAgent: request.headers.get('user-agent') || 'Unknown',
-    severity: 'high',
+    severity: 'critical',
     resource: 'security',
     metadata: {
       ...details,
@@ -210,7 +210,7 @@ export function logFailedAuth(
                request.headers.get('x-real-ip') || 
                '127.0.0.1',
     userAgent: request.headers.get('user-agent') || 'Unknown',
-    severity: 'medium',
+    severity: 'warning',
     resource: 'authentication',
     metadata: {
       email,
@@ -238,7 +238,7 @@ export function logSuccessfulAuth(
                request.headers.get('x-real-ip') || 
                '127.0.0.1',
     userAgent: request.headers.get('user-agent') || 'Unknown',
-    severity: 'low',
+    severity: 'info',
     resource: 'authentication',
     metadata: {
       endpoint: request.nextUrl.pathname,

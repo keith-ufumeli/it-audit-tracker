@@ -193,6 +193,14 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Convert scope and complianceFrameworks from strings to arrays if they exist
+    if (updates.scope && typeof updates.scope === 'string') {
+      updates.scope = updates.scope.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
+    }
+    if (updates.complianceFrameworks && typeof updates.complianceFrameworks === 'string') {
+      updates.complianceFrameworks = updates.complianceFrameworks.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
+    }
+
     // Get audit to check permissions
     const audit = Database.getAuditById(auditId)
     if (!audit) {
