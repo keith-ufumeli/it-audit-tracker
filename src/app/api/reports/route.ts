@@ -43,10 +43,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Load data from files if in-memory database is empty
-    if (InMemoryDatabase.reports.length === 0) {
-      await InMemoryDatabase.loadDataFromFiles()
-    }
+    // Data is already loaded from JSON imports in InMemoryDatabase
 
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
