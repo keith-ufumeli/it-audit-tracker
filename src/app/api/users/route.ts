@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     const session = permissionCheck.session
 
-    const users = Database.getAllUsers()
+    const users = Database.getUsers()
     
     // Filter out sensitive information for non-super admins
     const filteredUsers = users.map(user => {
@@ -105,11 +105,14 @@ export async function POST(request: NextRequest) {
       permissions: permissions || permissionManager.getRolePermissions(role as any),
       password: hashedPassword, // In production, this should be stored securely
       createdAt: new Date().toISOString(),
-      lastLogin: null,
+      lastLogin: "",
       isActive: true
     }
 
-    const createdUser = Database.addUser(newUser)
+    // Add user to database
+    const { InMemoryDatabase } = await import("@/lib/database")
+    InMemoryDatabase.users.push(newUser)
+    const createdUser = newUser
 
     // Log the activity
     Database.addActivity({
@@ -119,7 +122,7 @@ export async function POST(request: NextRequest) {
       action: "create_user",
       description: `Created user: ${name} (${email}) with role: ${role}`,
       timestamp: new Date().toISOString(),
-      ipAddress: request.ip || "127.0.0.1",
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "info",
       resource: "user_management",

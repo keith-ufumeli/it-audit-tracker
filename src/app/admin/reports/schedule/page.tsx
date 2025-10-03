@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useLoading } from "@/hooks/use-loading"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
@@ -70,6 +70,8 @@ export default function ReportSchedulePage() {
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([])
   const [reportJobs, setReportJobs] = useState<ReportJob[]>([])
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [reportToDelete, setReportToDelete] = useState<string | null>(null)
   const [newReport, setNewReport] = useState({
     name: "",
     description: "",
@@ -180,20 +182,27 @@ export default function ReportSchedulePage() {
     }
   }
 
-  const handleDeleteReport = async (reportId: string) => {
-    if (!confirm("Are you sure you want to delete this scheduled report?")) return
-
+  const handleDeleteReport = async () => {
+    if (!reportToDelete) return
+    
     try {
-      const response = await fetch(`/api/reports/schedule?id=${reportId}`, {
+      const response = await fetch(`/api/reports/schedule?id=${reportToDelete}`, {
         method: "DELETE"
       })
 
       if (response.ok) {
         loadScheduledReports()
+        setIsDeleteDialogOpen(false)
+        setReportToDelete(null)
       }
     } catch (error) {
       console.error("Error deleting report:", error)
     }
+  }
+
+  const openDeleteDialog = (reportId: string) => {
+    setReportToDelete(reportId)
+    setIsDeleteDialogOpen(true)
   }
 
   const getStatusIcon = (status: string) => {
@@ -386,7 +395,7 @@ export default function ReportSchedulePage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDeleteReport(report.id)}
+                      onClick={() => openDeleteDialog(report.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -477,6 +486,29 @@ export default function ReportSchedulePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Scheduled Report</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this scheduled report? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteReport}
+            >
+              Yes, Delete Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   )
 }

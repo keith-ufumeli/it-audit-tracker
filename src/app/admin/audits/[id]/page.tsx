@@ -43,6 +43,7 @@ export default function AuditDetailPage() {
   const { toast } = useToast()
   const [audit, setAudit] = useState<Audit | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
   const [isAddFindingDialogOpen, setIsAddFindingDialogOpen] = useState(false)
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
   const [editingAudit, setEditingAudit] = useState({
@@ -226,10 +227,6 @@ export default function AuditDetailPage() {
   const handleCancelAudit = async () => {
     if (!audit) return
     
-    if (!confirm("Are you sure you want to cancel this audit? This action cannot be undone.")) {
-      return
-    }
-
     startLoading("Cancelling audit...")
     try {
       const response = await fetch("/api/audits", {
@@ -560,15 +557,40 @@ export default function AuditDetailPage() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-red-600 hover:bg-red-50"
-                  onClick={handleCancelAudit}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Cancel Audit
-                </Button>
+                <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Cancel Audit
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Cancel Audit</DialogTitle>
+                      <DialogDescription>
+                        Are you sure you want to cancel this audit? This action cannot be undone.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        onClick={() => {
+                          setIsCancelDialogOpen(false)
+                          handleCancelAudit()
+                        }}
+                      >
+                        Yes, Cancel Audit
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </>
             )}
           </div>
