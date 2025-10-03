@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
-import { Database, User } from "./database"
+import { User } from "@/types/user"
 
 // Define user roles
 export type UserRole = "super_admin" | "audit_manager" | "auditor" | "management" | "client" | "department"
@@ -29,6 +29,9 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // Use dynamic import to avoid Edge Runtime issues
+        const { Database } = await import('./database')
+        
         // Find user by email from JSON database
         const user = Database.getUserByEmail(credentials.email)
         if (!user || !user.isActive) {

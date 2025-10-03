@@ -2,17 +2,9 @@
 // Data is now loaded dynamically via API endpoints
 
 // Types for our database entities
-export interface User {
-  id: string
-  email: string
-  name: string
-  role: string
-  department: string
-  permissions: string[]
-  createdAt: string
-  lastLogin: string
-  isActive: boolean
-}
+// User interface moved to @/types/user.ts to avoid Edge Runtime issues
+import type { User } from "@/types/user"
+export type { User }
 
 export interface Audit {
   id: string
