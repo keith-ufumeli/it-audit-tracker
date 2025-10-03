@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -32,6 +32,20 @@ export default function ClientNotificationsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
 
+  const loadNotifications = useCallback(async () => {
+    startLoading("Loading notifications...")
+    try {
+      await new Promise(resolve => setTimeout(resolve, 600))
+      
+      const allNotifications = Database.getNotificationsByUser(session?.user?.id || "")
+      setNotifications(allNotifications)
+    } catch (error) {
+      console.error("Error loading notifications:", error)
+    } finally {
+      stopLoading()
+    }
+  }, [startLoading, stopLoading, session?.user?.id])
+
   useEffect(() => {
     if (status === "loading") return
 
@@ -47,21 +61,7 @@ export default function ClientNotificationsPage() {
     }
 
     loadNotifications()
-  }, [session, status, router])
-
-  const loadNotifications = async () => {
-    startLoading("Loading notifications...")
-    try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      
-      const allNotifications = Database.getNotificationsByUser(session?.user?.id || "")
-      setNotifications(allNotifications)
-    } catch (error) {
-      console.error("Error loading notifications:", error)
-    } finally {
-      stopLoading()
-    }
-  }
+  }, [session, status, router, loadNotifications])
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
