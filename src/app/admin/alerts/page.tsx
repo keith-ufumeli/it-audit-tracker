@@ -506,7 +506,7 @@ export default function AdminAlertsPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleAcknowledgeAlert(alert.id)}
-                              className="hover:bg-yellow-50 hover:border-yellow-300"
+                              className="hover:bg-yellow-100 hover:text-yellow-800 hover:border-yellow-400"
                             >
                               <Eye className="h-4 w-4 mr-1" />
                               Acknowledge
@@ -515,7 +515,7 @@ export default function AdminAlertsPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleResolveAlert(alert.id)}
-                              className="hover:bg-green-50 hover:border-green-300"
+                              className="hover:bg-green-100 hover:text-green-800 hover:border-green-400"
                             >
                               <CheckCircle className="h-4 w-4 mr-1" />
                               Resolve
@@ -527,7 +527,7 @@ export default function AdminAlertsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleResolveAlert(alert.id)}
-                            className="hover:bg-green-50 hover:border-green-300"
+                            className="hover:bg-green-100 hover:text-green-800 hover:border-green-400"
                           >
                             <CheckCircle className="h-4 w-4 mr-1" />
                             Resolve
@@ -537,7 +537,7 @@ export default function AdminAlertsPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleDismissAlert(alert.id)}
-                          className="hover:bg-gray-50 hover:border-gray-300"
+                          className="hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400"
                         >
                           <XCircle className="h-4 w-4 mr-1" />
                           Dismiss

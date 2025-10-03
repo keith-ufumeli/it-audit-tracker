@@ -217,14 +217,14 @@ export default function ReportDetailPage() {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button variant="outline" size="sm" className="bg-blue-50 hover:bg-blue-100">
+                <Button variant="outline" size="sm" className="bg-blue-50 text-blue-700 hover:bg-blue-200 hover:text-blue-800 hover:border-blue-400">
                   <Send className="h-4 w-4 mr-2" />
                   Submit
                 </Button>
               </>
             )}
             {canEdit && (
-              <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50">
+              <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-100 hover:text-red-700 hover:border-red-300">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
@@ -432,7 +432,7 @@ export default function ReportDetailPage() {
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Approve Report
                   </Button>
-                  <Button variant="outline" className="w-full text-red-600 hover:bg-red-50">
+                  <Button variant="outline" className="w-full text-red-600 hover:bg-red-100 hover:text-red-700 hover:border-red-300">
                     <XCircle className="h-4 w-4 mr-2" />
                     Reject Report
                   </Button>

@@ -101,7 +101,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             </tbody>
           ),
           tr: ({ children }) => (
-            <tr className="hover:bg-gray-50">
+            <tr className="hover:bg-gray-100">
               {children}
             </tr>
           ),
