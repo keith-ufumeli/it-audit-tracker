@@ -5,7 +5,7 @@ import { Database, InMemoryDatabase } from "@/lib/database"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -25,12 +25,9 @@ export async function GET(
       )
     }
 
-    // Load data from files if in-memory database is empty
-    if (InMemoryDatabase.audits.length === 0) {
-      await InMemoryDatabase.loadDataFromFiles()
-    }
+    // Data is loaded directly from JSON imports, no need to load from files
 
-    const auditId = params.id
+    const { id: auditId } = await params
     const audit = Database.getAuditById(auditId)
 
     if (!audit) {
