@@ -21,6 +21,10 @@ export async function GET(request: NextRequest) {
 
     const session = permissionCheck.session
 
+    if (!session) {
+      return NextResponse.json({ error: "Session not found" }, { status: 401 })
+    }
+
     const users = Database.getUsers()
     
     // Filter out sensitive information for non-super admins
@@ -63,6 +67,10 @@ export async function POST(request: NextRequest) {
     }
 
     const session = permissionCheck.session
+
+    if (!session) {
+      return NextResponse.json({ error: "Session not found" }, { status: 401 })
+    }
 
     // Only Super Admin can create users
     if (!isSuperAdmin(session.user.role)) {
@@ -108,6 +116,7 @@ export async function POST(request: NextRequest) {
       permissions: permissions || permissionManager.getRolePermissions(role as any),
       password: hashedPassword, // In production, this should be stored securely
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       lastLogin: "",
       isActive: true
     }
