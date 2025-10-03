@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -62,23 +62,7 @@ export default function PermissionsPage() {
     isSystemPermission: false
   })
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    if (!isSuperAdmin(session.user.role)) {
-      router.push("/admin/dashboard")
-      return
-    }
-
-    loadData()
-  }, [session, status, router])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [permissionsRes, rolesRes] = await Promise.all([
@@ -105,7 +89,23 @@ export default function PermissionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    if (!isSuperAdmin(session.user.role)) {
+      router.push("/admin/dashboard")
+      return
+    }
+
+    loadData()
+  }, [session, status, router, loadData])
 
   const handleCreatePermission = async () => {
     try {

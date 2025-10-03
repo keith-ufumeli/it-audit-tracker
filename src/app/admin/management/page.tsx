@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -60,24 +60,7 @@ export default function ManagementDashboardPage() {
   const [metrics, setMetrics] = useState<ManagementMetrics | null>(null)
   const [selectedTimeRange, setSelectedTimeRange] = useState('30d')
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    // Only management role can access this page
-    if (session.user.role !== "management") {
-      router.push("/admin/dashboard")
-      return
-    }
-
-    loadManagementData()
-  }, [session, status, router, selectedTimeRange])
-
-  const loadManagementData = async () => {
+  const loadManagementData = useCallback(async () => {
     startLoading("Loading management dashboard...")
     try {
       await new Promise(resolve => setTimeout(resolve, 800))
@@ -189,7 +172,24 @@ export default function ManagementDashboardPage() {
     } finally {
       stopLoading()
     }
-  }
+  }, [startLoading, stopLoading, selectedTimeRange])
+
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    // Only management role can access this page
+    if (session.user.role !== "management") {
+      router.push("/admin/dashboard")
+      return
+    }
+
+    loadManagementData()
+  }, [session, status, router, loadManagementData])
 
   const handleExportPDF = async (reportType: string) => {
     try {
@@ -224,7 +224,7 @@ export default function ManagementDashboardPage() {
   const handleExportCSV = async (dataType: string) => {
     try {
       const config = {
-        dataType: dataType as any,
+        dataType: dataType as 'audits' | 'documents' | 'alerts' | 'activities',
         includeMetadata: true
       }
 
@@ -317,17 +317,6 @@ export default function ManagementDashboardPage() {
     }
   }
 
-  const getTrendIcon = (current: number, previous: number) => {
-    if (current > previous) return <ArrowUpRight className="h-4 w-4 text-green-600" />
-    if (current < previous) return <ArrowDownRight className="h-4 w-4 text-red-600" />
-    return <Minus className="h-4 w-4 text-gray-600" />
-  }
-
-  const getTrendColor = (current: number, previous: number) => {
-    if (current > previous) return "text-green-600"
-    if (current < previous) return "text-red-600"
-    return "text-gray-600"
-  }
 
   if (status === "loading" || isLoading) {
     return (
