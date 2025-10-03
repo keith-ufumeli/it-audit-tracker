@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem
 } from "@/components/ui/dropdown-menu"
-import { Database, Notification } from "@/lib/database"
+import { ClientDatabase, Notification } from "@/lib/client-database"
 import { 
   Bell, 
   CheckCircle, 
@@ -38,12 +38,19 @@ export function NotificationDropdown({ userId, userRole, portalType }: Notificat
     loadNotifications()
   }, [userId])
 
-  const loadNotifications = () => {
-    const userNotifications = Database.getNotificationsByUser(userId)
-    const unreadNotifications = userNotifications.filter(n => n.status === "unread")
-    
-    setNotifications(userNotifications.slice(0, 5)) // Show latest 5
-    setUnreadCount(unreadNotifications.length)
+  const loadNotifications = async () => {
+    try {
+      const allNotifications = await ClientDatabase.getNotifications()
+      const userNotifications = allNotifications.filter(notif => notif.userId === userId)
+      const unreadNotifications = userNotifications.filter(n => n.status === "unread")
+      
+      setNotifications(userNotifications.slice(0, 5)) // Show latest 5
+      setUnreadCount(unreadNotifications.length)
+    } catch (error) {
+      console.error("Error loading notifications:", error)
+      setNotifications([])
+      setUnreadCount(0)
+    }
   }
 
   const handleMarkAsRead = async (notificationId: string) => {

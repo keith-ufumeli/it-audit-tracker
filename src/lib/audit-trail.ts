@@ -94,7 +94,6 @@ export class AuditTrailLogger {
       try {
         const { Database } = await import('./database')
         Database.addActivity({
-          id: auditEntry.id,
           userId: auditEntry.userId,
           userName: auditEntry.userName,
           userRole: auditEntry.userRole,
@@ -105,9 +104,10 @@ export class AuditTrailLogger {
           userAgent: auditEntry.userAgent,
           severity: this.mapRiskLevelToSeverity(auditEntry.riskLevel),
           resource: auditEntry.resource,
-          resourceId: auditEntry.resourceId,
           metadata: {
             ...auditEntry.metadata,
+            auditTrailId: auditEntry.id,
+            resourceId: auditEntry.resourceId,
             sessionId: auditEntry.sessionId,
             endpoint: auditEntry.endpoint,
             method: auditEntry.method,
