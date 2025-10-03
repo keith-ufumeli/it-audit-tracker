@@ -9,7 +9,7 @@ const permissionManager = PermissionManager.getInstance()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -23,7 +23,8 @@ export async function GET(
       return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 })
     }
 
-    const user = Database.getUserById(params.id)
+    const { id } = await params
+    const user = Database.getUserById(id)
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
@@ -40,7 +41,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -54,7 +55,8 @@ export async function PUT(
       return NextResponse.json({ error: "Only Super Admin can update users" }, { status: 403 })
     }
 
-    const user = Database.getUserById(params.id)
+    const { id } = await params
+    const user = Database.getUserById(id)
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
@@ -71,7 +73,7 @@ export async function PUT(
 
       // Check if email is already taken by another user
       const existingUser = Database.getUserByEmail(email)
-      if (existingUser && existingUser.id !== params.id) {
+      if (existingUser && existingUser.id !== id) {
         return NextResponse.json({ error: "Email already in use" }, { status: 409 })
       }
     }
@@ -98,7 +100,7 @@ export async function PUT(
       updateData.password = await bcrypt.hash(password, 10)
     }
 
-    const updatedUser = Database.updateUser(params.id, updateData)
+    const updatedUser = Database.updateUser(id, updateData)
 
     // Log the activity
     Database.addActivity({
@@ -131,7 +133,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -145,7 +147,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Only Super Admin can delete users" }, { status: 403 })
     }
 
-    const user = Database.getUserById(params.id)
+    const { id } = await params
+    const user = Database.getUserById(id)
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
@@ -165,7 +168,7 @@ export async function DELETE(
     }
 
     // Mark user as inactive instead of deleting (since deleteUser doesn't exist in Database)
-    const updated = Database.updateUser(params.id, { isActive: false })
+    const updated = Database.updateUser(id, { isActive: false })
     if (!updated) {
       return NextResponse.json({ error: "Failed to delete user" }, { status: 500 })
     }
