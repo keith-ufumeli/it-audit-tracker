@@ -1,9 +1,5 @@
-// Import JSON data directly (Edge Runtime compatible)
-import usersData from '@/data/users.json'
-import auditsData from '@/data/audits.json'
-import documentsData from '@/data/documents.json'
-import activitiesData from '@/data/activities.json'
-import notificationsData from '@/data/notifications.json'
+// Note: Direct JSON imports removed to prevent Turbopack HMR caching issues
+// Data is now loaded dynamically via API endpoints
 
 // Types for our database entities
 export interface User {
@@ -117,12 +113,12 @@ export interface Alert {
 }
 
 // In-memory data storage (Edge Runtime compatible)
-class InMemoryDatabase {
-  static users: User[] = [...usersData] as User[]
-  static audits: Audit[] = [...auditsData] as Audit[]
-  static documents: Document[] = [...documentsData] as Document[]
-  static activities: Activity[] = [...activitiesData] as Activity[]
-  static notifications: Notification[] = [...notificationsData] as Notification[]
+export class InMemoryDatabase {
+  static users: User[] = []
+  static audits: Audit[] = []
+  static documents: Document[] = []
+  static activities: Activity[] = []
+  static notifications: Notification[] = []
   static alerts: Alert[] = [
     {
       id: 'alert-001',
@@ -281,6 +277,40 @@ class InMemoryDatabase {
     // This would require file system access which is not available in Edge Runtime
     // In a real implementation, you would reload from the actual data source
     console.log('Data reload requested - in production this would reload from database')
+  }
+
+  // Method to load data from files (called by API routes)
+  static async loadDataFromFiles() {
+    try {
+      const fs = await import('fs/promises')
+      const path = await import('path')
+      
+      const dataDir = path.join(process.cwd(), 'src', 'data')
+      
+      // Load users
+      const usersData = await fs.readFile(path.join(dataDir, 'users.json'), 'utf8')
+      this.users = JSON.parse(usersData)
+      
+      // Load audits
+      const auditsData = await fs.readFile(path.join(dataDir, 'audits.json'), 'utf8')
+      this.audits = JSON.parse(auditsData)
+      
+      // Load documents
+      const documentsData = await fs.readFile(path.join(dataDir, 'documents.json'), 'utf8')
+      this.documents = JSON.parse(documentsData)
+      
+      // Load activities
+      const activitiesData = await fs.readFile(path.join(dataDir, 'activities.json'), 'utf8')
+      this.activities = JSON.parse(activitiesData)
+      
+      // Load notifications
+      const notificationsData = await fs.readFile(path.join(dataDir, 'notifications.json'), 'utf8')
+      this.notifications = JSON.parse(notificationsData)
+      
+      console.log('✅ Data loaded from files into in-memory database')
+    } catch (error) {
+      console.error('❌ Error loading data from files:', error)
+    }
   }
 }
 

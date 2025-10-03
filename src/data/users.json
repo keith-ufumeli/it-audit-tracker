@@ -70,6 +70,24 @@
     "isActive": true
   },
   {
+    "id": "6",
+    "email": "auditor2@audit.com",
+    "name": "Mike Auditor",
+    "role": "auditor",
+    "department": "IT Security",
+    "permissions": [
+      "view_logs",
+      "submit_reports",
+      "request_documents",
+      "flag_activities",
+      "view_assigned_audits",
+      "upload_evidence"
+    ],
+    "createdAt": "2024-01-16T09:15:00Z",
+    "lastLogin": "2024-01-20T16:45:00Z",
+    "isActive": true
+  },
+  {
     "id": "5",
     "email": "dept@company.com",
     "name": "Charlie Department",

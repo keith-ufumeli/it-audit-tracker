@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { Database } from "@/lib/database"
+import { Database, InMemoryDatabase } from "@/lib/database"
 import { PersistentDatabase } from "@/lib/persistent-database"
 
 export async function GET(request: NextRequest) {
@@ -21,6 +21,11 @@ export async function GET(request: NextRequest) {
         { error: "Forbidden" },
         { status: 403 }
       )
+    }
+
+    // Load data from files if in-memory database is empty
+    if (InMemoryDatabase.audits.length === 0) {
+      await InMemoryDatabase.loadDataFromFiles()
     }
 
     const { searchParams } = new URL(request.url)

@@ -3,10 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Database, InMemoryDatabase } from "@/lib/database"
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     
@@ -26,28 +23,20 @@ export async function GET(
     }
 
     // Load data from files if in-memory database is empty
-    if (InMemoryDatabase.audits.length === 0) {
+    if (InMemoryDatabase.users.length === 0) {
       await InMemoryDatabase.loadDataFromFiles()
     }
 
-    const auditId = params.id
-    const audit = Database.getAuditById(auditId)
-
-    if (!audit) {
-      return NextResponse.json(
-        { error: "Audit not found" },
-        { status: 404 }
-      )
-    }
+    const users = Database.getUsers()
 
     return NextResponse.json({
       success: true,
-      data: audit
+      data: users
     })
   } catch (error) {
-    console.error("Error fetching audit:", error)
+    console.error("Error fetching users:", error)
     return NextResponse.json(
-      { error: "Failed to fetch audit" },
+      { error: "Failed to fetch users" },
       { status: 500 }
     )
   }

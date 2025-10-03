@@ -62,6 +62,9 @@ export default function AuditDetailPage() {
     dueDate: ""
   })
   const [selectedAuditor, setSelectedAuditor] = useState("")
+  const [availableAuditors, setAvailableAuditors] = useState<any[]>([])
+  const [auditManager, setAuditManager] = useState<any>(null)
+  const [assignedAuditors, setAssignedAuditors] = useState<any[]>([])
 
   useEffect(() => {
     if (status === "loading") return
@@ -95,6 +98,9 @@ export default function AuditDetailPage() {
       const auditData = result.data
       setAudit(auditData)
       
+      // Load user data for audit manager and assigned auditors
+      await loadUserData(auditData)
+      
       // Initialize edit form with current audit data
       setEditingAudit({
         title: auditData.title,
@@ -110,6 +116,51 @@ export default function AuditDetailPage() {
       router.push("/admin/audits")
     } finally {
       stopLoading()
+    }
+  }
+
+  const loadUserData = async (auditData: any) => {
+    try {
+      // Fetch all users from API
+      const response = await fetch("/api/users")
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          const users = result.data
+          
+          // Find audit manager
+          const manager = users.find((user: any) => user.id === auditData.auditManager)
+          setAuditManager(manager || null)
+          
+          // Find assigned auditors
+          const auditors = auditData.assignedAuditors
+            .map((id: string) => users.find((user: any) => user.id === id))
+            .filter(Boolean)
+          setAssignedAuditors(auditors)
+        }
+      }
+    } catch (error) {
+      console.error("Error loading user data:", error)
+    }
+  }
+
+  const loadAvailableAuditors = async () => {
+    try {
+      // Fetch fresh user data from API
+      const response = await fetch("/api/users")
+      if (response.ok) {
+        const result = await response.json()
+        if (result.success && result.data) {
+          const auditors = result.data.filter((user: any) => 
+            user.role === "auditor" && 
+            audit && 
+            !audit.assignedAuditors.includes(user.id)
+          )
+          setAvailableAuditors(auditors)
+        }
+      }
+    } catch (error) {
+      console.error("Error loading auditors:", error)
     }
   }
 
@@ -316,7 +367,8 @@ export default function AuditDetailPage() {
         })
         setIsAssignDialogOpen(false)
         setSelectedAuditor("")
-        await loadAudit() // Reload audit data
+        setAvailableAuditors([]) // Clear the list
+        await loadAudit() // Reload audit data and user data
       } else {
         toast({
           title: "Error",
@@ -387,9 +439,8 @@ export default function AuditDetailPage() {
   const canEdit = session.user.permissions.includes("create_audit") || 
                   session.user.id === audit.auditManager
 
-  // Get user details for audit manager and auditors
-  const auditManager = Database.getUserById(audit.auditManager)
-  const auditors = audit.assignedAuditors.map(id => Database.getUserById(id)).filter(Boolean)
+  // User details are now loaded via API and stored in state
+  // auditManager and assignedAuditors are set by loadUserData()
 
   return (
     <AdminLayout>
@@ -796,8 +847,8 @@ export default function AuditDetailPage() {
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium">{auditManager?.name}</p>
-                      <p className="text-xs text-muted-foreground">{auditManager?.email}</p>
+                      <p className="font-medium text-gray-50">{auditManager?.name}</p>
+                      <p className="text-xs text-gray-100">{auditManager?.email}</p>
                     </div>
                   </div>
                 </div>
@@ -806,10 +857,17 @@ export default function AuditDetailPage() {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-semibold">Assigned Auditors</h4>
                     {canEdit && (
-                      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+                      <Dialog open={isAssignDialogOpen} onOpenChange={(open) => {
+                        setIsAssignDialogOpen(open)
+                        if (open) {
+                          loadAvailableAuditors()
+                          setSelectedAuditor("")
+                        }
+                      }}>
                         <DialogTrigger asChild>
                           <Button size="sm" variant="ghost">
-                            <UserPlus className="h-3 w-3" />
+                            <UserPlus className="h-3 w-3 mr-1" />
+                            Assign
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -827,19 +885,26 @@ export default function AuditDetailPage() {
                                   <SelectValue placeholder="Choose an auditor" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {Database.getUsers()
-                                    .filter((user: any) => user.role === "auditor" && !audit.assignedAuditors.includes(user.id))
-                                    .map((user: any) => (
+                                  {availableAuditors.length > 0 ? (
+                                    availableAuditors.map((user: any) => (
                                       <SelectItem key={user.id} value={user.id}>
                                         {user.name} ({user.email})
                                       </SelectItem>
-                                    ))}
+                                    ))
+                                  ) : (
+                                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                                      No available auditors
+                                    </div>
+                                  )}
                                 </SelectContent>
                               </Select>
                             </div>
                           </div>
                           <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>
+                            <Button variant="outline" onClick={() => {
+                              setIsAssignDialogOpen(false)
+                              setSelectedAuditor("")
+                            }}>
                               Cancel
                             </Button>
                             <Button onClick={handleAssignAuditor} disabled={!selectedAuditor}>
@@ -850,9 +915,9 @@ export default function AuditDetailPage() {
                       </Dialog>
                     )}
                   </div>
-                  {auditors.length > 0 ? (
+                  {assignedAuditors.length > 0 ? (
                     <div className="space-y-2">
-                      {auditors.map((auditor) => (
+                      {assignedAuditors.map((auditor) => (
                         <div key={auditor?.id} className="flex items-center space-x-3 p-2 hover:bg-accent rounded-lg transition-colors">
                           <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                             <span className="text-blue-600 text-sm font-semibold">

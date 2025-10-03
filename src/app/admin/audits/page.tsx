@@ -453,17 +453,41 @@ export default function AuditsPage() {
 
                     {/* Actions */}
                     <div className="flex items-center justify-between pt-2 border-t opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="sm" className="hover:text-orange-600">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="hover:text-orange-600"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          router.push(`/admin/audits/${audit.id}`)
+                        }}
+                      >
                         <Eye className="h-4 w-4 mr-1" />
                         View
                       </Button>
                       {canCreateAudit && (
                         <>
-                          <Button variant="ghost" size="sm" className="hover:text-blue-600">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="hover:text-blue-600"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/admin/audits/${audit.id}`)
+                            }}
+                          >
                             <UserPlus className="h-4 w-4 mr-1" />
                             Assign
                           </Button>
-                          <Button variant="ghost" size="sm" className="hover:text-green-600">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="hover:text-green-600"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/admin/audits/${audit.id}`)
+                            }}
+                          >
                             <Edit className="h-4 w-4 mr-1" />
                             Edit
                           </Button>
