@@ -28,6 +28,7 @@ import {
   Shield
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 
 interface Report {
   id: string
@@ -245,11 +246,10 @@ export default function ReportDetailPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {report.content ? (
-                  <div className="prose max-w-none">
-                    <p className="text-muted-foreground whitespace-pre-wrap">
-                      {report.content}
-                    </p>
-                  </div>
+                  <MarkdownRenderer 
+                    content={report.content} 
+                    className="prose-lg"
+                  />
                 ) : (
                   <p className="text-muted-foreground text-center py-8">
                     No content has been added to this report yet

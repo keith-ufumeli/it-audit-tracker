@@ -130,14 +130,22 @@ export interface Report {
   recommendations?: string[]
 }
 
+// Import user data directly for Edge Runtime compatibility
+import usersData from '../data/users.json'
+import auditsData from '../data/audits.json'
+import documentsData from '../data/documents.json'
+import activitiesData from '../data/activities.json'
+import notificationsData from '../data/notifications.json'
+import reportsData from '../data/reports.json'
+
 // In-memory data storage (Edge Runtime compatible)
 export class InMemoryDatabase {
-  static users: User[] = []
-  static audits: Audit[] = []
-  static documents: Document[] = []
-  static activities: Activity[] = []
-  static notifications: Notification[] = []
-  static reports: Report[] = []
+  static users: User[] = usersData as User[]
+  static audits: Audit[] = auditsData as Audit[]
+  static documents: Document[] = documentsData as Document[]
+  static activities: Activity[] = activitiesData as Activity[]
+  static notifications: Notification[] = notificationsData as Notification[]
+  static reports: Report[] = reportsData as Report[]
   static alerts: Alert[] = [
     {
       id: 'alert-001',
