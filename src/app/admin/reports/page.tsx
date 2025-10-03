@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database, Audit } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
@@ -53,6 +54,7 @@ export default function ReportsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [audits, setAudits] = useState<Audit[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
@@ -106,7 +108,11 @@ export default function ReportsPage() {
 
   const handleCreateReport = async () => {
     if (!newReport.auditId || !newReport.title) {
-      alert("Please fill in all required fields")
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
       return
     }
 
@@ -130,6 +136,10 @@ export default function ReportsPage() {
       const data = await response.json()
 
       if (data.success) {
+        toast({
+          title: "Success",
+          description: "Report created successfully",
+        })
         setIsCreateDialogOpen(false)
         setNewReport({
           auditId: "",
@@ -140,11 +150,19 @@ export default function ReportsPage() {
         // Reload reports to show the new one
         await loadData()
       } else {
-        alert(`Failed to create report: ${data.error}`)
+        toast({
+          title: "Error",
+          description: `Failed to create report: ${data.error}`,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error creating report:", error)
-      alert("Failed to create report. Please try again.")
+      toast({
+        title: "Error",
+        description: "Failed to create report. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       stopLoading()
     }

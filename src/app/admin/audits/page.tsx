@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database, Audit } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
@@ -39,6 +40,7 @@ export default function AuditsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [audits, setAudits] = useState<Audit[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
@@ -86,7 +88,11 @@ export default function AuditsPage() {
 
   const handleCreateAudit = async () => {
     if (!newAudit.title || !newAudit.description || !newAudit.startDate || !newAudit.endDate) {
-      alert("Please fill in all required fields")
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
       return
     }
 
@@ -112,6 +118,10 @@ export default function AuditsPage() {
       const data = await response.json()
 
       if (data.success) {
+        toast({
+          title: "Success",
+          description: "Audit created successfully",
+        })
         setIsCreateDialogOpen(false)
         setNewAudit({
           title: "",
@@ -124,11 +134,19 @@ export default function AuditsPage() {
         // Reload audits to show the new one
         await loadAudits()
       } else {
-        alert(`Failed to create audit: ${data.error}`)
+        toast({
+          title: "Error",
+          description: `Failed to create audit: ${data.error}`,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error creating audit:", error)
-      alert("Failed to create audit. Please try again.")
+      toast({
+        title: "Error",
+        description: "Failed to create audit. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       stopLoading()
     }

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database } from "@/lib/database"
 import { reportGenerator } from "@/lib/report-generator"
 import { csvExporter } from "@/lib/csv-exporter"
@@ -60,6 +61,7 @@ export default function ManagementDashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [metrics, setMetrics] = useState<ManagementMetrics | null>(null)
   const [selectedTimeRange, setSelectedTimeRange] = useState('30d')
 
@@ -292,11 +294,31 @@ export default function ManagementDashboardPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          alert(`Report shared successfully! Share link: ${data.data.recipients.publicLink}`)
+          toast({
+            title: "Success",
+            description: `Report shared successfully! Share link: ${data.data.recipients.publicLink}`,
+          })
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to share report",
+            variant: "destructive",
+          })
         }
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to share report",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error sharing report:", error)
+      toast({
+        title: "Error",
+        description: "Failed to share report. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
