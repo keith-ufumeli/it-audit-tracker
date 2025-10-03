@@ -115,23 +115,26 @@ export default function ClientDashboardPage() {
     <ClientLayout>
       <div className="p-6 space-y-6 animate-in fade-in duration-500">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent tracking-tight">
               Dashboard
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-lg text-muted-foreground font-medium">
               Welcome back, {session.user.name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Track your document submissions and audit progress
             </p>
           </div>
           <Button 
             onClick={loadDashboardData} 
             variant="outline" 
-            size="sm"
-            className="hover:bg-primary/10 transition-colors"
+            size="lg"
+            className="hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            <RefreshCw className="h-5 w-5 mr-2" />
+            Refresh Data
           </Button>
         </div>
 

@@ -52,24 +52,24 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }
 
   const Sidebar = () => (
-    <div className="flex flex-col h-full bg-card border-r">
+    <div className="flex flex-col h-full bg-card border-r shadow-sm">
       {/* Logo */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b bg-gradient-to-r from-blue-50/50 to-blue-100/30">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <Building className="h-6 w-6 text-white" />
           </div>
           <div>
             <h1 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
               Client Portal
             </h1>
-            <p className="text-xs text-muted-foreground">Audit Tracker</p>
+            <p className="text-xs text-muted-foreground font-medium">Audit Tracker</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-1">
         {navigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -80,19 +80,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 setMobileOpen(false)
               }}
               className={`
-                w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium
-                transition-all duration-200 group relative
+                w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium
+                transition-all duration-300 group relative overflow-hidden
                 ${isActive 
-                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg" 
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25" 
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:-translate-y-0.5"
                 }
               `}
             >
               <div className="flex items-center space-x-3">
-                <item.icon className={`h-5 w-5 transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`} />
-                <span>{item.name}</span>
+                <item.icon className={`h-5 w-5 transition-all duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
+                <span className="font-medium">{item.name}</span>
               </div>
-              {isActive && <ChevronRight className="h-4 w-4" />}
+              {isActive && <ChevronRight className="h-4 w-4 animate-pulse" />}
             </button>
           )
         })}
@@ -100,25 +100,25 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
       {/* User Info */}
       <div className="p-4 border-t bg-muted/30">
-        <div className="flex items-center space-x-3 p-3 rounded-lg bg-background border shadow-sm">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md">
+        <div className="flex items-center space-x-3 p-3 rounded-xl bg-background border shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
             <User className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{session?.user.name}</p>
-            <Badge className={`${getRoleColor(session?.user.role || "")} text-white text-xs mt-1`}>
+            <p className="text-sm font-semibold text-foreground truncate">{session?.user.name}</p>
+            <Badge className={`${getRoleColor(session?.user.role || "")} text-white text-xs mt-1 hover:scale-105 transition-transform duration-200`}>
               {getRoleDisplayName(session?.user.role || "")}
             </Badge>
           </div>
         </div>
         {session?.user.department && (
-          <div className="mt-2 text-xs text-muted-foreground text-center">
+          <div className="mt-2 text-xs text-muted-foreground text-center font-medium">
             {session.user.department}
           </div>
         )}
         <Button 
           variant="ghost" 
-          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 hover:scale-[1.02] rounded-xl"
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4 mr-2" />

@@ -73,24 +73,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const Sidebar = () => (
-    <div className="flex flex-col h-full bg-card border-r">
+    <div className="flex flex-col h-full bg-card border-r shadow-sm">
       {/* Logo */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b bg-gradient-to-r from-orange-50/50 to-orange-100/30">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg">
+          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
             <Shield className="h-6 w-6 text-white" />
           </div>
           <div>
             <h1 className="font-bold text-lg bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
               Audit Tracker
             </h1>
-            <p className="text-xs text-muted-foreground">Admin Portal</p>
+            <p className="text-xs text-muted-foreground font-medium">Admin Portal</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-1">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -101,19 +101,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 setMobileOpen(false)
               }}
               className={`
-                w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium
-                transition-all duration-200 group relative
+                w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium
+                transition-all duration-300 group relative overflow-hidden
                 ${isActive 
-                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg" 
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25" 
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:-translate-y-0.5"
                 }
               `}
             >
               <div className="flex items-center space-x-3">
-                <item.icon className={`h-5 w-5 transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`} />
-                <span>{item.name}</span>
+                <item.icon className={`h-5 w-5 transition-all duration-300 ${isActive ? "scale-110" : "group-hover:scale-110 group-hover:rotate-3"}`} />
+                <span className="font-medium">{item.name}</span>
               </div>
-              {isActive && <ChevronRight className="h-4 w-4" />}
+              {isActive && <ChevronRight className="h-4 w-4 animate-pulse" />}
             </button>
           )
         })}
@@ -121,20 +121,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* User Info */}
       <div className="p-4 border-t bg-muted/30">
-        <div className="flex items-center space-x-3 p-3 rounded-lg bg-background border shadow-sm">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md">
+        <div className="flex items-center space-x-3 p-3 rounded-xl bg-background border shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
             <User className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{session?.user.name}</p>
-            <Badge className={`${getRoleColor(session?.user.role || "")} text-white text-xs mt-1`}>
+            <p className="text-sm font-semibold text-foreground truncate">{session?.user.name}</p>
+            <Badge className={`${getRoleColor(session?.user.role || "")} text-white text-xs mt-1 hover:scale-105 transition-transform duration-200`}>
               {getRoleDisplayName(session?.user.role || "")}
             </Badge>
           </div>
         </div>
         <Button 
           variant="ghost" 
-          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          className="w-full mt-3 justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 hover:scale-[1.02] rounded-xl"
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4 mr-2" />

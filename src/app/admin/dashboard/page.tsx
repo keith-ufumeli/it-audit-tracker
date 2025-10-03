@@ -130,89 +130,92 @@ export default function DashboardPage() {
     <AdminLayout>
       <div className="p-6 space-y-6 animate-in fade-in duration-500">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent tracking-tight">
               Dashboard
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-lg text-muted-foreground font-medium">
               Welcome back, {session.user.name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Here's what's happening with your audits today
             </p>
           </div>
           <Button 
             onClick={loadDashboardData} 
             variant="outline" 
-            size="sm"
-            className="hover:bg-primary/10 transition-colors"
+            size="lg"
+            className="hover:bg-orange-50 hover:text-orange-700 hover:border-orange-300 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
           >
-            <ActivityIcon className="h-4 w-4 mr-2" />
-            Refresh
+            <ActivityIcon className="h-5 w-5 mr-2" />
+            Refresh Data
           </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Audits</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <Shield className="h-5 w-5 text-blue-600" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-foreground">Active Audits</CardTitle>
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110">
+                <Shield className="h-6 w-6 text-blue-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-4xl font-bold text-blue-600 mb-2">
                 {stats.audits.byStatus.in_progress || 0}
               </div>
-              <p className="text-xs text-muted-foreground flex items-center mt-2">
-                <TrendingUp className="h-3 w-3 mr-1 text-green-600" />
+              <p className="text-sm text-muted-foreground flex items-center font-medium">
+                <TrendingUp className="h-4 w-4 mr-2 text-green-600" />
                 {stats.audits.total} total audits
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Documents</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-orange-600" />
+          <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-foreground">Documents</CardTitle>
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110">
+                <FileText className="h-6 w-6 text-orange-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-orange-600">{stats.documents.total}</div>
-              <p className="text-xs text-muted-foreground flex items-center mt-2">
-                <Clock className="h-3 w-3 mr-1 text-orange-600" />
+              <div className="text-4xl font-bold text-orange-600 mb-2">{stats.documents.total}</div>
+              <p className="text-sm text-muted-foreground flex items-center font-medium">
+                <Clock className="h-4 w-4 mr-2 text-orange-600" />
                 {stats.documents.byStatus.pending || 0} pending review
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                <Users className="h-5 w-5 text-green-600" />
+          <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-foreground">Total Users</CardTitle>
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110">
+                <Users className="h-6 w-6 text-green-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-600">{stats.users.total}</div>
-              <p className="text-xs text-muted-foreground flex items-center mt-2">
-                <CheckCircle2 className="h-3 w-3 mr-1 text-green-600" />
+              <div className="text-4xl font-bold text-green-600 mb-2">{stats.users.total}</div>
+              <p className="text-sm text-muted-foreground flex items-center font-medium">
+                <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
                 {stats.users.active} active users
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Alerts</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
+          <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-semibold text-foreground">Alerts</CardTitle>
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">{stats.notifications.unread}</div>
-              <p className="text-xs text-muted-foreground flex items-center mt-2">
-                <Sparkles className="h-3 w-3 mr-1 text-red-600" />
+              <div className="text-4xl font-bold text-red-600 mb-2">{stats.notifications.unread}</div>
+              <p className="text-sm text-muted-foreground flex items-center font-medium">
+                <Sparkles className="h-4 w-4 mr-2 text-red-600" />
                 {stats.notifications.total} total notifications
               </p>
             </CardContent>

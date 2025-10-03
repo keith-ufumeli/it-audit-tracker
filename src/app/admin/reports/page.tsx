@@ -1,24 +1,43 @@
-"use client"
+"use client";
 
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useLoading } from "@/hooks/use-loading"
-import { useToast } from "@/hooks/use-toast"
-import { Database, Audit } from "@/lib/database"
-import { reportGenerator } from "@/lib/report-generator"
-import { csvExporter } from "@/lib/csv-exporter"
-import AdminLayout from "@/components/admin/admin-layout"
-import { 
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useLoading } from "@/hooks/use-loading";
+import { useToast } from "@/hooks/use-toast";
+import { Database, Audit } from "@/lib/database";
+import { reportGenerator } from "@/lib/report-generator";
+import { csvExporter } from "@/lib/csv-exporter";
+import AdminLayout from "@/components/admin/admin-layout";
+import {
   FileText,
   Plus,
   Search,
@@ -34,80 +53,80 @@ import {
   Send,
   FileCheck,
   TrendingUp,
-  BarChart3
-} from "lucide-react"
-import { CardSkeleton } from "@/components/ui/loader"
+  BarChart3,
+} from "lucide-react";
+import { CardSkeleton } from "@/components/ui/loader";
 
 interface Report {
-  id: string
-  auditId: string
-  auditTitle: string
-  title: string
-  status: "draft" | "submitted" | "approved" | "rejected"
-  preparedBy: string
-  preparedByName: string
-  submittedAt?: string
-  approvedAt?: string
-  createdAt: string
-  findings: number
-  summary: string
+  id: string;
+  auditId: string;
+  auditTitle: string;
+  title: string;
+  status: "draft" | "submitted" | "approved" | "rejected";
+  preparedBy: string;
+  preparedByName: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  createdAt: string;
+  findings: number;
+  summary: string;
 }
 
 export default function ReportsPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const { isLoading, startLoading, stopLoading } = useLoading()
-  const { toast } = useToast()
-  const [audits, setAudits] = useState<Audit[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedTab, setSelectedTab] = useState("all")
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  
-  const [reports, setReports] = useState<Report[]>([])
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { isLoading, startLoading, stopLoading } = useLoading();
+  const { toast } = useToast();
+  const [audits, setAudits] = useState<Audit[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTab, setSelectedTab] = useState("all");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+  const [reports, setReports] = useState<Report[]>([]);
 
   const [newReport, setNewReport] = useState({
     auditId: "",
     title: "",
     summary: "",
     findings: "",
-  })
+  });
 
   useEffect(() => {
-    if (status === "loading") return
+    if (status === "loading") return;
 
     if (!session) {
-      router.push("/auth/signin")
-      return
+      router.push("/auth/signin");
+      return;
     }
 
-    const adminRoles = ["audit_manager", "auditor", "management"]
+    const adminRoles = ["audit_manager", "auditor", "management"];
     if (!adminRoles.includes(session.user.role)) {
-      router.push("/client")
-      return
+      router.push("/client");
+      return;
     }
 
-    loadData()
-  }, [session, status, router])
+    loadData();
+  }, [session, status, router]);
 
   const loadData = async () => {
-    startLoading("Loading reports...")
+    startLoading("Loading reports...");
     try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      const allAudits = Database.getAudits()
-      setAudits(allAudits)
-      
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      const allAudits = Database.getAudits();
+      setAudits(allAudits);
+
       // Fetch reports from API
-      const response = await fetch("/api/reports")
-      const data = await response.json()
+      const response = await fetch("/api/reports");
+      const data = await response.json();
       if (data.success) {
-        setReports(data.data)
+        setReports(data.data);
       }
     } catch (error) {
-      console.error("Error loading data:", error)
+      console.error("Error loading data:", error);
     } finally {
-      stopLoading()
+      stopLoading();
     }
-  }
+  };
 
   const handleCreateReport = async () => {
     if (!newReport.auditId || !newReport.title) {
@@ -115,11 +134,11 @@ export default function ReportsPage() {
         title: "Validation Error",
         description: "Please fill in all required fields",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    startLoading("Creating report...")
+    startLoading("Creating report...");
     try {
       const response = await fetch("/api/reports", {
         method: "POST",
@@ -131,45 +150,47 @@ export default function ReportsPage() {
           auditId: newReport.auditId,
           reportType: "audit",
           content: newReport.summary,
-          findings: newReport.findings ? newReport.findings.split(',').map(f => f.trim()) : [],
-          recommendations: []
+          findings: newReport.findings
+            ? newReport.findings.split(",").map((f) => f.trim())
+            : [],
+          recommendations: [],
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
         toast({
           title: "Success",
           description: "Report created successfully",
-        })
-        setIsCreateDialogOpen(false)
+        });
+        setIsCreateDialogOpen(false);
         setNewReport({
           auditId: "",
           title: "",
           summary: "",
           findings: "",
-        })
+        });
         // Reload reports to show the new one
-        await loadData()
+        await loadData();
       } else {
         toast({
           title: "Error",
           description: `Failed to create report: ${data.error}`,
           variant: "destructive",
-        })
+        });
       }
     } catch (error) {
-      console.error("Error creating report:", error)
+      console.error("Error creating report:", error);
       toast({
         title: "Error",
         description: "Failed to create report. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      stopLoading()
+      stopLoading();
     }
-  }
+  };
 
   const handleExportReportPDF = (report: Report) => {
     try {
@@ -177,82 +198,101 @@ export default function ReportsPage() {
         title: report.title,
         subtitle: `Generated on ${new Date().toLocaleDateString()}`,
         includeCharts: true,
-        includeDetails: true
-      })
-      pdf.save(`${report.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`)
+        includeDetails: true,
+      });
+      pdf.save(
+        `${report.title.replace(/\s+/g, "-").toLowerCase()}-${
+          new Date().toISOString().split("T")[0]
+        }.pdf`
+      );
       toast({
         title: "Success",
         description: "Report exported as PDF",
-      })
+      });
     } catch (error) {
-      console.error("Error exporting PDF:", error)
+      console.error("Error exporting PDF:", error);
       toast({
         title: "Error",
         description: "Failed to export PDF",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const handleExportReportCSV = (report: Report) => {
     try {
       const csvContent = [
-        ['Report Title', report.title],
-        ['Audit', report.auditTitle],
-        ['Status', report.status],
-        ['Prepared By', report.preparedByName],
-        ['Created At', new Date(report.createdAt).toLocaleString()],
-        ['Findings', report.findings.toString()],
-        ['Summary', report.summary]
-      ].map(row => row.join(',')).join('\n')
+        ["Report Title", report.title],
+        ["Audit", report.auditTitle],
+        ["Status", report.status],
+        ["Prepared By", report.preparedByName],
+        ["Created At", new Date(report.createdAt).toLocaleString()],
+        ["Findings", report.findings.toString()],
+        ["Summary", report.summary],
+      ]
+        .map((row) => row.join(","))
+        .join("\n");
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = `${report.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.csv`
-      link.click()
-      
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${report.title.replace(/\s+/g, "-").toLowerCase()}-${
+        new Date().toISOString().split("T")[0]
+      }.csv`;
+      link.click();
+
       toast({
         title: "Success",
         description: "Report exported as CSV",
         variant: "success",
-      })
+      });
     } catch (error) {
-      console.error("Error exporting CSV:", error)
+      console.error("Error exporting CSV:", error);
       toast({
         title: "Error",
         description: "Failed to export CSV",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "approved": return <CheckCircle className="h-4 w-4" />
-      case "submitted": return <Send className="h-4 w-4" />
-      case "draft": return <Edit className="h-4 w-4" />
-      case "rejected": return <AlertCircle className="h-4 w-4" />
-      default: return <FileText className="h-4 w-4" />
+      case "approved":
+        return <CheckCircle className="h-4 w-4" />;
+      case "submitted":
+        return <Send className="h-4 w-4" />;
+      case "draft":
+        return <Edit className="h-4 w-4" />;
+      case "rejected":
+        return <AlertCircle className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "approved": return "text-green-600 bg-green-100 hover:bg-green-200"
-      case "submitted": return "text-blue-600 bg-blue-100 hover:bg-blue-200"
-      case "draft": return "text-gray-600 bg-gray-100 hover:bg-gray-200"
-      case "rejected": return "text-red-600 bg-red-100 hover:bg-red-200"
-      default: return "text-gray-600 bg-gray-100"
+      case "approved":
+        return "text-green-600 bg-green-100 hover:bg-green-200";
+      case "submitted":
+        return "text-blue-600 bg-blue-100 hover:bg-blue-200";
+      case "draft":
+        return "text-gray-600 bg-gray-100 hover:bg-gray-200";
+      case "rejected":
+        return "text-red-600 bg-red-100 hover:bg-red-200";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
-  }
+  };
 
-  const filteredReports = reports.filter(report => {
-    const matchesSearch = report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         report.auditTitle.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesTab = selectedTab === "all" || report.status === selectedTab
-    return matchesSearch && matchesTab
-  })
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch =
+      report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      report.auditTitle.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab = selectedTab === "all" || report.status === selectedTab;
+    return matchesSearch && matchesTab;
+  });
 
   if (status === "loading" || isLoading) {
     return (
@@ -266,12 +306,12 @@ export default function ReportsPage() {
           </div>
         </div>
       </AdminLayout>
-    )
+    );
   }
 
-  if (!session) return null
+  if (!session) return null;
 
-  const canSubmitReports = session.user.permissions.includes("submit_reports")
+  const canSubmitReports = session.user.permissions.includes("submit_reports");
 
   return (
     <AdminLayout>
@@ -287,7 +327,10 @@ export default function ReportsPage() {
             </p>
           </div>
           {canSubmitReports && (
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Dialog
+              open={isCreateDialogOpen}
+              onOpenChange={setIsCreateDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-300">
                   <Plus className="h-4 w-4 mr-2" />
@@ -296,7 +339,9 @@ export default function ReportsPage() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl">Create New Report</DialogTitle>
+                  <DialogTitle className="text-2xl">
+                    Create New Report
+                  </DialogTitle>
                   <DialogDescription>
                     Document your audit findings and recommendations
                   </DialogDescription>
@@ -308,7 +353,9 @@ export default function ReportsPage() {
                       id="audit"
                       aria-label="Select audit for report"
                       value={newReport.auditId}
-                      onChange={(e) => setNewReport({...newReport, auditId: e.target.value})}
+                      onChange={(e) =>
+                        setNewReport({ ...newReport, auditId: e.target.value })
+                      }
                       className="w-full h-10 px-3 rounded-md border border-input bg-background focus:ring-2 focus:ring-orange-500"
                     >
                       <option value="">Select an audit...</option>
@@ -325,7 +372,9 @@ export default function ReportsPage() {
                       id="reportTitle"
                       placeholder="e.g., Security Assessment Report - Q1 2024"
                       value={newReport.title}
-                      onChange={(e) => setNewReport({...newReport, title: e.target.value})}
+                      onChange={(e) =>
+                        setNewReport({ ...newReport, title: e.target.value })
+                      }
                       className="focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
@@ -335,7 +384,9 @@ export default function ReportsPage() {
                       id="summary"
                       placeholder="Provide a high-level summary of the audit findings..."
                       value={newReport.summary}
-                      onChange={(e) => setNewReport({...newReport, summary: e.target.value})}
+                      onChange={(e) =>
+                        setNewReport({ ...newReport, summary: e.target.value })
+                      }
                       rows={5}
                       className="focus:ring-2 focus:ring-orange-500"
                     />
@@ -346,23 +397,25 @@ export default function ReportsPage() {
                       id="findings"
                       placeholder="List the main findings and observations..."
                       value={newReport.findings}
-                      onChange={(e) => setNewReport({...newReport, findings: e.target.value})}
+                      onChange={(e) =>
+                        setNewReport({ ...newReport, findings: e.target.value })
+                      }
                       rows={4}
                       className="focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={handleCreateReport}
-                  >
+                  <Button variant="outline" onClick={handleCreateReport}>
                     Save as Draft
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleCreateReport}
                     className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
                   >
@@ -378,39 +431,49 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Reports</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Reports
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-blue-600">{reports.length}</div>
+              <div className="text-3xl font-bold text-blue-600">
+                {reports.length}
+              </div>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Draft</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Draft
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-gray-600">
-                {reports.filter(r => r.status === "draft").length}
+                {reports.filter((r) => r.status === "draft").length}
               </div>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending Review</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending Review
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-orange-600">
-                {reports.filter(r => r.status === "submitted").length}
+                {reports.filter((r) => r.status === "submitted").length}
               </div>
             </CardContent>
           </Card>
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Approved</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Approved
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-green-600">
-                {reports.filter(r => r.status === "approved").length}
+                {reports.filter((r) => r.status === "approved").length}
               </div>
             </CardContent>
           </Card>
@@ -438,21 +501,40 @@ export default function ReportsPage() {
         </Card>
 
         {/* Tabs */}
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+        <Tabs
+          value={selectedTab}
+          onValueChange={setSelectedTab}
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
+            <TabsTrigger
+              value="all"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+            >
               All
             </TabsTrigger>
-            <TabsTrigger value="draft" className="data-[state=active]:bg-gray-500 data-[state=active]:text-white">
+            <TabsTrigger
+              value="draft"
+              className="data-[state=active]:bg-gray-500 data-[state=active]:text-white"
+            >
               Drafts
             </TabsTrigger>
-            <TabsTrigger value="submitted" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+            <TabsTrigger
+              value="submitted"
+              className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+            >
               Submitted
             </TabsTrigger>
-            <TabsTrigger value="approved" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">
+            <TabsTrigger
+              value="approved"
+              className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+            >
               Approved
             </TabsTrigger>
-            <TabsTrigger value="rejected" className="data-[state=active]:bg-red-500 data-[state=active]:text-white">
+            <TabsTrigger
+              value="rejected"
+              className="data-[state=active]:bg-red-500 data-[state=active]:text-white"
+            >
               Rejected
             </TabsTrigger>
           </TabsList>
@@ -460,7 +542,7 @@ export default function ReportsPage() {
           <TabsContent value={selectedTab} className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {filteredReports.map((report, index) => (
-                <Card 
+                <Card
                   key={report.id}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-in slide-in-from-bottom"
                   style={{ animationDelay: `${index * 50}ms` }}
@@ -476,16 +558,31 @@ export default function ReportsPage() {
                       </Badge>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="hover:text-orange-600" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:text-orange-600"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <Download className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleExportReportPDF(report); }}>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExportReportPDF(report);
+                            }}
+                          >
                             <FileText className="h-4 w-4 mr-2" />
                             Export as PDF
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleExportReportCSV(report); }}>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExportReportCSV(report);
+                            }}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Export as CSV
                           </DropdownMenuItem>
@@ -520,39 +617,55 @@ export default function ReportsPage() {
                     <div className="text-xs text-muted-foreground space-y-1">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
-                        Created: {new Date(report.createdAt).toLocaleDateString()}
+                        Created:{" "}
+                        {new Date(report.createdAt).toLocaleDateString()}
                       </div>
                       {report.submittedAt && (
                         <div className="flex items-center">
                           <Send className="h-3 w-3 mr-1" />
-                          Submitted: {new Date(report.submittedAt).toLocaleDateString()}
+                          Submitted:{" "}
+                          {new Date(report.submittedAt).toLocaleDateString()}
                         </div>
                       )}
                       {report.approvedAt && (
                         <div className="flex items-center">
                           <CheckCircle className="h-3 w-3 mr-1" />
-                          Approved: {new Date(report.approvedAt).toLocaleDateString()}
+                          Approved:{" "}
+                          {new Date(report.approvedAt).toLocaleDateString()}
                         </div>
                       )}
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="sm" className="hover:text-orange-600">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="hover:text-orange-600"
+                      >
                         <Eye className="h-4 w-4 mr-1" />
                         View Details
                       </Button>
                       {report.status === "draft" && canSubmitReports && (
-                        <Button variant="ghost" size="sm" className="hover:text-blue-600">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:text-blue-600"
+                        >
                           <Edit className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
                       )}
-                      {report.status === "submitted" && session.user.role === "management" && (
-                        <Button variant="ghost" size="sm" className="hover:text-green-600">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Approve
-                        </Button>
-                      )}
+                      {report.status === "submitted" &&
+                        session.user.role === "management" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="hover:text-green-600"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Approve
+                          </Button>
+                        )}
                     </div>
                   </CardContent>
                 </Card>
@@ -565,7 +678,9 @@ export default function ReportsPage() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">No reports found</h3>
                 <p className="text-muted-foreground">
-                  {searchQuery ? "Try adjusting your search query" : "Create your first report to get started"}
+                  {searchQuery
+                    ? "Try adjusting your search query"
+                    : "Create your first report to get started"}
                 </p>
               </div>
             )}
@@ -573,6 +688,5 @@ export default function ReportsPage() {
         </Tabs>
       </div>
     </AdminLayout>
-  )
+  );
 }
-
