@@ -35,7 +35,7 @@ export async function activityLoggingMiddleware(
     const resourceId = extractResourceId(request)
 
     // Log the activity
-    activityLogger.logRequest(
+    await activityLogger.logRequest(
       request,
       response,
       userId,
@@ -165,7 +165,7 @@ function extractResourceId(request: NextRequest): string | undefined {
 }
 
 // Enhanced logging for specific security events
-export function logSecurityEvent(
+export async function logSecurityEvent(
   event: string,
   details: Record<string, any>,
   request: NextRequest,
@@ -173,7 +173,7 @@ export function logSecurityEvent(
   userName?: string,
   userRole?: string
 ) {
-  activityLogger.logActivity({
+  await activityLogger.logActivity({
     userId: userId || 'system',
     userName: userName || 'System',
     userRole: userRole || 'system',
@@ -195,12 +195,12 @@ export function logSecurityEvent(
 }
 
 // Log failed authentication attempts
-export function logFailedAuth(
+export async function logFailedAuth(
   email: string,
   reason: string,
   request: NextRequest
 ) {
-  activityLogger.logActivity({
+  await activityLogger.logActivity({
     userId: 'anonymous',
     userName: email,
     userRole: 'guest',
@@ -222,13 +222,13 @@ export function logFailedAuth(
 }
 
 // Log successful authentication
-export function logSuccessfulAuth(
+export async function logSuccessfulAuth(
   userId: string,
   userName: string,
   userRole: string,
   request: NextRequest
 ) {
-  activityLogger.logActivity({
+  await activityLogger.logActivity({
     userId,
     userName,
     userRole,

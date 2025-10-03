@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { Database } from "./database"
 
 export interface ActivityLogEntry {
   id: string
@@ -111,7 +110,7 @@ export class ActivityLogger {
     ]
   }
 
-  public logActivity(entry: Omit<ActivityLogEntry, 'id' | 'timestamp'>): string {
+  public async logActivity(entry: Omit<ActivityLogEntry, 'id' | 'timestamp'>): Promise<string> {
     const activityId = `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     
     const fullEntry: ActivityLogEntry = {
@@ -120,19 +119,26 @@ export class ActivityLogger {
       timestamp: new Date().toISOString()
     }
 
-    // Store in database
-    Database.addActivity({
-      ...fullEntry,
-      metadata: fullEntry.metadata || {}
-    })
+    // Store in database using dynamic import to avoid Edge Runtime issues
+    if (typeof window === 'undefined') {
+      try {
+        const { Database } = await import('./database')
+        Database.addActivity({
+          ...fullEntry,
+          metadata: fullEntry.metadata || {}
+        })
+      } catch (error) {
+        console.error('Failed to log activity:', error)
+      }
+    }
 
     // Check for alerts
-    this.checkAlertRules(fullEntry)
+    await this.checkAlertRules(fullEntry)
 
     return activityId
   }
 
-  public logRequest(
+  public async logRequest(
     request: NextRequest,
     response: NextResponse,
     userId?: string,
@@ -142,11 +148,11 @@ export class ActivityLogger {
     resource?: string,
     resourceId?: string,
     metadata?: Record<string, any>
-  ): string {
+  ): Promise<string> {
     const startTime = Date.now()
     const responseTime = Date.now() - startTime
 
-    return this.logActivity({
+    return await this.logActivity({
       userId: userId || 'anonymous',
       userName: userName || 'Anonymous User',
       userRole: userRole || 'guest',
@@ -196,17 +202,17 @@ export class ActivityLogger {
     return 'info'
   }
 
-  private checkAlertRules(entry: ActivityLogEntry) {
+  private async checkAlertRules(entry: ActivityLogEntry) {
     for (const rule of this.alertRules) {
       if (!rule.isActive) continue
 
-      if (this.evaluateRule(rule, entry)) {
-        this.triggerAlert(rule, entry)
+      if (await this.evaluateRule(rule, entry)) {
+        await this.triggerAlert(rule, entry)
       }
     }
   }
 
-  private evaluateRule(rule: AlertRule, entry: ActivityLogEntry): boolean {
+  private async evaluateRule(rule: AlertRule, entry: ActivityLogEntry): Promise<boolean> {
     const { conditions } = rule
 
     // Check basic conditions
@@ -220,14 +226,19 @@ export class ActivityLogger {
       const timeWindow = conditions.timeWindow * 60 * 1000 // Convert to milliseconds
       const cutoffTime = new Date(Date.now() - timeWindow).toISOString()
       
-      const recentActivities = Database.getActivities().filter(activity => 
-        activity.userId === entry.userId &&
-        activity.timestamp >= cutoffTime &&
-        this.matchesBasicConditions(activity, conditions)
-      )
+      try {
+        const { Database } = await import('./database')
+        const recentActivities = Database.getActivities().filter(activity => 
+          activity.userId === entry.userId &&
+          activity.timestamp >= cutoffTime &&
+          this.matchesBasicConditions(activity, conditions)
+        )
 
-      if (recentActivities.length >= conditions.threshold) {
-        return true
+        if (recentActivities.length >= conditions.threshold) {
+          return true
+        }
+      } catch (error) {
+        console.error('Failed to evaluate rule:', error)
       }
     }
 
@@ -242,7 +253,7 @@ export class ActivityLogger {
     return true
   }
 
-  private triggerAlert(rule: AlertRule, entry: ActivityLogEntry) {
+  private async triggerAlert(rule: AlertRule, entry: ActivityLogEntry) {
     // Update rule last triggered
     rule.lastTriggered = new Date().toISOString()
 
@@ -265,33 +276,40 @@ export class ActivityLogger {
       }
     }
 
-    // Store alert
-    Database.addAlert(alert)
+    // Store alert using dynamic import
+    if (typeof window === 'undefined') {
+      try {
+        const { Database } = await import('./database')
+        Database.addAlert(alert)
+
+        // Create notification for admin users
+        const adminUsers = Database.getUsers().filter(user => 
+          ['audit_manager', 'auditor', 'management'].includes(user.role)
+        )
+
+        adminUsers.forEach(admin => {
+          Database.addNotification({
+            userId: admin.id,
+            userName: admin.name,
+            userRole: admin.role,
+            title: `Security Alert: ${rule.name}`,
+            message: `${rule.description} - Triggered by ${entry.userName}`,
+            type: 'security_alert',
+            priority: rule.severity as 'low' | 'medium' | 'high' | 'critical',
+            metadata: {
+              alertId: alert.id,
+              ruleId: rule.id,
+              activityId: entry.id
+            }
+          })
+        })
+      } catch (error) {
+        console.error('Failed to trigger alert:', error)
+      }
+    }
 
     // Send real-time notification via WebSocket
     this.broadcastAlert(alert)
-
-    // Create notification for admin users
-    const adminUsers = Database.getUsers().filter(user => 
-      ['audit_manager', 'auditor', 'management'].includes(user.role)
-    )
-
-    adminUsers.forEach(admin => {
-      Database.addNotification({
-        userId: admin.id,
-        userName: admin.name,
-        userRole: admin.role,
-        title: `Security Alert: ${rule.name}`,
-        message: `${rule.description} - Triggered by ${entry.userName}`,
-        type: 'security_alert',
-        priority: rule.severity as 'low' | 'medium' | 'high' | 'critical',
-        metadata: {
-          alertId: alert.id,
-          ruleId: rule.id,
-          activityId: entry.id
-        }
-      })
-    })
   }
 
   public broadcastAlert(alert: any) {
@@ -327,24 +345,42 @@ export class ActivityLogger {
     return true
   }
 
-  public getRecentActivities(limit: number = 100): ActivityLogEntry[] {
-    return Database.getActivities()
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, limit)
+  public async getRecentActivities(limit: number = 100): Promise<ActivityLogEntry[]> {
+    try {
+      const { Database } = await import('./database')
+      return Database.getActivities()
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, limit)
+    } catch (error) {
+      console.error('Failed to get recent activities:', error)
+      return []
+    }
   }
 
-  public getActivitiesByUser(userId: string, limit: number = 50): ActivityLogEntry[] {
-    return Database.getActivities()
-      .filter(activity => activity.userId === userId)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, limit)
+  public async getActivitiesByUser(userId: string, limit: number = 50): Promise<ActivityLogEntry[]> {
+    try {
+      const { Database } = await import('./database')
+      return Database.getActivities()
+        .filter(activity => activity.userId === userId)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, limit)
+    } catch (error) {
+      console.error('Failed to get activities by user:', error)
+      return []
+    }
   }
 
-  public getActivitiesBySeverity(severity: string, limit: number = 50): ActivityLogEntry[] {
-    return Database.getActivities()
-      .filter(activity => activity.severity === severity)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, limit)
+  public async getActivitiesBySeverity(severity: string, limit: number = 50): Promise<ActivityLogEntry[]> {
+    try {
+      const { Database } = await import('./database')
+      return Database.getActivities()
+        .filter(activity => activity.severity === severity)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+        .slice(0, limit)
+    } catch (error) {
+      console.error('Failed to get activities by severity:', error)
+      return []
+    }
   }
 }
 

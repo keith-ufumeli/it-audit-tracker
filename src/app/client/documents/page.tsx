@@ -55,19 +55,12 @@ export default function ClientDocumentsPage() {
   const loadDocuments = useCallback(async () => {
     startLoading("Loading documents...")
     try {
-      // Fetch fresh data from API instead of using cached data
-      const response = await fetch("/api/audits")
+      // Fetch documents from the dedicated documents API
+      const response = await fetch("/api/documents")
       const result = await response.json()
       
       if (result.success && result.data) {
-        // Get all documents from all audits
-        const allDocuments = result.data.flatMap((audit: any) => audit.documents || [])
-        
-        // Filter documents for current user
-        const userDocs = allDocuments.filter((doc: any) => 
-          doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
-        )
-        setDocuments(userDocs)
+        setDocuments(result.data)
       } else {
         // Fallback to in-memory database if API fails
         const allDocuments = Database.getDocuments()
