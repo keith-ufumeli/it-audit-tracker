@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FullPageLoader } from "@/components/ui/loader"
 import { useToast } from "@/hooks/use-toast"
+import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Shield, 
   Plus, 
@@ -313,7 +314,7 @@ export default function PermissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <AdminLayout>
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
@@ -655,6 +656,6 @@ export default function PermissionsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminLayout>
   )
 }

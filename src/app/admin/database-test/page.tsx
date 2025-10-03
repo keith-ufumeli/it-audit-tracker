@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Loader } from "@/components/ui/loader"
 import { Database } from "@/lib/database"
+import AdminLayout from "@/components/admin/admin-layout"
 import { Database as DatabaseIcon, Users, Shield, FileText, Activity as ActivityIcon } from "lucide-react"
 
 export default function DatabaseTestPage() {
@@ -93,7 +94,7 @@ export default function DatabaseTestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <AdminLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -275,6 +276,6 @@ export default function DatabaseTestPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminLayout>
   )
 }

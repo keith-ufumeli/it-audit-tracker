@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { FullPageLoader } from "@/components/ui/loader"
 import { useToast } from "@/hooks/use-toast"
+import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Users, 
   Plus, 
@@ -272,7 +273,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <AdminLayout>
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
@@ -576,6 +577,6 @@ export default function UsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminLayout>
   )
 }
