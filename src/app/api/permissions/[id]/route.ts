@@ -8,7 +8,7 @@ const permissionManager = PermissionManager.getInstance()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,7 +22,8 @@ export async function GET(
       return NextResponse.json({ error: "Only Super Admin can view permissions" }, { status: 403 })
     }
 
-    const permission = permissionManager.getPermissionById(params.id)
+    const { id } = await params
+    const permission = permissionManager.getPermissionById(id)
     if (!permission) {
       return NextResponse.json({ error: "Permission not found" }, { status: 404 })
     }
@@ -36,7 +37,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -50,7 +51,8 @@ export async function PUT(
       return NextResponse.json({ error: "Only Super Admin can update permissions" }, { status: 403 })
     }
 
-    const existingPermission = permissionManager.getPermissionById(params.id)
+    const { id } = await params
+    const existingPermission = permissionManager.getPermissionById(id)
     if (!existingPermission) {
       return NextResponse.json({ error: "Permission not found" }, { status: 404 })
     }
@@ -70,7 +72,7 @@ export async function PUT(
 
     // Validate permission structure
     const permission = { 
-      id: params.id, 
+      id: id, 
       name, 
       description, 
       category, 
@@ -93,14 +95,14 @@ export async function PUT(
       userName: session.user.name,
       userRole: session.user.role,
       action: "update_permission",
-      description: `Updated permission: ${name} (${params.id})`,
+      description: `Updated permission: ${name} (${id})`,
       timestamp: new Date().toISOString(),
       ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "info",
       resource: "permission_management",
       metadata: {
-        permissionId: params.id,
+        permissionId: id,
         permissionName: name,
         category: category
       }
@@ -115,7 +117,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -129,7 +131,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Only Super Admin can delete permissions" }, { status: 403 })
     }
 
-    const permission = permissionManager.getPermissionById(params.id)
+    const { id } = await params
+    const permission = permissionManager.getPermissionById(id)
     if (!permission) {
       return NextResponse.json({ error: "Permission not found" }, { status: 404 })
     }
@@ -139,7 +142,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Cannot delete system permissions" }, { status: 400 })
     }
 
-    const success = permissionManager.deletePermission(params.id)
+    const success = permissionManager.deletePermission(id)
     if (!success) {
       return NextResponse.json({ error: "Failed to delete permission" }, { status: 500 })
     }
@@ -150,14 +153,14 @@ export async function DELETE(
       userName: session.user.name,
       userRole: session.user.role,
       action: "delete_permission",
-      description: `Deleted permission: ${permission.name} (${params.id})`,
+      description: `Deleted permission: ${permission.name} (${id})`,
       timestamp: new Date().toISOString(),
       ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "warning",
       resource: "permission_management",
       metadata: {
-        permissionId: params.id,
+        permissionId: id,
         permissionName: permission.name,
         category: permission.category
       }

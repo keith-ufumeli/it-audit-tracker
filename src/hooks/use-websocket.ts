@@ -81,7 +81,7 @@ export function useWebSocket({
       console.error('Failed to create WebSocket connection:', error)
       setConnectionStatus('disconnected')
     }
-  }, [url, onOpen, onError, onClose])
+  }, [url, onOpen, onError, onClose, onMessage, maxReconnectAttempts, reconnectInterval])
 
   const disconnect = () => {
     if (reconnectTimeoutRef.current) {

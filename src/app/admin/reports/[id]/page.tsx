@@ -79,7 +79,7 @@ export default function ReportDetailPage() {
     } finally {
       stopLoading()
     }
-  }, [startLoading, stopLoading, reportId])
+  }, [startLoading, stopLoading, reportId, router])
 
   useEffect(() => {
     if (status === "loading") return
