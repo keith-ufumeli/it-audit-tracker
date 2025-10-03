@@ -21,8 +21,6 @@ import {
   Shield, 
   Clock,
   Archive,
-  Trash2,
-  Filter
 } from "lucide-react"
 
 import { CardSkeleton } from "@/components/ui/loader"

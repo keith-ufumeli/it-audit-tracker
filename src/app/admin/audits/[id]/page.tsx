@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
-import { Database, Audit } from "@/lib/database"
+import { Audit } from "@/lib/database"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,16 +20,14 @@ import {
   ArrowLeft,
   Calendar,
   Users,
-  FileText,
   AlertCircle,
-  CheckCircle2,
   Clock,
-  Shield,
   Edit,
   Trash2,
   UserPlus,
   TrendingUp,
   Target,
+  Shield,
   Activity
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"
@@ -126,15 +124,11 @@ export default function AuditDetailPage() {
       const response = await fetch("/api/users")
       if (response.ok) {
         const result = await response.json()
-        console.log("Users API response:", result)
         if (result.success && result.data) {
           const users = result.data
-          console.log("Available users:", users)
-          console.log("Looking for audit manager with ID:", auditData.auditManager)
           
           // Find audit manager
           const manager = users.find((user: any) => user.id === auditData.auditManager)
-          console.log("Found audit manager:", manager)
           setAuditManager(manager || null)
           
           // Find assigned auditors
@@ -142,11 +136,7 @@ export default function AuditDetailPage() {
             .map((id: string) => users.find((user: any) => user.id === id))
             .filter(Boolean)
           setAssignedAuditors(auditors)
-        } else {
-          console.error("API response format error:", result)
         }
-      } else {
-        console.error("Failed to fetch users:", response.status, response.statusText)
       }
     } catch (error) {
       console.error("Error loading user data:", error)

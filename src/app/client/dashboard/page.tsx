@@ -16,12 +16,10 @@ import {
   FileText,
   Upload,
   Clock,
-  CheckCircle,
-  AlertCircle,
   Calendar,
   ArrowRight,
-  TrendingUp,
   RefreshCw,
+  CheckCircle,
   BarChart3
 } from "lucide-react"
 import { CardSkeleton } from "@/components/ui/loader"

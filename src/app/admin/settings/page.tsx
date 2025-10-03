@@ -20,8 +20,6 @@ import {
   Users, 
   Shield, 
   Database, 
-  Bell, 
-  FileText, 
   Monitor,
   Plug,
   Save,

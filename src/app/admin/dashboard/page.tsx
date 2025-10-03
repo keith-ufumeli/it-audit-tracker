@@ -8,11 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Loader, CardSkeleton } from "@/components/ui/loader"
 import { useLoading } from "@/hooks/use-loading"
-import { Database, Audit, Document, Activity, Notification } from "@/lib/database"
+import { Database, Audit, Activity, Notification } from "@/lib/database"
 import AdminLayout from "@/components/admin/admin-layout"
 import AuditStatusChart from "@/components/charts/AuditStatusChart"
-import AuditTrendChart from "@/components/charts/AuditTrendChart"
-import ActivityBarChart from "@/components/charts/ActivityBarChart"
 import PriorityDistributionChart from "@/components/charts/PriorityDistributionChart"
 import { 
   Shield, 
@@ -23,10 +21,7 @@ import {
   AlertTriangle,
   TrendingUp,
   Activity as ActivityIcon,
-  ArrowUpRight,
-  ArrowDownRight,
   CheckCircle2,
-  XCircle,
   Calendar,
   Sparkles
 } from "lucide-react"
