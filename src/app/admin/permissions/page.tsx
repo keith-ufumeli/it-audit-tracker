@@ -22,7 +22,6 @@ import {
   Trash2, 
   Search,
   Users,
-  Settings,
   CheckCircle,
   XCircle
 } from "lucide-react"

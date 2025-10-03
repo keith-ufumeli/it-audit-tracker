@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -45,6 +45,19 @@ export default function ActivitiesPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSeverity, setSelectedSeverity] = useState("all")
 
+  const loadActivities = useCallback(async () => {
+    startLoading("Loading activities...")
+    try {
+      await new Promise(resolve => setTimeout(resolve, 600))
+      const allActivities = Database.getRecentActivities(50)
+      setActivities(allActivities)
+    } catch (error) {
+      console.error("Error loading activities:", error)
+    } finally {
+      stopLoading()
+    }
+  }, [startLoading, stopLoading])
+
   useEffect(() => {
     if (status === "loading") return
 
@@ -60,20 +73,7 @@ export default function ActivitiesPage() {
     }
 
     loadActivities()
-  }, [session, status, router])
-
-  const loadActivities = async () => {
-    startLoading("Loading activities...")
-    try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      const allActivities = Database.getRecentActivities(50)
-      setActivities(allActivities)
-    } catch (error) {
-      console.error("Error loading activities:", error)
-    } finally {
-      stopLoading()
-    }
-  }
+  }, [session, status, router, loadActivities])
 
   const handleExportPDF = async () => {
     try {

@@ -6,6 +6,10 @@
 import type { User } from "@/types/user"
 export type { User }
 
+// Common metadata type for better type safety
+export type MetadataValue = string | number | boolean | string[] | number[] | Record<string, unknown> | null
+export type Metadata = Record<string, MetadataValue>
+
 export interface Audit {
   id: string
   title: string
@@ -69,7 +73,7 @@ export interface Activity {
   userAgent: string
   severity: 'info' | 'warning' | 'error' | 'critical'
   resource: string
-  metadata: Record<string, any>
+  metadata: Metadata
 }
 
 export interface Notification {
@@ -85,7 +89,7 @@ export interface Notification {
   createdAt: string
   readAt: string | null
   expiresAt?: string
-  metadata?: Record<string, any>
+  metadata?: Metadata
 }
 
 export interface Alert {
@@ -102,7 +106,7 @@ export interface Alert {
   acknowledgedAt?: string
   resolvedBy?: string
   resolvedAt?: string
-  metadata?: Record<string, any>
+  metadata?: Metadata
 }
 
 export interface Report {
@@ -136,8 +140,8 @@ export class InMemoryDatabase {
   static users: User[] = usersData as User[]
   static audits: Audit[] = auditsData as Audit[]
   static documents: Document[] = documentsData as Document[]
-  static activities: Activity[] = activitiesData as Activity[]
-  static notifications: Notification[] = notificationsData as Notification[]
+  static activities: Activity[] = activitiesData as unknown as Activity[]
+  static notifications: Notification[] = notificationsData as unknown as Notification[]
   static reports: Report[] = reportsData as Report[]
   static alerts: Alert[] = [
     {

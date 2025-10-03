@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { Metadata } from './database'
 
 export interface ActivityLogEntry {
   id: string
@@ -13,7 +14,7 @@ export interface ActivityLogEntry {
   severity: 'info' | 'warning' | 'error' | 'critical'
   resource: string
   resourceId?: string
-  metadata?: Record<string, any>
+  metadata?: Metadata
   sessionId?: string
   endpoint?: string
   method?: string
@@ -147,7 +148,7 @@ export class ActivityLogger {
     action?: string,
     resource?: string,
     resourceId?: string,
-    metadata?: Record<string, any>
+    metadata?: Metadata
   ): Promise<string> {
     const startTime = Date.now()
     const responseTime = Date.now() - startTime
@@ -245,7 +246,7 @@ export class ActivityLogger {
     return false
   }
 
-  private matchesBasicConditions(activity: any, conditions: AlertRule['conditions']): boolean {
+  private matchesBasicConditions(activity: ActivityLogEntry, conditions: AlertRule['conditions']): boolean {
     if (conditions.action && activity.action !== conditions.action) return false
     if (conditions.resource && activity.resource !== conditions.resource) return false
     if (conditions.userRole && activity.userRole !== conditions.userRole) return false
@@ -312,7 +313,7 @@ export class ActivityLogger {
     this.broadcastAlert(alert)
   }
 
-  public broadcastAlert(alert: any) {
+  public broadcastAlert(alert: { id: string; severity: string; description: string; [key: string]: unknown }) {
     const message = JSON.stringify({
       type: 'alert',
       data: alert
@@ -325,12 +326,14 @@ export class ActivityLogger {
     })
   }
 
-  public addWebSocketClient(client: any) {
+  public addWebSocketClient(client: { send: (data: string) => void; readyState: number; on?: (event: string, callback: () => void) => void }) {
     this.websocketClients.add(client)
     
-    client.on('close', () => {
-      this.websocketClients.delete(client)
-    })
+    if (client.on) {
+      client.on('close', () => {
+        this.websocketClients.delete(client)
+      })
+    }
   }
 
   public getAlertRules(): AlertRule[] {

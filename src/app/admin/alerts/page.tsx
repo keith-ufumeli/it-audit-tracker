@@ -36,7 +36,6 @@ export default function AdminAlertsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSeverity, setSelectedSeverity] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
-  const [wsConnection, setWsConnection] = useState<WebSocket | null>(null)
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected')
   const wsRef = useRef<WebSocket | null>(null)
 
@@ -100,7 +99,6 @@ export default function AdminAlertsPage() {
           setTimeout(() => {
             const ws = new WebSocket('ws://localhost:8080')
             wsRef.current = ws
-            setWsConnection(ws)
             setConnectionStatus('connecting')
 
             ws.onopen = () => {
@@ -490,7 +488,7 @@ export default function AdminAlertsPage() {
                           {alert.metadata?.ipAddress && (
                             <div className="flex items-center">
                               <Activity className="h-4 w-4 mr-1" />
-                              {alert.metadata.ipAddress}
+                              {String(alert.metadata.ipAddress || '')}
                             </div>
                           )}
                         </div>

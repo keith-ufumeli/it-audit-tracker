@@ -1,5 +1,4 @@
 import { UserRole } from "./auth"
-import { Database } from "./database"
 // Import permissions data directly for Edge Runtime compatibility
 import permissionsData from '../data/permissions.json'
 

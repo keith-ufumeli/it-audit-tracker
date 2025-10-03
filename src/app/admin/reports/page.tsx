@@ -34,7 +34,6 @@ import { useLoading } from "@/hooks/use-loading";
 import { useToast } from "@/hooks/use-toast";
 import { Database, Audit } from "@/lib/database";
 import { reportGenerator } from "@/lib/report-generator";
-import { csvExporter } from "@/lib/csv-exporter";
 import AdminLayout from "@/components/admin/admin-layout";
 import {
   FileText,
@@ -44,15 +43,12 @@ import {
   Download,
   Eye,
   Edit,
-  Clock,
   CheckCircle,
   AlertCircle,
   Calendar,
   User,
   Send,
   FileCheck,
-  TrendingUp,
-  BarChart3,
 } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/loader";
 

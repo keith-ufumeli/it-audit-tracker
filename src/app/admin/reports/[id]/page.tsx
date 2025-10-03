@@ -9,8 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
 import { Database } from "@/lib/database"
-import { reportGenerator } from "@/lib/report-generator"
-import { csvExporter } from "@/lib/csv-exporter"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 

@@ -4,7 +4,7 @@
  * while maintaining in-memory performance for reads
  */
 
-import { Database, Audit, User, Document, Activity, Notification, Alert } from './database'
+import { Database, Audit, User, Document, Activity, Notification } from './database'
 
 // Note: In Edge Runtime, we can't access the file system
 // This class now provides in-memory persistence only
@@ -164,7 +164,7 @@ export class PersistentDatabase {
   /**
    * Get file stats for debugging (Edge Runtime compatible)
    */
-  static async getFileStats(): Promise<Record<string, any>> {
+  static async getFileStats(): Promise<Record<string, { exists: boolean; note?: string }>> {
     // Return mock stats since we can't access files in Edge Runtime
     return {
       users: { exists: true, note: 'In-memory data' },
