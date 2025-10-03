@@ -8,20 +8,26 @@ import { Database } from "@/lib/database"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: documentId } = await params
+    console.log(`[VIEW API] Request for document: ${documentId}`)
     const session = await getServerSession(authOptions)
     
     if (!session) {
+      console.log(`[VIEW API] Unauthorized access attempt`)
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       )
     }
-
-    const documentId = params.id
     const document = Database.getDocumentById(documentId)
+    
+    console.log(`[VIEW API] Document found:`, document ? 'Yes' : 'No')
+    if (document) {
+      console.log(`[VIEW API] Document status: ${document.status}, filePath: ${document.filePath}`)
+    }
     
     if (!document) {
       return NextResponse.json(
@@ -56,6 +62,8 @@ export async function GET(
 
     // Construct file path
     const filePath = path.join(process.cwd(), "data", "uploads", document.filePath)
+    console.log(`[VIEW API] Looking for file at: ${filePath}`)
+    console.log(`[VIEW API] File exists: ${existsSync(filePath)}`)
     
     if (!existsSync(filePath)) {
       return NextResponse.json(
