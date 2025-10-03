@@ -199,15 +199,15 @@ export class ReportScheduler {
         return true
 
       case 'weekly':
-        return now.getDay() === schedule.dayOfWeek
+        return schedule.dayOfWeek !== undefined && now.getDay() === schedule.dayOfWeek
 
       case 'monthly':
-        return now.getDate() === schedule.dayOfMonth
+        return schedule.dayOfMonth !== undefined && now.getDate() === schedule.dayOfMonth
 
       case 'quarterly':
         const month = now.getMonth()
         const quarterMonths = [0, 3, 6, 9] // January, April, July, October
-        return quarterMonths.includes(month) && now.getDate() === schedule.dayOfMonth
+        return schedule.dayOfMonth !== undefined && quarterMonths.includes(month) && now.getDate() === schedule.dayOfMonth
 
       default:
         return false
@@ -357,7 +357,8 @@ export class ReportScheduler {
           priority: 'medium',
           metadata: {
             scheduledReportId: scheduledReport.id,
-            files: files.map(f => ({ filename: f.filename, format: f.format, size: f.size }))
+            filesCount: files.length,
+            files: files.map(f => `${f.filename} (${f.format}, ${f.size} bytes)`).join('; ')
           }
         })
       }
@@ -390,18 +391,24 @@ export class ReportScheduler {
         break
 
       case 'weekly':
-        const daysUntilNext = (day! - now.getDay() + 7) % 7
-        nextRun.setDate(now.getDate() + (daysUntilNext === 0 ? 7 : daysUntilNext))
+        if (day !== undefined) {
+          const daysUntilNext = (day - now.getDay() + 7) % 7
+          nextRun.setDate(now.getDate() + (daysUntilNext === 0 ? 7 : daysUntilNext))
+        }
         break
 
       case 'monthly':
         nextRun.setMonth(now.getMonth() + 1)
-        nextRun.setDate(day!)
+        if (day !== undefined) {
+          nextRun.setDate(day)
+        }
         break
 
       case 'quarterly':
         nextRun.setMonth(now.getMonth() + 3)
-        nextRun.setDate(day!)
+        if (day !== undefined) {
+          nextRun.setDate(day)
+        }
         break
     }
 
