@@ -172,7 +172,7 @@ export default function ManagementDashboardPage() {
     } finally {
       stopLoading()
     }
-  }, [startLoading, stopLoading, selectedTimeRange])
+  }, [startLoading, stopLoading])
 
   useEffect(() => {
     if (status === "loading") return

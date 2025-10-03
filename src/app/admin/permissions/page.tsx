@@ -89,7 +89,7 @@ export default function PermissionsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     if (status === "loading") return
