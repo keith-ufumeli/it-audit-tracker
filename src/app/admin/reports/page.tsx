@@ -11,9 +11,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
 import { Database, Audit } from "@/lib/database"
+import { reportGenerator } from "@/lib/report-generator"
+import { csvExporter } from "@/lib/csv-exporter"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   FileText,
@@ -165,6 +168,61 @@ export default function ReportsPage() {
       })
     } finally {
       stopLoading()
+    }
+  }
+
+  const handleExportReportPDF = (report: Report) => {
+    try {
+      const pdf = reportGenerator.generateAuditReport({
+        title: report.title,
+        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        includeCharts: true,
+        includeDetails: true
+      })
+      pdf.save(`${report.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`)
+      toast({
+        title: "Success",
+        description: "Report exported as PDF",
+      })
+    } catch (error) {
+      console.error("Error exporting PDF:", error)
+      toast({
+        title: "Error",
+        description: "Failed to export PDF",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleExportReportCSV = (report: Report) => {
+    try {
+      const csvContent = [
+        ['Report Title', report.title],
+        ['Audit', report.auditTitle],
+        ['Status', report.status],
+        ['Prepared By', report.preparedByName],
+        ['Created At', new Date(report.createdAt).toLocaleString()],
+        ['Findings', report.findings.toString()],
+        ['Summary', report.summary]
+      ].map(row => row.join(',')).join('\n')
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      link.download = `${report.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.csv`
+      link.click()
+      
+      toast({
+        title: "Success",
+        description: "Report exported as CSV",
+      })
+    } catch (error) {
+      console.error("Error exporting CSV:", error)
+      toast({
+        title: "Error",
+        description: "Failed to export CSV",
+        variant: "destructive",
+      })
     }
   }
 
@@ -415,9 +473,23 @@ export default function ReportsPage() {
                           <span className="capitalize">{report.status}</span>
                         </div>
                       </Badge>
-                      <Button variant="ghost" size="icon" className="hover:text-orange-600">
-                        <Download className="h-4 w-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="hover:text-orange-600" onClick={(e) => e.stopPropagation()}>
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleExportReportPDF(report); }}>
+                            <FileText className="h-4 w-4 mr-2" />
+                            Export as PDF
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleExportReportCSV(report); }}>
+                            <Download className="h-4 w-4 mr-2" />
+                            Export as CSV
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                     <div>
                       <CardTitle className="group-hover:text-orange-600 transition-colors line-clamp-1">

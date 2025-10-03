@@ -8,8 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database, Activity } from "@/lib/database"
+import { reportGenerator } from "@/lib/report-generator"
+import { csvExporter } from "@/lib/csv-exporter"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Activity as ActivityIcon,
@@ -36,6 +40,7 @@ export default function ActivitiesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [activities, setActivities] = useState<Activity[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSeverity, setSelectedSeverity] = useState("all")
@@ -67,6 +72,50 @@ export default function ActivitiesPage() {
       console.error("Error loading activities:", error)
     } finally {
       stopLoading()
+    }
+  }
+
+  const handleExportPDF = async () => {
+    try {
+      const pdf = reportGenerator.generateActivityReport({
+        title: "Activity Report",
+        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        includeCharts: true,
+        includeDetails: true
+      })
+      pdf.save(`activity-report-${new Date().toISOString().split('T')[0]}.pdf`)
+      toast({
+        title: "Success",
+        description: "Activity report exported as PDF",
+      })
+    } catch (error) {
+      console.error("Error exporting PDF:", error)
+      toast({
+        title: "Error",
+        description: "Failed to export PDF",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleExportCSV = async () => {
+    try {
+      const csv = csvExporter.exportActivities({
+        dataType: 'activities',
+        includeMetadata: true
+      })
+      csvExporter.downloadCSV(csv, `activities-export-${new Date().toISOString().split('T')[0]}.csv`)
+      toast({
+        title: "Success",
+        description: "Activities exported as CSV",
+      })
+    } catch (error) {
+      console.error("Error exporting CSV:", error)
+      toast({
+        title: "Error",
+        description: "Failed to export CSV",
+        variant: "destructive",
+      })
     }
   }
 
@@ -171,14 +220,28 @@ export default function ActivitiesPage() {
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="hover:bg-primary/10"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="hover:bg-primary/10"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExportPDF}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportCSV}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Export as CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
