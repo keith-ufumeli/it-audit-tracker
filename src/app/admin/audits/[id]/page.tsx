@@ -8,7 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database, Audit } from "@/lib/database"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   ArrowLeft,
@@ -34,7 +40,28 @@ export default function AuditDetailPage() {
   const params = useParams()
   const auditId = params.id as string
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [audit, setAudit] = useState<Audit | null>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isAddFindingDialogOpen, setIsAddFindingDialogOpen] = useState(false)
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
+  const [editingAudit, setEditingAudit] = useState({
+    title: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    priority: "medium",
+    scope: "",
+    complianceFrameworks: ""
+  })
+  const [newFinding, setNewFinding] = useState({
+    title: "",
+    description: "",
+    severity: "medium",
+    recommendation: "",
+    dueDate: ""
+  })
+  const [selectedAuditor, setSelectedAuditor] = useState("")
 
   useEffect(() => {
     if (status === "loading") return
@@ -64,9 +91,243 @@ export default function AuditDetailPage() {
         return
       }
       setAudit(auditData)
+      
+      // Initialize edit form with current audit data
+      setEditingAudit({
+        title: auditData.title,
+        description: auditData.description,
+        startDate: auditData.startDate,
+        endDate: auditData.endDate,
+        priority: auditData.priority,
+        scope: auditData.scope.join(", "),
+        complianceFrameworks: auditData.complianceFrameworks.join(", ")
+      })
     } catch (error) {
       console.error("Error loading audit:", error)
       router.push("/admin/audits")
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const handleEditAudit = async () => {
+    if (!audit) return
+    
+    if (!editingAudit.title || !editingAudit.description || !editingAudit.startDate || !editingAudit.endDate) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    startLoading("Updating audit...")
+    try {
+      const response = await fetch("/api/audits", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auditId: audit.id,
+          title: editingAudit.title,
+          description: editingAudit.description,
+          startDate: editingAudit.startDate,
+          endDate: editingAudit.endDate,
+          priority: editingAudit.priority,
+          scope: editingAudit.scope,
+          complianceFrameworks: editingAudit.complianceFrameworks
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Audit updated successfully",
+        })
+        setIsEditDialogOpen(false)
+        await loadAudit() // Reload audit data
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to update audit: ${data.error}`,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error updating audit:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update audit. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const handleCancelAudit = async () => {
+    if (!audit) return
+    
+    if (!confirm("Are you sure you want to cancel this audit? This action cannot be undone.")) {
+      return
+    }
+
+    startLoading("Cancelling audit...")
+    try {
+      const response = await fetch("/api/audits", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auditId: audit.id,
+          status: "cancelled"
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Audit cancelled successfully",
+        })
+        await loadAudit() // Reload audit data
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to cancel audit: ${data.error}`,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error cancelling audit:", error)
+      toast({
+        title: "Error",
+        description: "Failed to cancel audit. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const handleAddFinding = async () => {
+    if (!audit) return
+    
+    if (!newFinding.title || !newFinding.description || !newFinding.dueDate) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    startLoading("Adding finding...")
+    try {
+      const finding = {
+        id: `finding-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        title: newFinding.title,
+        description: newFinding.description,
+        severity: newFinding.severity,
+        status: "open",
+        recommendation: newFinding.recommendation,
+        dueDate: newFinding.dueDate,
+        createdAt: new Date().toISOString(),
+        assignedTo: session?.user.id || ""
+      }
+
+      const response = await fetch("/api/audits", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auditId: audit.id,
+          findings: [...(audit.findings || []), finding]
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Finding added successfully",
+        })
+        setIsAddFindingDialogOpen(false)
+        setNewFinding({
+          title: "",
+          description: "",
+          severity: "medium",
+          recommendation: "",
+          dueDate: ""
+        })
+        await loadAudit() // Reload audit data
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to add finding: ${data.error}`,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error adding finding:", error)
+      toast({
+        title: "Error",
+        description: "Failed to add finding. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      stopLoading()
+    }
+  }
+
+  const handleAssignAuditor = async () => {
+    if (!audit || !selectedAuditor) return
+
+    startLoading("Assigning auditor...")
+    try {
+      const response = await fetch("/api/audits", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auditId: audit.id,
+          assignedAuditors: [...audit.assignedAuditors, selectedAuditor]
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Auditor assigned successfully",
+        })
+        setIsAssignDialogOpen(false)
+        setSelectedAuditor("")
+        await loadAudit() // Reload audit data
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to assign auditor: ${data.error}`,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error assigning auditor:", error)
+      toast({
+        title: "Error",
+        description: "Failed to assign auditor. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       stopLoading()
     }
@@ -151,11 +412,106 @@ export default function AuditDetailPage() {
           <div className="flex items-center space-x-2">
             {canEdit && (
               <>
-                <Button variant="outline" size="sm">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <Button variant="outline" size="sm" className="text-red-600 hover:bg-red-50">
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Edit Audit</DialogTitle>
+                      <DialogDescription>
+                        Update the audit details below
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="title">Title *</Label>
+                        <Input
+                          id="title"
+                          value={editingAudit.title}
+                          onChange={(e) => setEditingAudit(prev => ({ ...prev, title: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="description">Description *</Label>
+                        <Textarea
+                          id="description"
+                          value={editingAudit.description}
+                          onChange={(e) => setEditingAudit(prev => ({ ...prev, description: e.target.value }))}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="startDate">Start Date *</Label>
+                          <Input
+                            id="startDate"
+                            type="date"
+                            value={editingAudit.startDate}
+                            onChange={(e) => setEditingAudit(prev => ({ ...prev, startDate: e.target.value }))}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="endDate">End Date *</Label>
+                          <Input
+                            id="endDate"
+                            type="date"
+                            value={editingAudit.endDate}
+                            onChange={(e) => setEditingAudit(prev => ({ ...prev, endDate: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="priority">Priority</Label>
+                        <Select value={editingAudit.priority} onValueChange={(value) => setEditingAudit(prev => ({ ...prev, priority: value }))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                            <SelectItem value="critical">Critical</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="scope">Scope (comma-separated)</Label>
+                        <Input
+                          id="scope"
+                          value={editingAudit.scope}
+                          onChange={(e) => setEditingAudit(prev => ({ ...prev, scope: e.target.value }))}
+                          placeholder="e.g., IT Systems, Network Security, Data Protection"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="frameworks">Compliance Frameworks (comma-separated)</Label>
+                        <Input
+                          id="frameworks"
+                          value={editingAudit.complianceFrameworks}
+                          onChange={(e) => setEditingAudit(prev => ({ ...prev, complianceFrameworks: e.target.value }))}
+                          placeholder="e.g., ISO 27001, SOC 2, GDPR"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleEditAudit}>
+                        Update Audit
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-red-600 hover:bg-red-50"
+                  onClick={handleCancelAudit}
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Cancel Audit
                 </Button>
@@ -288,9 +644,81 @@ export default function AuditDetailPage() {
                     </CardDescription>
                   </div>
                   {canEdit && (
-                    <Button size="sm" variant="outline">
-                      Add Finding
-                    </Button>
+                    <Dialog open={isAddFindingDialogOpen} onOpenChange={setIsAddFindingDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="outline">
+                          Add Finding
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add Finding</DialogTitle>
+                          <DialogDescription>
+                            Add a new finding to this audit
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="findingTitle">Title *</Label>
+                            <Input
+                              id="findingTitle"
+                              value={newFinding.title}
+                              onChange={(e) => setNewFinding(prev => ({ ...prev, title: e.target.value }))}
+                              placeholder="Brief title for the finding"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="findingDescription">Description *</Label>
+                            <Textarea
+                              id="findingDescription"
+                              value={newFinding.description}
+                              onChange={(e) => setNewFinding(prev => ({ ...prev, description: e.target.value }))}
+                              placeholder="Detailed description of the finding"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="findingSeverity">Severity</Label>
+                            <Select value={newFinding.severity} onValueChange={(value) => setNewFinding(prev => ({ ...prev, severity: value }))}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="low">Low</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="critical">Critical</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="findingRecommendation">Recommendation</Label>
+                            <Textarea
+                              id="findingRecommendation"
+                              value={newFinding.recommendation}
+                              onChange={(e) => setNewFinding(prev => ({ ...prev, recommendation: e.target.value }))}
+                              placeholder="Recommended action to address this finding"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="findingDueDate">Due Date *</Label>
+                            <Input
+                              id="findingDueDate"
+                              type="date"
+                              value={newFinding.dueDate}
+                              onChange={(e) => setNewFinding(prev => ({ ...prev, dueDate: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setIsAddFindingDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleAddFinding}>
+                            Add Finding
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   )}
                 </div>
               </CardHeader>
@@ -375,9 +803,48 @@ export default function AuditDetailPage() {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-semibold">Assigned Auditors</h4>
                     {canEdit && (
-                      <Button size="sm" variant="ghost">
-                        <UserPlus className="h-3 w-3" />
-                      </Button>
+                      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="ghost">
+                            <UserPlus className="h-3 w-3" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Assign Auditor</DialogTitle>
+                            <DialogDescription>
+                              Assign an auditor to this audit
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="auditorSelect">Select Auditor</Label>
+                              <Select value={selectedAuditor} onValueChange={setSelectedAuditor}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Choose an auditor" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Database.getUsers()
+                                    .filter((user: any) => user.role === "auditor" && !audit.assignedAuditors.includes(user.id))
+                                    .map((user: any) => (
+                                      <SelectItem key={user.id} value={user.id}>
+                                        {user.name} ({user.email})
+                                      </SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button variant="outline" onClick={() => setIsAssignDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button onClick={handleAssignAuditor} disabled={!selectedAuditor}>
+                              Assign Auditor
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     )}
                   </div>
                   {auditors.length > 0 ? (
