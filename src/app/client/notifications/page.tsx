@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
-import { Database, Notification } from "@/lib/database"
+import { ClientDatabase, Notification } from "@/lib/client-database"
 import ClientLayout from "@/components/client/client-layout"
 import { 
   Bell,
@@ -54,8 +54,11 @@ export default function ClientNotificationsPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 600))
       
-      const allNotifications = Database.getNotificationsByUser(session?.user?.id || "")
-      setNotifications(allNotifications)
+      const allNotifications = await ClientDatabase.getNotifications()
+      const userNotifications = allNotifications.filter(notif => 
+        notif.userId === session?.user?.id
+      )
+      setNotifications(userNotifications)
     } catch (error) {
       console.error("Error loading notifications:", error)
     } finally {

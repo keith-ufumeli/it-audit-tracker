@@ -2,6 +2,7 @@ import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
 import { UserRole, getPortalRoute } from "@/lib/auth"
 import { activityLoggingMiddleware } from "./middleware/activity-logger"
+import { auditTrailMiddleware } from "./middleware/audit-trail-middleware"
 
 export default withAuth(
   function middleware(req) {
@@ -48,9 +49,10 @@ export default withAuth(
       return NextResponse.redirect(new URL(redirectUrl, req.url))
     }
 
-    // Log activity for authenticated requests
+    // Log activity and audit trail for authenticated requests
     const response = NextResponse.next()
     activityLoggingMiddleware(req, response)
+    auditTrailMiddleware(req, response)
     
     return response
   },
