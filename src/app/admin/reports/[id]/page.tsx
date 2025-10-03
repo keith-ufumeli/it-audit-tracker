@@ -55,6 +55,7 @@ export default function ReportDetailPage() {
   const params = useParams()
   const reportId = params.id as string
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [report, setReport] = useState<Report | null>(null)
   const [isDownloading, setIsDownloading] = useState(false)
 
