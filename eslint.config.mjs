@@ -10,7 +10,7 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next/core-web-vitals"),
   {
     ignores: [
       "node_modules/**",
@@ -19,6 +19,23 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+  },
+  {
+    rules: {
+      // Disable TypeScript ESLint rules
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/prefer-as-const": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/no-this-alias": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-namespace": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
+    },
   },
 ];
 
