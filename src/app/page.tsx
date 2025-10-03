@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { FullPageLoader } from "@/components/ui/loader"
+import { AuthRedirectLoader } from "@/components/ui/loader"
 
 export default function Home() {
   const { data: session, status } = useSession()
@@ -27,10 +27,9 @@ export default function Home() {
   }, [session, status, router])
 
   return (
-    <FullPageLoader 
+    <AuthRedirectLoader 
       text="Redirecting..." 
-      variant="white"
-      className="bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700"
+      subtitle="Determining your access level and redirecting you to the appropriate portal"
     />
   )
 }

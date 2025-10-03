@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Shield } from "lucide-react"
 
 const loaderVariants = cva(
   "animate-spin rounded-full border-2 border-solid",
@@ -154,15 +155,143 @@ export function TableSkeleton({
 export function FullPageLoader({ 
   text = "Loading...", 
   variant = "primary",
+  showLogo = false,
+  subtitle,
   ...props 
-}: Omit<LoaderProps, 'size' | 'showText'>) {
+}: Omit<LoaderProps, 'size' | 'showText'> & { 
+  showLogo?: boolean
+  subtitle?: string 
+}) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center" {...props}>
-      <div className="text-center">
-        <Loader size="2xl" variant={variant} />
-        <p className="mt-4 text-lg text-muted-foreground animate-pulse">
-          {text}
-        </p>
+      <div className="text-center space-y-6 animate-in fade-in duration-500">
+        {showLogo && (
+          <div className="flex justify-center mb-6">
+            <div className="p-4 bg-orange_web-500 rounded-full shadow-lg animate-pulse">
+              <Shield className="h-12 w-12 text-white" />
+            </div>
+          </div>
+        )}
+        
+        <div className="space-y-4">
+          <Loader size="2xl" variant={variant} />
+          <div className="space-y-2">
+            <p className="text-xl font-semibold text-foreground animate-pulse">
+              {text}
+            </p>
+            {subtitle && (
+              <p className="text-sm text-muted-foreground animate-pulse">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="w-48 mx-auto">
+          <div className="h-1 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-orange_web-500 to-oxford_blue-500 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Authentication redirect loader
+export function AuthRedirectLoader({ 
+  text = "Redirecting to Sign In...", 
+  subtitle = "Please wait while we redirect you to the login page",
+  ...props 
+}: Omit<LoaderProps, 'size' | 'variant' | 'showText'> & { 
+  text?: string
+  subtitle?: string 
+}) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700 flex items-center justify-center p-4" {...props}>
+      <div className="text-center space-y-8 animate-in fade-in duration-700">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <div className="p-6 bg-orange_web-500 rounded-full shadow-2xl animate-pulse">
+            <Shield className="h-16 w-16 text-white" />
+          </div>
+        </div>
+        
+        {/* App Title */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-white">IT Audit Tracker</h1>
+          <p className="text-white/90">Secure Audit Management System</p>
+        </div>
+        
+        {/* Loading Content */}
+        <div className="space-y-6">
+          <Loader size="2xl" variant="white" />
+          <div className="space-y-3">
+            <p className="text-xl font-semibold text-white animate-pulse">
+              {text}
+            </p>
+            <p className="text-sm text-white/90 animate-pulse">
+              {subtitle}
+            </p>
+          </div>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="w-64 mx-auto">
+          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-orange_web-400 to-white rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        
+        {/* Security badge */}
+        <div className="flex justify-center">
+          <div className="px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full border border-white/30">
+            <p className="text-xs text-white font-medium">🔒 Secure Connection</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Authentication state loader (for signin/signout)
+export function AuthStateLoader({ 
+  text = "Signing in...", 
+  subtitle = "Please wait while we authenticate your credentials",
+  ...props 
+}: Omit<LoaderProps, 'size' | 'variant' | 'showText'> & { 
+  text?: string
+  subtitle?: string 
+}) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-oxford_blue-500 via-oxford_blue-600 to-oxford_blue-700 flex items-center justify-center p-4" {...props}>
+      <div className="text-center space-y-6 animate-in fade-in duration-500">
+        {/* Logo */}
+        <div className="flex justify-center">
+          <div className="p-4 bg-orange_web-500 rounded-full shadow-lg animate-pulse">
+            <Shield className="h-12 w-12 text-white" />
+          </div>
+        </div>
+        
+        {/* Loading Content */}
+        <div className="space-y-4">
+          <Loader size="2xl" variant="white" />
+          <div className="space-y-2">
+            <p className="text-lg font-semibold text-white animate-pulse">
+              {text}
+            </p>
+            <p className="text-sm text-white/90 animate-pulse">
+              {subtitle}
+            </p>
+          </div>
+        </div>
+        
+        {/* Progress indicator */}
+        <div className="w-48 mx-auto">
+          <div className="h-1 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-orange_web-400 to-white rounded-full animate-pulse"></div>
+          </div>
+        </div>
       </div>
     </div>
   )

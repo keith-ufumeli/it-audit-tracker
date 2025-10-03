@@ -57,10 +57,12 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
     <LoadingContext.Provider value={value}>
       {children}
       {isLoading && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md">
           <FullPageLoader 
             text={loadingText} 
             variant="primary"
+            showLogo={true}
+            subtitle={progress !== undefined ? `${progress}% complete` : undefined}
           />
         </div>
       )}
