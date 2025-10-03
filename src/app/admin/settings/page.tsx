@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -24,14 +24,85 @@ import {
 } from "lucide-react"
 import { isSuperAdmin } from "@/lib/auth"
 
+interface DatabaseSettings {
+  backupEnabled: boolean
+  backupFrequency: string
+  backupRetentionDays: number
+  autoCleanupEnabled: boolean
+  cleanupFrequency: string
+  maxLogRetentionDays: number
+  maxActivityRetentionDays: number
+}
+
+interface SecuritySettings {
+  sessionTimeoutMinutes: number
+  maxLoginAttempts: number
+  lockoutDurationMinutes: number
+  passwordMinLength: number
+  requirePasswordComplexity: boolean
+  twoFactorAuthEnabled: boolean
+  ipWhitelistEnabled: boolean
+  allowedIPs: string[]
+}
+
+interface NotificationSettings {
+  emailNotificationsEnabled: boolean
+  systemNotificationsEnabled: boolean
+  auditReminderEnabled: boolean
+  auditReminderDays: number
+  reportGenerationNotifications: boolean
+  securityAlertNotifications: boolean
+}
+
+interface AuditSettings {
+  defaultAuditDurationDays: number
+  autoCloseInactiveAudits: boolean
+  inactiveAuditThresholdDays: number
+  requireApprovalForAuditClosure: boolean
+  allowBulkAuditOperations: boolean
+  maxConcurrentAudits: number
+}
+
+interface ReportingSettings {
+  defaultReportFormat: string
+  autoGenerateReports: boolean
+  reportRetentionDays: number
+  allowCustomReportTemplates: boolean
+  maxReportSizeMB: number
+  enableReportScheduling: boolean
+}
+
+interface SystemConfigSettings {
+  maintenanceMode: boolean
+  debugMode: boolean
+  logLevel: string
+  maxFileUploadSizeMB: number
+  allowedFileTypes: string[]
+  enableActivityLogging: boolean
+  enablePerformanceMonitoring: boolean
+}
+
+interface IntegrationSettings {
+  emailServiceEnabled: boolean
+  emailServiceProvider: string
+  smtpHost: string
+  smtpPort: number
+  smtpUsername: string
+  smtpPassword: string
+  webhookNotificationsEnabled: boolean
+  webhookUrl: string
+  apiAccessEnabled: boolean
+  apiRateLimit: number
+}
+
 interface SystemSettings {
-  database: any
-  security: any
-  notifications: any
-  audit: any
-  reporting: any
-  system: any
-  integrations: any
+  database: DatabaseSettings
+  security: SecuritySettings
+  notifications: NotificationSettings
+  audit: AuditSettings
+  reporting: ReportingSettings
+  system: SystemConfigSettings
+  integrations: IntegrationSettings
 }
 
 interface Permission {
@@ -56,27 +127,11 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [permissions, setPermissions] = useState<Permission[]>([])
   const [rolePermissions, setRolePermissions] = useState<RolePermissions[]>([])
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<{ id: string; name: string; email: string; role: string; lastLogin?: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    if (status === "loading") return
-
-    if (!session) {
-      router.push("/auth/signin")
-      return
-    }
-
-    if (!isSuperAdmin(session.user.role)) {
-      router.push("/admin/dashboard")
-      return
-    }
-
-    loadData()
-  }, [session, status, router])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true)
       const [settingsRes, permissionsRes, rolesRes, usersRes] = await Promise.all([
@@ -115,9 +170,25 @@ export default function SettingsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const updateSettings = async (section: string, newSettings: any) => {
+  useEffect(() => {
+    if (status === "loading") return
+
+    if (!session) {
+      router.push("/auth/signin")
+      return
+    }
+
+    if (!isSuperAdmin(session.user.role)) {
+      router.push("/admin/dashboard")
+      return
+    }
+
+    loadData()
+  }, [session, status, router, loadData])
+
+  const updateSettings = async (section: string, newSettings: Record<string, unknown>) => {
     try {
       setSaving(true)
       const response = await fetch("/api/settings", {
