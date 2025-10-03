@@ -59,6 +59,7 @@ export interface Document {
   dueDate: string
   fileSize?: number
   fileName?: string
+  filePath?: string
   version?: string
   tags: string[]
   isConfidential: boolean

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useLoading } from "@/hooks/use-loading"
+import { useToast } from "@/hooks/use-toast"
 import { Database, Document } from "@/lib/database"
 import ClientLayout from "@/components/client/client-layout"
 import { 
@@ -37,6 +38,7 @@ export default function ClientDocumentsPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isLoading, startLoading, stopLoading } = useLoading()
+  const { toast } = useToast()
   const [documents, setDocuments] = useState<Document[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
@@ -45,6 +47,8 @@ export default function ClientDocumentsPage() {
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [uploadNotes, setUploadNotes] = useState("")
   const [uploadSuccess, setUploadSuccess] = useState(false)
+  const [viewDialogOpen, setViewDialogOpen] = useState(false)
+  const [viewingDocument, setViewingDocument] = useState<Document | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -102,29 +106,105 @@ export default function ClientDocumentsPage() {
 
     startLoading("Uploading document...")
     try {
-      // Simulate upload
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // In real app, this would upload to /data/uploads and update database
-      console.log("Uploading:", {
-        file: uploadFile.name,
-        documentId: selectedDocument.id,
-        notes: uploadNotes,
-        userId: session?.user?.id
+      const formData = new FormData()
+      formData.append("file", uploadFile)
+      formData.append("documentId", selectedDocument.id)
+      if (uploadNotes) {
+        formData.append("notes", uploadNotes)
+      }
+
+      const response = await fetch("/api/upload/document", {
+        method: "POST",
+        body: formData,
       })
 
-      // Simulate email notification
-      console.log("Email notification sent to auditor")
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload failed")
+      }
 
       setUploadSuccess(true)
+      toast({
+        title: "Upload Successful",
+        description: "Document uploaded successfully and auditor has been notified.",
+      })
       setTimeout(() => {
         setIsUploadDialogOpen(false)
         loadDocuments()
       }, 1500)
     } catch (error) {
       console.error("Error uploading document:", error)
+      toast({
+        title: "Upload Failed",
+        description: error instanceof Error ? error.message : "Failed to upload document. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       stopLoading()
+    }
+  }
+
+  const handleViewDocument = async (doc: Document) => {
+    try {
+      // Check if document can be viewed
+      const response = await fetch(`/api/documents/${doc.id}/view`, { method: "HEAD" })
+      if (!response.ok) {
+        throw new Error("Document not available for viewing")
+      }
+      
+      setViewingDocument(doc)
+      setViewDialogOpen(true)
+    } catch (error) {
+      console.error("Error viewing document:", error)
+      toast({
+        title: "View Failed",
+        description: "Document is not available for viewing. It may not be uploaded yet.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleDownloadDocument = async (doc: Document) => {
+    try {
+      const response = await fetch(`/api/documents/${doc.id}/download`)
+      
+      if (!response.ok) {
+        throw new Error("Download failed")
+      }
+
+      // Get filename from response headers or use document title
+      const contentDisposition = response.headers.get("content-disposition")
+      let filename = doc.title
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      // Create blob and download
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      
+      toast({
+        title: "Download Started",
+        description: `Downloading ${filename}`,
+      })
+    } catch (error) {
+      console.error("Error downloading document:", error)
+      toast({
+        title: "Download Failed",
+        description: "Failed to download document. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -354,11 +434,19 @@ export default function ClientDocumentsPage() {
                         </Button>
                       ) : (
                         <div className="flex items-center space-x-2 w-full">
-                          <Button variant="outline" className="flex-1">
+                          <Button 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleViewDocument(doc)}
+                          >
                             <Eye className="h-4 w-4 mr-2" />
                             View
                           </Button>
-                          <Button variant="outline" className="flex-1">
+                          <Button 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleDownloadDocument(doc)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -482,6 +570,43 @@ export default function ClientDocumentsPage() {
                 </Button>
               </DialogFooter>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* View Document Dialog */}
+        <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>View Document</DialogTitle>
+              <DialogDescription>
+                {viewingDocument?.title}
+              </DialogDescription>
+            </DialogHeader>
+            
+            {viewingDocument && (
+              <div className="flex-1 overflow-hidden">
+                <iframe
+                  src={`/api/documents/${viewingDocument.id}/view`}
+                  className="w-full h-[70vh] border rounded"
+                  title={viewingDocument.title}
+                />
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                Close
+              </Button>
+              {viewingDocument && (
+                <Button 
+                  onClick={() => handleDownloadDocument(viewingDocument)}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              )}
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

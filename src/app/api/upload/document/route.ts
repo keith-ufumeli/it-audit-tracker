@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
       uploadedAt: new Date().toISOString(),
       fileName: originalName,
       fileSize: file.size,
+      filePath: filename
     })
 
     // Log activity
