@@ -1,0 +1,162 @@
+[
+  {
+    "id": "report-001",
+    "title": "Q1 2024 IT Security Audit Report",
+    "auditId": "audit-001",
+    "auditTitle": "Q1 2024 IT Security Audit",
+    "reportType": "compliance",
+    "status": "approved",
+    "createdBy": "2",
+    "createdByName": "Jane Auditor",
+    "createdAt": "2024-03-15T10:00:00Z",
+    "submittedAt": "2024-03-20T14:30:00Z",
+    "approvedAt": "2024-03-25T09:15:00Z",
+    "approvedBy": "1",
+    "content": "This comprehensive audit report covers the IT security assessment conducted during Q1 2024. The audit evaluated our organization's compliance with ISO 27001 and SOC 2 frameworks, focusing on network security, access controls, data protection, and incident response capabilities.\n\n## Executive Summary\n\nThe audit revealed several areas of strength in our current security posture, including robust network segmentation and effective access control mechanisms. However, we identified opportunities for improvement in password policies and incident response procedures.\n\n## Key Findings\n\n1. **Network Security**: Strong implementation of network segmentation and firewall rules\n2. **Access Controls**: Effective role-based access control system in place\n3. **Data Protection**: Encryption at rest and in transit properly implemented\n4. **Incident Response**: Well-defined procedures but needs regular testing\n\n## Recommendations\n\n1. Strengthen password policy requirements\n2. Implement regular incident response drills\n3. Enhance monitoring and logging capabilities\n4. Conduct quarterly security awareness training",
+    "findings": [
+      "Network security controls are effectively implemented with proper segmentation",
+      "Access control system follows principle of least privilege",
+      "Data encryption is properly configured for sensitive information",
+      "Password policy needs strengthening to meet industry standards",
+      "Incident response procedures are documented but require regular testing"
+    ],
+    "recommendations": [
+      "Implement stronger password requirements including complexity rules",
+      "Conduct quarterly incident response tabletop exercises",
+      "Enhance security monitoring and alerting capabilities",
+      "Provide regular security awareness training to all staff",
+      "Establish regular vulnerability assessment schedule"
+    ]
+  },
+  {
+    "id": "report-002",
+    "title": "Data Privacy Compliance Assessment",
+    "auditId": "audit-002",
+    "auditTitle": "Data Privacy Compliance Review",
+    "reportType": "privacy",
+    "status": "draft",
+    "createdBy": "2",
+    "createdByName": "Jane Auditor",
+    "createdAt": "2024-03-28T11:30:00Z",
+    "content": "This report assesses our organization's compliance with data privacy regulations including GDPR and CCPA. The assessment covers data collection practices, processing activities, storage mechanisms, and retention policies.\n\n## Scope of Assessment\n\nThe audit focused on:\n- Data collection and consent mechanisms\n- Data processing and lawful basis\n- Data storage and security measures\n- Data retention and deletion policies\n- Individual rights and request handling\n\n## Preliminary Findings\n\nInitial assessment indicates good compliance posture with some areas requiring attention:\n\n1. **Data Collection**: Clear consent mechanisms in place\n2. **Processing**: Lawful basis properly documented\n3. **Storage**: Adequate security measures implemented\n4. **Retention**: Policies exist but need review\n5. **Rights**: Response procedures need streamlining\n\n## Next Steps\n\nComplete detailed analysis of data flows and processing activities to finalize recommendations.",
+    "findings": [
+      "Data collection practices include proper consent mechanisms",
+      "Processing activities have documented lawful basis",
+      "Data storage implements appropriate security measures",
+      "Retention policies exist but require periodic review",
+      "Individual rights response procedures need optimization"
+    ],
+    "recommendations": [
+      "Review and update data retention schedules",
+      "Streamline individual rights request handling",
+      "Implement automated data discovery tools",
+      "Conduct privacy impact assessments for new projects",
+      "Establish regular privacy training program"
+    ]
+  },
+  {
+    "id": "report-003",
+    "title": "Infrastructure Security Review",
+    "auditId": "audit-003",
+    "auditTitle": "Infrastructure Security Assessment",
+    "reportType": "technical",
+    "status": "pending",
+    "createdBy": "6",
+    "createdByName": "Mike Auditor",
+    "createdAt": "2024-03-30T16:45:00Z",
+    "submittedAt": "2024-04-02T10:20:00Z",
+    "content": "This technical audit report evaluates the security posture of our infrastructure components including servers, databases, and network devices. The assessment was conducted using industry-standard security frameworks and penetration testing methodologies.\n\n## Infrastructure Overview\n\nOur infrastructure consists of:\n- 15 production servers (Windows/Linux)\n- 3 database clusters (SQL Server, PostgreSQL, MongoDB)\n- Network infrastructure (switches, routers, firewalls)\n- Cloud services (AWS, Azure)\n\n## Security Assessment Results\n\n### Strengths\n- Regular security patching schedule\n- Network segmentation implemented\n- Database encryption enabled\n- Multi-factor authentication deployed\n\n### Areas for Improvement\n- Some legacy systems need security updates\n- Network monitoring could be enhanced\n- Backup encryption needs verification\n- Incident response automation required\n\n## Risk Assessment\n\nOverall risk level: **MEDIUM**\n\nMost critical findings relate to legacy system maintenance and monitoring capabilities. No high-risk vulnerabilities were identified during the assessment.",
+    "findings": [
+      "Regular security patching schedule is maintained across all systems",
+      "Network segmentation effectively isolates critical systems",
+      "Database encryption is properly configured for sensitive data",
+      "Multi-factor authentication is deployed for administrative access",
+      "Legacy systems require security updates and monitoring",
+      "Network monitoring capabilities need enhancement",
+      "Backup encryption status requires verification",
+      "Incident response automation is not fully implemented"
+    ],
+    "recommendations": [
+      "Prioritize security updates for legacy systems",
+      "Implement comprehensive network monitoring solution",
+      "Verify and test backup encryption mechanisms",
+      "Develop automated incident response procedures",
+      "Establish regular infrastructure security reviews",
+      "Implement vulnerability scanning automation",
+      "Enhance logging and audit trail capabilities"
+    ]
+  },
+  {
+    "id": "report-004",
+    "title": "SOC 2 Type II Compliance Report",
+    "auditId": "audit-001",
+    "auditTitle": "Q1 2024 IT Security Audit",
+    "reportType": "compliance",
+    "status": "approved",
+    "createdBy": "1",
+    "createdByName": "John Manager",
+    "createdAt": "2024-03-10T08:00:00Z",
+    "submittedAt": "2024-03-12T15:30:00Z",
+    "approvedAt": "2024-03-15T11:45:00Z",
+    "approvedBy": "3",
+    "content": "This SOC 2 Type II compliance report demonstrates our organization's adherence to the five Trust Service Criteria: Security, Availability, Processing Integrity, Confidentiality, and Privacy. The report covers the period from January 1, 2024, to March 31, 2024.\n\n## Trust Service Criteria Assessment\n\n### Security\nOur security controls effectively protect against unauthorized access, use, or disclosure of information. Key controls include:\n- Access control systems with role-based permissions\n- Network security measures including firewalls and intrusion detection\n- Regular security awareness training for personnel\n- Incident response procedures and monitoring\n\n### Availability\nSystems are designed to meet availability commitments with:\n- Redundant infrastructure components\n- Regular backup and recovery procedures\n- Monitoring and alerting systems\n- Business continuity planning\n\n### Processing Integrity\nData processing systems maintain integrity through:\n- Input validation and error handling\n- Data validation and reconciliation procedures\n- Change management processes\n- Quality assurance testing\n\n### Confidentiality\nConfidential information is protected by:\n- Encryption of data at rest and in transit\n- Access controls and authentication mechanisms\n- Data classification and handling procedures\n- Secure disposal of confidential information\n\n### Privacy\nPrivacy controls ensure compliance with applicable privacy laws:\n- Data collection and use limitations\n- Individual rights and choice mechanisms\n- Data retention and disposal procedures\n- Privacy impact assessments\n\n## Conclusion\n\nOur organization maintains effective controls over the Trust Service Criteria during the reporting period. All identified exceptions were minor and have been addressed through remediation activities.",
+    "findings": [
+      "Security controls effectively protect against unauthorized access",
+      "Availability commitments are met through redundant infrastructure",
+      "Processing integrity is maintained through validation procedures",
+      "Confidentiality is ensured through encryption and access controls",
+      "Privacy controls comply with applicable regulations",
+      "Minor control exceptions were identified and remediated",
+      "Monitoring and testing procedures are effective",
+      "Personnel training programs are comprehensive"
+    ],
+    "recommendations": [
+      "Continue regular security awareness training",
+      "Enhance monitoring and alerting capabilities",
+      "Implement automated compliance testing",
+      "Regular review of access control systems",
+      "Maintain current backup and recovery procedures",
+      "Conduct periodic privacy impact assessments",
+      "Update incident response procedures as needed"
+    ]
+  },
+  {
+    "id": "report-005",
+    "title": "Vulnerability Assessment Report",
+    "auditId": "audit-003",
+    "auditTitle": "Infrastructure Security Assessment",
+    "reportType": "vulnerability",
+    "status": "approved",
+    "createdBy": "6",
+    "createdByName": "Mike Auditor",
+    "createdAt": "2024-04-01T09:15:00Z",
+    "submittedAt": "2024-04-03T14:20:00Z",
+    "approvedAt": "2024-04-05T10:30:00Z",
+    "approvedBy": "1",
+    "content": "This vulnerability assessment report presents the results of automated and manual security testing conducted on our infrastructure components. The assessment identified security vulnerabilities and provides recommendations for remediation.\n\n## Assessment Methodology\n\nThe vulnerability assessment included:\n- Automated vulnerability scanning using industry-standard tools\n- Manual penetration testing of critical systems\n- Configuration review of security controls\n- Social engineering testing (phishing simulation)\n\n## Vulnerability Summary\n\n### Critical Vulnerabilities: 0\n### High Vulnerabilities: 2\n### Medium Vulnerabilities: 8\n### Low Vulnerabilities: 15\n### Informational: 23\n\n## High Priority Findings\n\n1. **Outdated SSL/TLS Configuration**\n   - Several servers using deprecated TLS versions\n   - Risk: Potential for man-in-the-middle attacks\n   - Remediation: Update to TLS 1.3\n\n2. **Default Credentials on Network Device**\n   - One network switch using default admin credentials\n   - Risk: Unauthorized administrative access\n   - Remediation: Change default credentials immediately\n\n## Medium Priority Findings\n\n- Missing security patches on 3 servers\n- Weak password policies on legacy systems\n- Insufficient logging on database servers\n- Unencrypted backup storage\n- Outdated antivirus signatures\n- Unrestricted file upload functionality\n- Information disclosure in error messages\n- Cross-site scripting (XSS) vulnerabilities\n\n## Remediation Status\n\n- 2 High vulnerabilities: Remediated\n- 6 Medium vulnerabilities: In progress\n- 2 Medium vulnerabilities: Planned\n- 10 Low vulnerabilities: Remediated\n- 5 Low vulnerabilities: Accepted risk\n\n## Recommendations\n\n1. Implement automated vulnerability scanning\n2. Establish regular patch management schedule\n3. Enhance security monitoring and alerting\n4. Conduct quarterly penetration testing\n5. Implement secure coding practices\n6. Regular security awareness training",
+    "findings": [
+      "No critical vulnerabilities identified during assessment",
+      "2 high-priority vulnerabilities found and remediated",
+      "8 medium-priority vulnerabilities require attention",
+      "15 low-priority vulnerabilities identified",
+      "23 informational findings documented",
+      "Outdated SSL/TLS configurations on multiple servers",
+      "Default credentials found on network device",
+      "Missing security patches on several systems",
+      "Weak password policies on legacy systems",
+      "Insufficient logging and monitoring capabilities"
+    ],
+    "recommendations": [
+      "Implement automated vulnerability scanning program",
+      "Establish regular patch management schedule",
+      "Update SSL/TLS configurations to latest standards",
+      "Change all default credentials immediately",
+      "Enhance security monitoring and alerting systems",
+      "Conduct quarterly penetration testing",
+      "Implement secure coding practices training",
+      "Regular security awareness training for staff",
+      "Establish vulnerability management process",
+      "Implement continuous security monitoring"
+    ]
+  }
+]

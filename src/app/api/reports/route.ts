@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { Database } from "@/lib/database"
+import { Database, InMemoryDatabase } from "@/lib/database"
+import { PersistentDatabase } from "@/lib/persistent-database"
 
 interface Report {
   id: string
@@ -21,8 +22,7 @@ interface Report {
   recommendations?: string[]
 }
 
-// In-memory reports storage (would be in database in production)
-let reportsStorage: Report[] = []
+// Reports are now stored in the Database class and loaded from JSON files
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,11 +43,16 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Load data from files if in-memory database is empty
+    if (InMemoryDatabase.reports.length === 0) {
+      await InMemoryDatabase.loadDataFromFiles()
+    }
+
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const auditId = searchParams.get('auditId')
 
-    let reports = [...reportsStorage]
+    let reports = Database.getReports()
 
     // Apply filters
     if (status) {
@@ -132,8 +137,8 @@ export async function POST(request: NextRequest) {
       recommendations: recommendations || []
     }
 
-    // Add to storage
-    reportsStorage.push(newReport)
+    // Add to database
+    Database.addReport(newReport)
 
     // Log activity
     Database.addActivity({
@@ -192,15 +197,13 @@ export async function PUT(request: NextRequest) {
     }
 
     // Find report
-    const reportIndex = reportsStorage.findIndex(r => r.id === reportId)
-    if (reportIndex === -1) {
+    const report = Database.getReportById(reportId)
+    if (!report) {
       return NextResponse.json(
         { error: "Report not found" },
         { status: 404 }
       )
     }
-
-    const report = reportsStorage[reportIndex]
 
     // Check if user can edit this report
     const canEdit = session.user.id === report.createdBy || 
@@ -214,7 +217,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update report
-    reportsStorage[reportIndex] = { ...report, ...updates }
+    Database.updateReport(reportId, updates)
 
     // Log activity
     Database.addActivity({
@@ -237,7 +240,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: reportsStorage[reportIndex],
+      data: Database.getReportById(reportId),
       message: "Report updated successfully"
     })
   } catch (error) {
@@ -271,15 +274,13 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Find report
-    const reportIndex = reportsStorage.findIndex(r => r.id === reportId)
-    if (reportIndex === -1) {
+    const report = Database.getReportById(reportId)
+    if (!report) {
       return NextResponse.json(
         { error: "Report not found" },
         { status: 404 }
       )
     }
-
-    const report = reportsStorage[reportIndex]
 
     // Only creator or admin can delete
     if (session.user.id !== report.createdBy && !session.user.permissions.includes("create_audit")) {
@@ -289,8 +290,8 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // Remove from storage
-    reportsStorage.splice(reportIndex, 1)
+    // Remove from database
+    Database.deleteReport(reportId)
 
     // Log activity
     Database.addActivity({

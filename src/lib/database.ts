@@ -112,6 +112,24 @@ export interface Alert {
   metadata?: Record<string, any>
 }
 
+export interface Report {
+  id: string
+  title: string
+  auditId: string
+  auditTitle: string
+  reportType: string
+  status: 'draft' | 'pending' | 'approved' | 'rejected'
+  createdBy: string
+  createdByName: string
+  createdAt: string
+  submittedAt?: string
+  approvedAt?: string
+  approvedBy?: string
+  content: string
+  findings?: string[]
+  recommendations?: string[]
+}
+
 // In-memory data storage (Edge Runtime compatible)
 export class InMemoryDatabase {
   static users: User[] = []
@@ -119,6 +137,7 @@ export class InMemoryDatabase {
   static documents: Document[] = []
   static activities: Activity[] = []
   static notifications: Notification[] = []
+  static reports: Report[] = []
   static alerts: Alert[] = [
     {
       id: 'alert-001',
@@ -306,6 +325,10 @@ export class InMemoryDatabase {
       // Load notifications
       const notificationsData = await fs.readFile(path.join(dataDir, 'notifications.json'), 'utf8')
       this.notifications = JSON.parse(notificationsData)
+      
+      // Load reports
+      const reportsData = await fs.readFile(path.join(dataDir, 'reports.json'), 'utf8')
+      this.reports = JSON.parse(reportsData)
       
       console.log('✅ Data loaded from files into in-memory database')
     } catch (error) {
@@ -564,5 +587,38 @@ export class Database {
         unread: notifications.filter(n => n.status === 'unread').length
       }
     }
+  }
+
+  // Report operations
+  static getReports(): Report[] {
+    return InMemoryDatabase.reports
+  }
+
+  static getReportById(id: string): Report | undefined {
+    return InMemoryDatabase.reports.find(report => report.id === id)
+  }
+
+  static getReportsByAuditId(auditId: string): Report[] {
+    return InMemoryDatabase.reports.filter(report => report.auditId === auditId)
+  }
+
+  static addReport(report: Report): void {
+    InMemoryDatabase.reports.push(report)
+  }
+
+  static updateReport(id: string, updates: Partial<Report>): boolean {
+    const index = InMemoryDatabase.reports.findIndex(report => report.id === id)
+    if (index === -1) return false
+
+    InMemoryDatabase.reports[index] = { ...InMemoryDatabase.reports[index], ...updates }
+    return true
+  }
+
+  static deleteReport(id: string): boolean {
+    const index = InMemoryDatabase.reports.findIndex(report => report.id === id)
+    if (index === -1) return false
+
+    InMemoryDatabase.reports.splice(index, 1)
+    return true
   }
 }
