@@ -115,7 +115,8 @@ export default function UsersPage() {
       if (response.ok) {
         toast({
           title: "Success",
-          description: "User created successfully"
+          description: "User created successfully",
+          variant: "success"
         })
         setIsCreateDialogOpen(false)
         setFormData({ email: "", name: "", role: "", department: "", password: "", isActive: true })
@@ -153,7 +154,8 @@ export default function UsersPage() {
       if (response.ok) {
         toast({
           title: "Success",
-          description: "User updated successfully"
+          description: "User updated successfully",
+          variant: "success"
         })
         setIsEditDialogOpen(false)
         setSelectedUser(null)
@@ -188,7 +190,8 @@ export default function UsersPage() {
       if (response.ok) {
         toast({
           title: "Success",
-          description: "User deleted successfully"
+          description: "User deleted successfully",
+          variant: "success"
         })
         setIsDeleteDialogOpen(false)
         setSelectedUser(null)

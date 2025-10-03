@@ -215,6 +215,7 @@ export default function ReportsPage() {
       toast({
         title: "Success",
         description: "Report exported as CSV",
+        variant: "success",
       })
     } catch (error) {
       console.error("Error exporting CSV:", error)

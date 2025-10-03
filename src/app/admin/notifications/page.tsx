@@ -92,6 +92,7 @@ export default function AdminNotificationsPage() {
         toast({
           title: "Success",
           description: "Notification marked as read",
+          variant: "success",
         })
       } else {
         console.error("Failed to mark notification as read:", data.error)
@@ -145,6 +146,7 @@ export default function AdminNotificationsPage() {
       toast({
         title: "Success",
         description: "All notifications marked as read",
+        variant: "success",
       })
     } catch (error) {
       console.error("Error marking all notifications as read:", error)
@@ -180,6 +182,7 @@ export default function AdminNotificationsPage() {
         toast({
           title: "Success",
           description: "Notification archived",
+          variant: "success",
         })
       } else {
         console.error("Failed to archive notification:", data.error)

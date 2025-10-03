@@ -202,6 +202,7 @@ export default function AuditDetailPage() {
         toast({
           title: "Success",
           description: "Audit updated successfully",
+          variant: "success",
         })
         setIsEditDialogOpen(false)
         await loadAudit() // Reload audit data
@@ -246,6 +247,7 @@ export default function AuditDetailPage() {
         toast({
           title: "Success",
           description: "Audit cancelled successfully",
+          variant: "success",
         })
         await loadAudit() // Reload audit data
       } else {
@@ -310,6 +312,7 @@ export default function AuditDetailPage() {
         toast({
           title: "Success",
           description: "Finding added successfully",
+          variant: "success",
         })
         setIsAddFindingDialogOpen(false)
         setNewFinding({
@@ -361,6 +364,7 @@ export default function AuditDetailPage() {
         toast({
           title: "Success",
           description: "Auditor assigned successfully",
+          variant: "success",
         })
         setIsAssignDialogOpen(false)
         setSelectedAuditor("")
