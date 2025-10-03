@@ -17,6 +17,7 @@ import {
   User,
   ChevronRight
 } from "lucide-react"
+import { NotificationDropdown } from "@/components/ui/notification-dropdown"
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
@@ -153,9 +154,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               <span className="font-bold">Client Portal</span>
             </div>
           </div>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
+          {session && (
+            <NotificationDropdown 
+              userId={session.user.id} 
+              userRole={session.user.role}
+              portalType="client"
+            />
+          )}
         </div>
       </div>
 

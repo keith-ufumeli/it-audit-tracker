@@ -93,6 +93,29 @@ export default function ClientNotificationsPage() {
     }
   }
 
+  const handleNotificationClick = (notification: Notification) => {
+    // Mark as read if unread
+    if (notification.status === "unread") {
+      handleMarkAsRead(notification.id)
+    }
+    
+    // Navigate to appropriate page based on notification type and metadata
+    if (notification.metadata?.auditId) {
+      // For clients, we might want to show audit details in a different way
+      // For now, just show a toast or stay on notifications page
+      console.log("Audit notification clicked:", notification.metadata.auditId)
+    } else if (notification.metadata?.documentId) {
+      // Navigate to documents page
+      router.push("/client/documents")
+    } else if (notification.type === "document_request") {
+      // Navigate to documents page for document-related notifications
+      router.push("/client/documents")
+    } else {
+      // For other notifications, stay on the notifications page
+      // The notification is already marked as read above
+    }
+  }
+
   const handleMarkAllAsRead = () => {
     // In real app, this would update the database
     setNotifications(prev => 
@@ -294,7 +317,7 @@ export default function ClientNotificationsPage() {
                           notification.status === "unread" ? "bg-blue-50/50" : ""
                         }`}
                         style={{ animationDelay: `${index * 30}ms` }}
-                        onClick={() => notification.status === "unread" && handleMarkAsRead(notification.id)}
+                        onClick={() => handleNotificationClick(notification)}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start space-x-4">

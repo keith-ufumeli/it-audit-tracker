@@ -22,6 +22,7 @@ import {
   Users,
   Key
 } from "lucide-react"
+import { NotificationDropdown } from "@/components/ui/notification-dropdown"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
@@ -34,6 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Audits", href: "/admin/audits", icon: ClipboardCheck, permission: "create_audit" },
     { name: "Reports", href: "/admin/reports", icon: FileText, permission: "view_reports" },
     { name: "Schedule Reports", href: "/admin/reports/schedule", icon: Settings, permission: "view_reports" },
+    { name: "Notifications", href: "/admin/notifications", icon: Bell, permission: null },
     { name: "Activity Logs", href: "/admin/activities", icon: Activity, permission: "view_logs" },
     { name: "Security Alerts", href: "/admin/alerts", icon: Shield, permission: "view_logs" },
     { name: "Management", href: "/admin/management", icon: BarChart3, permission: "view_dashboards" },
@@ -168,9 +170,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="font-bold">Audit Tracker</span>
             </div>
           </div>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
+          {session && (
+            <NotificationDropdown 
+              userId={session.user.id} 
+              userRole={session.user.role}
+              portalType="admin"
+            />
+          )}
         </div>
       </div>
 
