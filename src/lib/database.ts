@@ -324,6 +324,16 @@ export class Database {
     return audits.filter(audit => audit.assignedAuditors.includes(auditorId))
   }
 
+  static addAudit(audit: Audit): boolean {
+    try {
+      InMemoryDatabase.audits.push(audit)
+      return true
+    } catch (error) {
+      console.error("Error adding audit:", error)
+      return false
+    }
+  }
+
   static updateAudit(id: string, updates: Partial<Audit>): boolean {
     const audits = this.getAudits()
     const index = audits.findIndex(audit => audit.id === id)

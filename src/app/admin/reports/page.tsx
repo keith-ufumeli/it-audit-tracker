@@ -58,48 +58,7 @@ export default function ReportsPage() {
   const [selectedTab, setSelectedTab] = useState("all")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   
-  // Mock reports data - In real app, this would come from API
-  const [reports] = useState<Report[]>([
-    {
-      id: "rep-001",
-      auditId: "audit-001",
-      auditTitle: "Q1 2024 IT Security Audit",
-      title: "Security Assessment Report - Q1 2024",
-      status: "submitted",
-      preparedBy: "2",
-      preparedByName: "Jane Auditor",
-      submittedAt: "2024-01-25T14:30:00Z",
-      createdAt: "2024-01-20T10:00:00Z",
-      findings: 3,
-      summary: "Comprehensive security assessment covering network infrastructure, access controls, and data protection measures."
-    },
-    {
-      id: "rep-002",
-      auditId: "audit-003",
-      auditTitle: "Infrastructure Security Assessment",
-      title: "Infrastructure Security Report - December 2023",
-      status: "approved",
-      preparedBy: "2",
-      preparedByName: "Jane Auditor",
-      submittedAt: "2023-12-30T16:00:00Z",
-      approvedAt: "2024-01-05T11:00:00Z",
-      createdAt: "2023-12-28T09:00:00Z",
-      findings: 2,
-      summary: "Assessment of server infrastructure, cloud services, and backup systems with recommendations."
-    },
-    {
-      id: "rep-003",
-      auditId: "audit-002",
-      auditTitle: "Data Privacy Compliance Review",
-      title: "GDPR Compliance Assessment - Draft",
-      status: "draft",
-      preparedBy: "2",
-      preparedByName: "Jane Auditor",
-      createdAt: "2024-01-22T13:00:00Z",
-      findings: 1,
-      summary: "Initial review of data handling practices and GDPR compliance measures across departments."
-    }
-  ])
+  const [reports, setReports] = useState<Report[]>([])
 
   const [newReport, setNewReport] = useState({
     auditId: "",
@@ -131,6 +90,13 @@ export default function ReportsPage() {
       await new Promise(resolve => setTimeout(resolve, 600))
       const allAudits = Database.getAudits()
       setAudits(allAudits)
+      
+      // Fetch reports from API
+      const response = await fetch("/api/reports")
+      const data = await response.json()
+      if (data.success) {
+        setReports(data.data)
+      }
     } catch (error) {
       console.error("Error loading data:", error)
     } finally {
@@ -138,15 +104,50 @@ export default function ReportsPage() {
     }
   }
 
-  const handleCreateReport = () => {
-    console.log("Creating report:", newReport)
-    setIsCreateDialogOpen(false)
-    setNewReport({
-      auditId: "",
-      title: "",
-      summary: "",
-      findings: "",
-    })
+  const handleCreateReport = async () => {
+    if (!newReport.auditId || !newReport.title) {
+      alert("Please fill in all required fields")
+      return
+    }
+
+    startLoading("Creating report...")
+    try {
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newReport.title,
+          auditId: newReport.auditId,
+          reportType: "audit",
+          content: newReport.summary,
+          findings: newReport.findings ? newReport.findings.split(',').map(f => f.trim()) : [],
+          recommendations: []
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setIsCreateDialogOpen(false)
+        setNewReport({
+          auditId: "",
+          title: "",
+          summary: "",
+          findings: "",
+        })
+        // Reload reports to show the new one
+        await loadData()
+      } else {
+        alert(`Failed to create report: ${data.error}`)
+      }
+    } catch (error) {
+      console.error("Error creating report:", error)
+      alert("Failed to create report. Please try again.")
+    } finally {
+      stopLoading()
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -386,6 +387,7 @@ export default function ReportsPage() {
                   key={report.id}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-in slide-in-from-bottom"
                   style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => router.push(`/admin/reports/${report.id}`)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between mb-3">

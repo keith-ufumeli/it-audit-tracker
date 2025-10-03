@@ -84,18 +84,54 @@ export default function AuditsPage() {
     }
   }
 
-  const handleCreateAudit = () => {
-    // In a real app, this would call an API
-    console.log("Creating audit:", newAudit)
-    setIsCreateDialogOpen(false)
-    setNewAudit({
-      title: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      priority: "medium",
-      scope: "",
-    })
+  const handleCreateAudit = async () => {
+    if (!newAudit.title || !newAudit.description || !newAudit.startDate || !newAudit.endDate) {
+      alert("Please fill in all required fields")
+      return
+    }
+
+    startLoading("Creating audit...")
+    try {
+      const response = await fetch("/api/audits", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newAudit.title,
+          description: newAudit.description,
+          startDate: newAudit.startDate,
+          endDate: newAudit.endDate,
+          priority: newAudit.priority,
+          scope: newAudit.scope,
+          complianceFrameworks: "",
+          assignedAuditors: []
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setIsCreateDialogOpen(false)
+        setNewAudit({
+          title: "",
+          description: "",
+          startDate: "",
+          endDate: "",
+          priority: "medium",
+          scope: "",
+        })
+        // Reload audits to show the new one
+        await loadAudits()
+      } else {
+        alert(`Failed to create audit: ${data.error}`)
+      }
+    } catch (error) {
+      console.error("Error creating audit:", error)
+      alert("Failed to create audit. Please try again.")
+    } finally {
+      stopLoading()
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -313,6 +349,7 @@ export default function AuditsPage() {
                   key={audit.id}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-in slide-in-from-bottom"
                   style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => router.push(`/admin/audits/${audit.id}`)}
                 >
                   <CardHeader className="space-y-3">
                     <div className="flex items-start justify-between">

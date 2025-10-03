@@ -63,14 +63,34 @@ export default function ClientNotificationsPage() {
     }
   }
 
-  const handleMarkAsRead = (notificationId: string) => {
-    // In real app, this would update the database
-    setNotifications(prev => 
-      prev.map(n => 
-        n.id === notificationId ? { ...n, status: "read", readAt: new Date().toISOString() } : n
-      )
-    )
-    console.log("Marked as read:", notificationId)
+  const handleMarkAsRead = async (notificationId: string) => {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          notificationId,
+          action: "mark_read"
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update local state
+        setNotifications(prev => 
+          prev.map(n => 
+            n.id === notificationId ? { ...n, status: "read", readAt: new Date().toISOString() } : n
+          )
+        )
+      } else {
+        console.error("Failed to mark notification as read:", data.error)
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error)
+    }
   }
 
   const handleMarkAllAsRead = () => {
