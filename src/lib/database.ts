@@ -292,50 +292,8 @@ export class InMemoryDatabase {
   // This is a read-only implementation for demo purposes
   // In production, you would use a real database or API calls
 
-  // Method to reload data from files (for development)
-  static reloadFromFiles() {
-    // This would require file system access which is not available in Edge Runtime
-    // In a real implementation, you would reload from the actual data source
-    console.log('Data reload requested - in production this would reload from database')
-  }
-
-  // Method to load data from files (called by API routes)
-  static async loadDataFromFiles() {
-    try {
-      const fs = await import('fs/promises')
-      const path = await import('path')
-      
-      const dataDir = path.join(process.cwd(), 'src', 'data')
-      
-      // Load users
-      const usersData = await fs.readFile(path.join(dataDir, 'users.json'), 'utf8')
-      this.users = JSON.parse(usersData)
-      
-      // Load audits
-      const auditsData = await fs.readFile(path.join(dataDir, 'audits.json'), 'utf8')
-      this.audits = JSON.parse(auditsData)
-      
-      // Load documents
-      const documentsData = await fs.readFile(path.join(dataDir, 'documents.json'), 'utf8')
-      this.documents = JSON.parse(documentsData)
-      
-      // Load activities
-      const activitiesData = await fs.readFile(path.join(dataDir, 'activities.json'), 'utf8')
-      this.activities = JSON.parse(activitiesData)
-      
-      // Load notifications
-      const notificationsData = await fs.readFile(path.join(dataDir, 'notifications.json'), 'utf8')
-      this.notifications = JSON.parse(notificationsData)
-      
-      // Load reports
-      const reportsData = await fs.readFile(path.join(dataDir, 'reports.json'), 'utf8')
-      this.reports = JSON.parse(reportsData)
-      
-      console.log('✅ Data loaded from files into in-memory database')
-    } catch (error) {
-      console.error('❌ Error loading data from files:', error)
-    }
-  }
+  // Note: Data is loaded directly from JSON imports at the top of the file
+  // This ensures Edge Runtime compatibility without requiring Node.js APIs
 }
 
 // Generic database operations (Edge Runtime compatible)

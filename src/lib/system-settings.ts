@@ -1,3 +1,6 @@
+// Import system settings data directly for Edge Runtime compatibility
+import systemSettingsData from '../data/system-settings.json'
+
 export interface DatabaseSettings {
   backupEnabled: boolean
   backupFrequency: 'daily' | 'weekly' | 'monthly'
@@ -96,11 +99,8 @@ export class SystemSettingsManager {
 
   private loadSettings(): void {
     try {
-      const fs = require('fs')
-      const path = require('path')
-      const settingsPath = path.join(process.cwd(), 'src', 'data', 'system-settings.json')
-      const settingsData = fs.readFileSync(settingsPath, 'utf8')
-      this.settings = JSON.parse(settingsData)
+      // Use imported data for Edge Runtime compatibility
+      this.settings = systemSettingsData as SystemConfiguration
     } catch (error) {
       console.error('Error loading system settings:', error)
       this.settings = this.getDefaultSettings()
@@ -309,10 +309,10 @@ export class SystemSettingsManager {
 
   private saveSettings(): void {
     try {
-      const fs = require('fs')
-      const path = require('path')
-      const settingsPath = path.join(process.cwd(), 'src', 'data', 'system-settings.json')
-      fs.writeFileSync(settingsPath, JSON.stringify(this.settings, null, 2))
+      // Note: In Edge Runtime, we can't write to files
+      // Settings are updated in memory only
+      // In production, this would save to a database or external API
+      console.log('Settings updated in memory (Edge Runtime compatible)')
     } catch (error) {
       console.error('Error saving system settings:', error)
     }

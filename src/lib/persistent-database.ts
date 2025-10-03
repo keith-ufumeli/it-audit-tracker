@@ -4,74 +4,31 @@
  * while maintaining in-memory performance for reads
  */
 
-import { promises as fs } from 'fs'
-import path from 'path'
 import { Database, Audit, User, Document, Activity, Notification, Alert } from './database'
 
-// File paths for JSON data files
-const DATA_DIR = path.join(process.cwd(), 'src', 'data')
-const FILES = {
-  users: path.join(DATA_DIR, 'users.json'),
-  audits: path.join(DATA_DIR, 'audits.json'),
-  documents: path.join(DATA_DIR, 'documents.json'),
-  activities: path.join(DATA_DIR, 'activities.json'),
-  notifications: path.join(DATA_DIR, 'notifications.json')
-}
+// Note: In Edge Runtime, we can't access the file system
+// This class now provides in-memory persistence only
+// In production, you would use a real database or external API
 
 export class PersistentDatabase {
   /**
-   * Write data to JSON file
+   * Note: File operations removed for Edge Runtime compatibility
+   * In production, these would be replaced with database operations
    */
-  private static async writeToFile<T>(filePath: string, data: T[]): Promise<void> {
-    try {
-      await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8')
-    } catch (error) {
-      console.error(`Error writing to ${filePath}:`, error)
-      throw error
-    }
-  }
 
   /**
-   * Read data from JSON file
-   */
-  private static async readFromFile<T>(filePath: string): Promise<T[]> {
-    try {
-      const data = await fs.readFile(filePath, 'utf8')
-      return JSON.parse(data)
-    } catch (error) {
-      console.error(`Error reading from ${filePath}:`, error)
-      return []
-    }
-  }
-
-  /**
-   * Update audit with persistence
+   * Update audit with persistence (in-memory only for Edge Runtime)
    */
   static async updateAudit(id: string, updates: Partial<Audit>): Promise<boolean> {
     try {
-      // Read current audits from file first
-      const audits = await this.readFromFile<Audit>(FILES.audits)
+      // Update in-memory data only (Edge Runtime compatible)
+      const success = Database.updateAudit(id, updates)
       
-      // Find and update the audit in the array
-      const index = audits.findIndex(audit => audit.id === id)
-      if (index === -1) return false
-
-      // Update the audit in the array
-      const updatedAudit = { 
-        ...audits[index], 
-        ...updates, 
-        updatedAt: new Date().toISOString() 
+      if (success) {
+        console.log(`✅ Audit ${id} updated in memory`)
       }
-      audits[index] = updatedAudit
-
-      // Write back to file
-      await this.writeToFile(FILES.audits, audits)
-
-      // Update in-memory data to match file data
-      Database.updateAudit(id, updates)
-
-      console.log(`✅ Audit ${id} updated in both memory and file`)
-      return true
+      
+      return success
     } catch (error) {
       console.error('Error updating audit persistently:', error)
       return false
@@ -79,25 +36,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Add new audit with persistence
+   * Add new audit with persistence (in-memory only for Edge Runtime)
    */
   static async addAudit(audit: Audit): Promise<boolean> {
     try {
-      // Add to in-memory data first
+      // Add to in-memory data only (Edge Runtime compatible)
       const success = Database.addAudit(audit)
-      if (!success) return false
-
-      // Read current audits from file
-      const audits = await this.readFromFile<Audit>(FILES.audits)
       
-      // Add new audit to array
-      audits.push(audit)
-
-      // Write back to file
-      await this.writeToFile(FILES.audits, audits)
-
-      console.log(`✅ Audit ${audit.id} added to both memory and file`)
-      return true
+      if (success) {
+        console.log(`✅ Audit ${audit.id} added to memory`)
+      }
+      
+      return success
     } catch (error) {
       console.error('Error adding audit persistently:', error)
       return false
@@ -105,33 +55,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Update user with persistence
+   * Update user with persistence (in-memory only for Edge Runtime)
    */
   static async updateUser(id: string, updates: Partial<User>): Promise<boolean> {
     try {
-      // Update in-memory data first
+      // Update in-memory data only (Edge Runtime compatible)
       const success = Database.updateUser(id, updates)
-      if (!success) return false
-
-      // Get updated user data
-      const updatedUser = Database.getUserById(id)
-      if (!updatedUser) return false
-
-      // Read current users from file
-      const users = await this.readFromFile<User>(FILES.users)
       
-      // Find and update the user in the array
-      const index = users.findIndex(user => user.id === id)
-      if (index === -1) return false
-
-      // Update the user in the array
-      users[index] = updatedUser
-
-      // Write back to file
-      await this.writeToFile(FILES.users, users)
-
-      console.log(`✅ User ${id} updated in both memory and file`)
-      return true
+      if (success) {
+        console.log(`✅ User ${id} updated in memory`)
+      }
+      
+      return success
     } catch (error) {
       console.error('Error updating user persistently:', error)
       return false
@@ -139,33 +74,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Update document with persistence
+   * Update document with persistence (in-memory only for Edge Runtime)
    */
   static async updateDocument(id: string, updates: Partial<Document>): Promise<boolean> {
     try {
-      // Update in-memory data first
+      // Update in-memory data only (Edge Runtime compatible)
       const success = Database.updateDocument(id, updates)
-      if (!success) return false
-
-      // Get updated document data
-      const updatedDocument = Database.getDocumentById(id)
-      if (!updatedDocument) return false
-
-      // Read current documents from file
-      const documents = await this.readFromFile<Document>(FILES.documents)
       
-      // Find and update the document in the array
-      const index = documents.findIndex(doc => doc.id === id)
-      if (index === -1) return false
-
-      // Update the document in the array
-      documents[index] = updatedDocument
-
-      // Write back to file
-      await this.writeToFile(FILES.documents, documents)
-
-      console.log(`✅ Document ${id} updated in both memory and file`)
-      return true
+      if (success) {
+        console.log(`✅ Document ${id} updated in memory`)
+      }
+      
+      return success
     } catch (error) {
       console.error('Error updating document persistently:', error)
       return false
@@ -173,31 +93,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Add activity with persistence
+   * Add activity with persistence (in-memory only for Edge Runtime)
    */
   static async addActivity(activity: Omit<Activity, 'id'>): Promise<boolean> {
     try {
-      // Add to in-memory data first
+      // Add to in-memory data only (Edge Runtime compatible)
       const success = Database.addActivity(activity)
-      if (!success) return false
-
-      // Read current activities from file
-      const activities = await this.readFromFile<Activity>(FILES.activities)
       
-      // Create new activity with ID
-      const newActivity: Activity = {
-        ...activity,
-        id: `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      if (success) {
+        console.log(`✅ Activity added to memory`)
       }
-
-      // Add new activity to array
-      activities.push(newActivity)
-
-      // Write back to file
-      await this.writeToFile(FILES.activities, activities)
-
-      console.log(`✅ Activity ${newActivity.id} added to both memory and file`)
-      return true
+      
+      return success
     } catch (error) {
       console.error('Error adding activity persistently:', error)
       return false
@@ -205,34 +112,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Add notification with persistence
+   * Add notification with persistence (in-memory only for Edge Runtime)
    */
   static async addNotification(notification: Omit<Notification, 'id' | 'status' | 'createdAt' | 'readAt'>): Promise<boolean> {
     try {
-      // Add to in-memory data first
+      // Add to in-memory data only (Edge Runtime compatible)
       const success = Database.addNotification(notification)
-      if (!success) return false
-
-      // Read current notifications from file
-      const notifications = await this.readFromFile<Notification>(FILES.notifications)
       
-      // Create new notification with required fields
-      const newNotification: Notification = {
-        ...notification,
-        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        status: "unread",
-        createdAt: new Date().toISOString(),
-        readAt: null
+      if (success) {
+        console.log(`✅ Notification added to memory`)
       }
-
-      // Add new notification to array
-      notifications.push(newNotification)
-
-      // Write back to file
-      await this.writeToFile(FILES.notifications, notifications)
-
-      console.log(`✅ Notification ${newNotification.id} added to both memory and file`)
-      return true
+      
+      return success
     } catch (error) {
       console.error('Error adding notification persistently:', error)
       return false
@@ -240,33 +131,18 @@ export class PersistentDatabase {
   }
 
   /**
-   * Update notification with persistence
+   * Update notification with persistence (in-memory only for Edge Runtime)
    */
   static async updateNotification(id: string, updates: Partial<Notification>): Promise<boolean> {
     try {
-      // Update in-memory data first
+      // Update in-memory data only (Edge Runtime compatible)
       const success = Database.updateNotification(id, updates)
-      if (!success) return false
-
-      // Get updated notification data
-      const updatedNotification = Database.getNotifications().find(n => n.id === id)
-      if (!updatedNotification) return false
-
-      // Read current notifications from file
-      const notifications = await this.readFromFile<Notification>(FILES.notifications)
       
-      // Find and update the notification in the array
-      const index = notifications.findIndex(notif => notif.id === id)
-      if (index === -1) return false
-
-      // Update the notification in the array
-      notifications[index] = updatedNotification
-
-      // Write back to file
-      await this.writeToFile(FILES.notifications, notifications)
-
-      console.log(`✅ Notification ${id} updated in both memory and file`)
-      return true
+      if (success) {
+        console.log(`✅ Notification ${id} updated in memory`)
+      }
+      
+      return success
     } catch (error) {
       console.error('Error updating notification persistently:', error)
       return false
@@ -274,42 +150,28 @@ export class PersistentDatabase {
   }
 
   /**
-   * Sync all data from files to memory (useful for server restart)
+   * Sync all data from files to memory (Edge Runtime compatible)
    */
   static async syncFromFiles(): Promise<void> {
     try {
-      console.log('🔄 Syncing data from files to memory...')
-      
-      // Note: This would require modifying the Database class to allow setting data
-      // For now, we'll rely on the existing JSON imports at startup
+      console.log('🔄 Data sync not needed - using in-memory data only')
       console.log('✅ Data sync completed')
     } catch (error) {
-      console.error('Error syncing data from files:', error)
+      console.error('Error syncing data:', error)
     }
   }
 
   /**
-   * Get file modification times for debugging
+   * Get file stats for debugging (Edge Runtime compatible)
    */
   static async getFileStats(): Promise<Record<string, any>> {
-    const stats: Record<string, any> = {}
-    
-    for (const [key, filePath] of Object.entries(FILES)) {
-      try {
-        const stat = await fs.stat(filePath)
-        stats[key] = {
-          exists: true,
-          modified: stat.mtime,
-          size: stat.size
-        }
-      } catch (error) {
-        stats[key] = {
-          exists: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
-        }
-      }
+    // Return mock stats since we can't access files in Edge Runtime
+    return {
+      users: { exists: true, note: 'In-memory data' },
+      audits: { exists: true, note: 'In-memory data' },
+      documents: { exists: true, note: 'In-memory data' },
+      activities: { exists: true, note: 'In-memory data' },
+      notifications: { exists: true, note: 'In-memory data' }
     }
-    
-    return stats
   }
 }

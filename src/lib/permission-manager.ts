@@ -1,5 +1,7 @@
 import { UserRole } from "./auth"
 import { Database } from "./database"
+// Import permissions data directly for Edge Runtime compatibility
+import permissionsData from '../data/permissions.json'
 
 export interface Permission {
   id: string
@@ -33,11 +35,8 @@ export class PermissionManager {
 
   private loadPermissions(): void {
     try {
-      const fs = require('fs')
-      const path = require('path')
-      const permissionsPath = path.join(process.cwd(), 'src', 'data', 'permissions.json')
-      const permissionsData = fs.readFileSync(permissionsPath, 'utf8')
-      this.permissions = JSON.parse(permissionsData)
+      // Use imported data for Edge Runtime compatibility
+      this.permissions = permissionsData as Permission[]
     } catch (error) {
       console.error('Error loading permissions:', error)
       this.permissions = []
@@ -215,10 +214,10 @@ export class PermissionManager {
 
   private savePermissions(): void {
     try {
-      const fs = require('fs')
-      const path = require('path')
-      const permissionsPath = path.join(process.cwd(), 'src', 'data', 'permissions.json')
-      fs.writeFileSync(permissionsPath, JSON.stringify(this.permissions, null, 2))
+      // Note: In Edge Runtime, we can't write to files
+      // Permissions are updated in memory only
+      // In production, this would save to a database or external API
+      console.log('Permissions updated in memory (Edge Runtime compatible)')
     } catch (error) {
       console.error('Error saving permissions:', error)
     }
