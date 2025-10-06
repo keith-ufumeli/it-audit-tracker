@@ -34,6 +34,7 @@ import { useLoading } from "@/hooks/use-loading";
 import { useToast } from "@/hooks/use-toast";
 import { Database, Audit } from "@/lib/database";
 import { reportGenerator } from "@/lib/report-generator";
+import { formatDate, formatDateTime, formatDateISO } from "@/lib/utils";
 import AdminLayout from "@/components/admin/admin-layout";
 import {
   FileText,
@@ -200,14 +201,12 @@ export default function ReportsPage() {
     try {
       const pdf = reportGenerator.generateAuditReport({
         title: report.title,
-        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        subtitle: `Generated on ${formatDate(new Date().toISOString())}`,
         includeCharts: true,
         includeDetails: true,
       });
       pdf.save(
-        `${report.title.replace(/\s+/g, "-").toLowerCase()}-${
-          new Date().toISOString().split("T")[0]
-        }.pdf`
+        `${report.title.replace(/\s+/g, "-").toLowerCase()}-${formatDateISO(new Date().toISOString())}.pdf`
       );
       toast({
         title: "Success",
@@ -230,7 +229,7 @@ export default function ReportsPage() {
         ["Audit", report.auditTitle],
         ["Status", report.status],
         ["Prepared By", report.preparedByName],
-        ["Created At", new Date(report.createdAt).toLocaleString()],
+        ["Created At", formatDateTime(report.createdAt)],
         ["Findings", report.findings.toString()],
         ["Summary", report.summary],
       ]
@@ -240,9 +239,7 @@ export default function ReportsPage() {
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `${report.title.replace(/\s+/g, "-").toLowerCase()}-${
-        new Date().toISOString().split("T")[0]
-      }.csv`;
+      link.download = `${report.title.replace(/\s+/g, "-").toLowerCase()}-${formatDateISO(new Date().toISOString())}.csv`;
       link.click();
 
       toast({
@@ -625,20 +622,20 @@ export default function ReportsPage() {
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         Created:{" "}
-                        {new Date(report.createdAt).toLocaleDateString()}
+                        {formatDate(report.createdAt)}
                       </div>
                       {report.submittedAt && (
                         <div className="flex items-center">
                           <Send className="h-3 w-3 mr-1" />
                           Submitted:{" "}
-                          {new Date(report.submittedAt).toLocaleDateString()}
+                          {formatDate(report.submittedAt)}
                         </div>
                       )}
                       {report.approvedAt && (
                         <div className="flex items-center">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           Approved:{" "}
-                          {new Date(report.approvedAt).toLocaleDateString()}
+                          {formatDate(report.approvedAt)}
                         </div>
                       )}
                     </div>

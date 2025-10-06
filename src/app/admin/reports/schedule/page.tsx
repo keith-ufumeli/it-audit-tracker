@@ -24,6 +24,7 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react"
+import { formatDateTime } from "@/lib/utils"
 
 interface ScheduledReport {
   id: string
@@ -435,12 +436,12 @@ export default function ReportSchedulePage() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Next Run:</span>
-                    <span>{new Date(report.nextRun).toLocaleString()}</span>
+                    <span>{formatDateTime(report.nextRun)}</span>
                   </div>
                   {report.lastRun && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Last Run:</span>
-                      <span>{new Date(report.lastRun).toLocaleString()}</span>
+                      <span>{formatDateTime(report.lastRun)}</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between text-sm">
@@ -472,7 +473,7 @@ export default function ReportSchedulePage() {
                       <div>
                         <p className="font-semibold">{report?.name || 'Unknown Report'}</p>
                         <p className="text-sm text-muted-foreground">
-                          {job.startedAt && new Date(job.startedAt).toLocaleString()}
+                          {job.startedAt && formatDateTime(job.startedAt)}
                         </p>
                       </div>
                     </div>

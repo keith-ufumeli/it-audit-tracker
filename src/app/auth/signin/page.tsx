@@ -65,8 +65,8 @@ export default function SignInPage() {
               <Image 
                 src="/logo.png" 
                 alt="Audit Tracker Logo" 
-                width={64} 
-                height={64}
+                width={120} 
+                height={120}
                 className="object-contain"
               />
             </div>

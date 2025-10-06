@@ -28,6 +28,7 @@ import {
 import { CardSkeleton } from "@/components/ui/loader"
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 import { ReportDownloader } from "@/lib/report-downloader"
+import { formatDateTime } from "@/lib/utils"
 
 interface Report {
   id: string
@@ -374,13 +375,7 @@ export default function ReportDetailPage() {
                   <h4 className="text-sm font-semibold mb-1">Created</h4>
                   <p className="text-sm text-muted-foreground flex items-center">
                     <Calendar className="h-4 w-4 mr-2" />
-                    {new Date(report.createdAt).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    {formatDateTime(report.createdAt)}
                   </p>
                 </div>
 
