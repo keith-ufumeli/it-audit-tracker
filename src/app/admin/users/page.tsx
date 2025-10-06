@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { FullPageLoader } from "@/components/ui/loader"
 import { useToast } from "@/hooks/use-toast"
+import { usePagination, PaginationComponent } from "@/components/ui/pagination"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Users, 
@@ -48,6 +49,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [itemsPerPage, setItemsPerPage] = useState(10)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -259,6 +261,21 @@ export default function UsersPage() {
     user.department.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // Pagination logic
+  const {
+    currentPage,
+    totalPages,
+    currentData: paginatedUsers,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    startIndex,
+    endIndex,
+    totalItems
+  } = usePagination(filteredUsers, itemsPerPage)
+
   if (status === "loading" || loading) {
     return (
       <FullPageLoader 
@@ -385,7 +402,7 @@ export default function UsersPage() {
 
           {/* Users Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <Card key={user.id} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
@@ -456,6 +473,26 @@ export default function UsersPage() {
               </Card>
             ))}
           </div>
+
+          {/* Pagination */}
+          {filteredUsers.length > 0 && (
+            <div className="mt-8">
+              <PaginationComponent
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+                onPreviousPage={goToPreviousPage}
+                onNextPage={goToNextPage}
+                hasNextPage={hasNextPage}
+                hasPreviousPage={hasPreviousPage}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                totalItems={totalItems}
+                itemsPerPage={itemsPerPage}
+                showInfo={true}
+              />
+            </div>
+          )}
 
           {filteredUsers.length === 0 && (
             <Card>

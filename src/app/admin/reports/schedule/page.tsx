@@ -70,6 +70,7 @@ export default function ReportSchedulePage() {
   const { isLoading, startLoading, stopLoading } = useLoading()
   const [scheduledReports, setScheduledReports] = useState<ScheduledReport[]>([])
   const [reportJobs, setReportJobs] = useState<ReportJob[]>([])
+  const [itemsPerPage, setItemsPerPage] = useState(6)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [reportToDelete, setReportToDelete] = useState<string | null>(null)
@@ -384,7 +385,7 @@ export default function ReportSchedulePage() {
 
         {/* Scheduled Reports */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {scheduledReports.map((report) => (
+          {scheduledReports.slice(0, itemsPerPage).map((report) => (
             <Card key={report.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">

@@ -35,6 +35,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Database, Audit } from "@/lib/database";
 import { reportGenerator } from "@/lib/report-generator";
 import { formatDate, formatDateTime, formatDateISO } from "@/lib/utils";
+import { usePagination, PaginationComponent } from "@/components/ui/pagination";
 import AdminLayout from "@/components/admin/admin-layout";
 import {
   FileText,
@@ -79,6 +80,7 @@ export default function ReportsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const [reports, setReports] = useState<Report[]>([]);
+  const [itemsPerPage, setItemsPerPage] = useState(6); // 6 items per page for better grid layout
 
   const [newReport, setNewReport] = useState({
     auditId: "",
@@ -294,6 +296,21 @@ export default function ReportsPage() {
     const matchesTab = selectedTab === "all" || report.status === selectedTab;
     return matchesSearch && matchesTab;
   });
+
+  // Pagination logic
+  const {
+    currentPage,
+    totalPages,
+    currentData: paginatedReports,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    startIndex,
+    endIndex,
+    totalItems
+  } = usePagination(filteredReports, itemsPerPage);
 
   if (status === "loading" || isLoading) {
     return (
@@ -545,7 +562,7 @@ export default function ReportsPage() {
 
           <TabsContent value={selectedTab} className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredReports.map((report, index) => (
+              {paginatedReports.map((report, index) => (
                 <Card
                   key={report.id}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-in slide-in-from-bottom"
@@ -675,6 +692,27 @@ export default function ReportsPage() {
                 </Card>
               ))}
             </div>
+            
+            {/* Pagination */}
+            {filteredReports.length > 0 && (
+              <div className="mt-8">
+                <PaginationComponent
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  onPreviousPage={goToPreviousPage}
+                  onNextPage={goToNextPage}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
+                  startIndex={startIndex}
+                  endIndex={endIndex}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  showInfo={true}
+                />
+              </div>
+            )}
+            
             {filteredReports.length === 0 && (
               <div className="text-center py-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">

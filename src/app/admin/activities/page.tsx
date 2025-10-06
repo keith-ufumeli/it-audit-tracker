@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Database, Activity } from "@/lib/database"
 import { reportGenerator } from "@/lib/report-generator"
 import { csvExporter } from "@/lib/csv-exporter"
+import { usePagination, PaginationComponent } from "@/components/ui/pagination"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Activity as ActivityIcon,
@@ -44,6 +45,7 @@ export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSeverity, setSelectedSeverity] = useState("all")
+  const [itemsPerPage, setItemsPerPage] = useState(15)
 
   const loadActivities = useCallback(async () => {
     startLoading("Loading activities...")
@@ -170,8 +172,23 @@ export default function ActivitiesPage() {
     return matchesSearch && matchesSeverity
   })
 
+  // Pagination logic
+  const {
+    currentPage,
+    totalPages,
+    currentData: paginatedActivities,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    startIndex,
+    endIndex,
+    totalItems
+  } = usePagination(filteredActivities, itemsPerPage)
+
   // Group activities by date
-  const groupedActivities = filteredActivities.reduce((groups: { [key: string]: Activity[] }, activity) => {
+  const groupedActivities = paginatedActivities.reduce((groups: { [key: string]: Activity[] }, activity) => {
     const date = new Date(activity.timestamp).toLocaleDateString()
     if (!groups[date]) {
       groups[date] = []
@@ -422,6 +439,26 @@ export default function ActivitiesPage() {
                   </div>
                 </div>
               ))}
+              
+              {/* Pagination */}
+              {filteredActivities.length > 0 && (
+                <div className="mt-8">
+                  <PaginationComponent
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={goToPage}
+                    onPreviousPage={goToPreviousPage}
+                    onNextPage={goToNextPage}
+                    hasNextPage={hasNextPage}
+                    hasPreviousPage={hasPreviousPage}
+                    startIndex={startIndex}
+                    endIndex={endIndex}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    showInfo={true}
+                  />
+                </div>
+              )}
               
               {filteredActivities.length === 0 && (
                 <div className="text-center py-12">

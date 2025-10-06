@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
 import { Audit } from "@/lib/database"
+import { usePagination, PaginationComponent } from "@/components/ui/pagination"
 import AdminLayout from "@/components/admin/admin-layout"
 import { 
   Plus,
@@ -43,6 +44,7 @@ export default function AuditsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTab, setSelectedTab] = useState("all")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [itemsPerPage, setItemsPerPage] = useState(9)
   
   // Form state for new audit
   const [newAudit, setNewAudit] = useState({
@@ -191,6 +193,21 @@ export default function AuditsPage() {
     const matchesTab = selectedTab === "all" || audit.status === selectedTab
     return matchesSearch && matchesTab
   })
+
+  // Pagination logic
+  const {
+    currentPage,
+    totalPages,
+    currentData: paginatedAudits,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+    startIndex,
+    endIndex,
+    totalItems
+  } = usePagination(filteredAudits, itemsPerPage)
 
   if (status === "loading" || isLoading) {
     return (
@@ -366,7 +383,7 @@ export default function AuditsPage() {
 
           <TabsContent value={selectedTab} className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAudits.map((audit, index) => (
+              {paginatedAudits.map((audit, index) => (
                 <Card 
                   key={audit.id}
                   className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-in slide-in-from-bottom"
@@ -496,6 +513,27 @@ export default function AuditsPage() {
                 </Card>
               ))}
             </div>
+            
+            {/* Pagination */}
+            {filteredAudits.length > 0 && (
+              <div className="mt-8">
+                <PaginationComponent
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  onPreviousPage={goToPreviousPage}
+                  onNextPage={goToNextPage}
+                  hasNextPage={hasNextPage}
+                  hasPreviousPage={hasPreviousPage}
+                  startIndex={startIndex}
+                  endIndex={endIndex}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  showInfo={true}
+                />
+              </div>
+            )}
+            
             {filteredAudits.length === 0 && (
               <div className="text-center py-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
