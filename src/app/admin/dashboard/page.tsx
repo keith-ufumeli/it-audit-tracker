@@ -238,7 +238,11 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {audits.filter(a => a.status !== "completed").slice(0, 3).map((audit) => (
-                <div key={audit.id} className="group hover:bg-accent/50 p-4 rounded-lg transition-colors cursor-pointer">
+                <div 
+                  key={audit.id} 
+                  className="group hover:bg-accent/50 p-4 rounded-lg transition-colors cursor-pointer"
+                  onClick={() => router.push(`/admin/audits/${audit.id}`)}
+                >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">

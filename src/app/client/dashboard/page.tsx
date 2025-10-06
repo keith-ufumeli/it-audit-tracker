@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
-import { Database, Document, Notification } from "@/lib/database"
+import { Database, Document, Notification, Audit } from "@/lib/database"
 import ClientLayout from "@/components/client/client-layout"
 import PriorityDistributionChart from "@/components/charts/PriorityDistributionChart"
 import AuditStatusChart from "@/components/charts/AuditStatusChart"
@@ -30,6 +30,7 @@ export default function ClientDashboardPage() {
   const { isLoading, startLoading, stopLoading } = useLoading()
   const [documents, setDocuments] = useState<Document[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
+  const [audits, setAudits] = useState<Audit[]>([])
 
   const loadDashboardData = useCallback(async () => {
     startLoading("Loading dashboard...")
@@ -38,14 +39,22 @@ export default function ClientDashboardPage() {
       
       const allDocuments = Database.getDocuments()
       const userNotifications = Database.getUnreadNotificationsByUser(session?.user?.id || "")
+      const allAudits = Database.getAudits()
       
       // Filter documents for current user
       const userDocs = allDocuments.filter(doc => 
         doc.requestedFrom === session?.user?.id || doc.uploadedBy === session?.user?.id
       )
       
+      // Filter audits that are related to user's documents
+      const userAuditIds = userDocs.map(doc => doc.auditId)
+      const relatedAudits = allAudits.filter(audit => 
+        userAuditIds.includes(audit.id) && audit.status !== "completed"
+      )
+      
       setDocuments(userDocs)
       setNotifications(userNotifications)
+      setAudits(relatedAudits)
     } catch (error) {
       console.error("Error loading dashboard:", error)
     } finally {
@@ -228,6 +237,81 @@ export default function ClientDashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Audit Progress Overview */}
+        {audits.length > 0 && (
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+                    Related Audits Overview
+                  </CardTitle>
+                  <CardDescription className="mt-2">
+                    Track progress of audits involving your documents
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => router.push("/client/documents")}>
+                  View Documents
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {audits.slice(0, 3).map((audit) => (
+                  <div 
+                    key={audit.id} 
+                    className="group hover:bg-accent/50 p-4 rounded-lg transition-colors cursor-pointer"
+                    onClick={() => router.push(`/client/documents`)}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h4 className="font-semibold group-hover:text-primary transition-colors">{audit.title}</h4>
+                          <Badge className={getPriorityColor(audit.priority)}>
+                            {audit.priority}
+                          </Badge>
+                          <Badge className={getStatusColor(audit.status)}>
+                            {audit.status.replace('_', ' ')}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {audit.description}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="font-medium">{audit.progress}%</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                          style={{ width: `${audit.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+                      <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {new Date(audit.startDate).toLocaleDateString()} - {new Date(audit.endDate).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center">
+                        <FileText className="h-3 w-3 mr-1" />
+                        {documents.filter(d => d.auditId === audit.id).length} document{documents.filter(d => d.auditId === audit.id).length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pending Document Requests */}
