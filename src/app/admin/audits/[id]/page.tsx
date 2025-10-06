@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { useLoading } from "@/hooks/use-loading"
 import { useToast } from "@/hooks/use-toast"
-import { Audit, User } from "@/lib/database"
+import { Audit, User, Database } from "@/lib/database"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -119,24 +119,24 @@ export default function AuditDetailPage() {
 
   const loadUserData = async (auditData: Audit) => {
     try {
-      // Fetch all users from API
-      const response = await fetch("/api/users")
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.data) {
-          const users = result.data
-          
-          // Find audit manager
-          const manager = users.find((user: User) => user.id === auditData.auditManager)
-          setAuditManager(manager || null)
-          
-          // Find assigned auditors
-          const auditors = auditData.assignedAuditors
-            .map((id: string) => users.find((user: User) => user.id === id))
-            .filter((user): user is User => user !== undefined)
-          setAssignedAuditors(auditors)
-        }
-      }
+      // Get all users directly from database
+      const users = Database.getUsers()
+      
+      // Debug logging
+      console.log("Audit data:", auditData)
+      console.log("Audit manager ID:", auditData.auditManager)
+      console.log("Available users:", users.map(u => ({ id: u.id, name: u.name, role: u.role })))
+      
+      // Find audit manager
+      const manager = users.find((user: User) => user.id === auditData.auditManager)
+      console.log("Found manager:", manager)
+      setAuditManager(manager || null)
+      
+      // Find assigned auditors
+      const auditors = auditData.assignedAuditors
+        .map((id: string) => users.find((user: User) => user.id === id))
+        .filter((user): user is User => user !== undefined)
+      setAssignedAuditors(auditors)
     } catch (error) {
       console.error("Error loading user data:", error)
     }
@@ -144,19 +144,14 @@ export default function AuditDetailPage() {
 
   const loadAvailableAuditors = async () => {
     try {
-      // Fetch fresh user data from API
-      const response = await fetch("/api/users")
-      if (response.ok) {
-        const result = await response.json()
-        if (result.success && result.data) {
-          const auditors = result.data.filter((user: User) => 
-            user.role === "auditor" && 
-            audit && 
-            !audit.assignedAuditors.includes(user.id)
-          )
-          setAvailableAuditors(auditors)
-        }
-      }
+      // Get fresh user data from database
+      const users = Database.getUsers()
+      const auditors = users.filter((user: User) => 
+        user.role === "auditor" && 
+        audit && 
+        !audit.assignedAuditors.includes(user.id)
+      )
+      setAvailableAuditors(auditors)
     } catch (error) {
       console.error("Error loading auditors:", error)
     }
