@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Eye, EyeOff, Shield } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
+import Image from "next/image"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
@@ -60,8 +61,14 @@ export default function SignInPage() {
       <Card className="w-full max-w-md mx-auto shadow-2xl">
         <CardHeader className="space-y-2 text-center">
           <div className="flex justify-center mb-4">
-            <div className="p-3 bg-orange_web-500 rounded-full">
-              <Shield className="h-8 w-8 text-white" />
+            <div className="bg-white">
+              <Image 
+                src="/logo.png" 
+                alt="Audit Tracker Logo" 
+                width={64} 
+                height={64}
+                className="object-contain"
+              />
             </div>
           </div>
           <CardTitle className="text-2xl font-bold">IT Audit Tracker</CardTitle>

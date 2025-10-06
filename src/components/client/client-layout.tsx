@@ -17,6 +17,7 @@ import {
   User,
   ChevronRight
 } from "lucide-react"
+import Image from "next/image"
 import { NotificationDropdown } from "@/components/ui/notification-dropdown"
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -56,8 +57,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Logo */}
       <div className="p-6 border-b bg-gradient-to-r from-blue-50/50 to-blue-100/30">
         <div className="flex items-center space-x-3">
-          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <Building className="h-6 w-6 text-white" />
+          <div className="h-11 w-11 rounded-xl bg-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-blue-200">
+            <Image 
+              src="/logo.png" 
+              alt="Audit Tracker Logo" 
+              width={28} 
+              height={28}
+              className="object-contain"
+            />
           </div>
           <div>
             <h1 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
@@ -150,7 +157,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               </SheetContent>
             </Sheet>
             <div className="flex items-center space-x-2">
-              <Building className="h-6 w-6 text-blue-500" />
+              <div className="h-6 w-6 rounded bg-white flex items-center justify-center border border-blue-200">
+                <Image 
+                  src="/logo.png" 
+                  alt="Audit Tracker Logo" 
+                  width={20} 
+                  height={20}
+                  className="object-contain"
+                />
+              </div>
               <span className="font-bold">Client Portal</span>
             </div>
           </div>

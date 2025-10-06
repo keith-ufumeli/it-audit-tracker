@@ -176,5 +176,98 @@
       "loginMethod": "credentials"
     },
     "id": "activity-1759748675534-wof6lyg0g"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:12:56.050Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759749176051",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759749176054-o7dy4gszd"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "create_user",
+    "description": "Created user: Chiedza Muzuva (chiedza@zacc.co.zw) with role: auditor",
+    "timestamp": "2025-10-06T11:14:29.753Z",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "severity": "info",
+    "resource": "user_management",
+    "metadata": {
+      "targetUserId": "1759749269738",
+      "targetUserEmail": "chiedza@zacc.co.zw",
+      "targetUserRole": "auditor"
+    },
+    "id": "activity-1759749269757-pye1hdo6k"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "update_user",
+    "description": "Updated user: Super Administrator (superadmin@audit.com)",
+    "timestamp": "2025-10-06T11:15:13.242Z",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "severity": "info",
+    "resource": "user_management",
+    "metadata": {
+      "targetUserId": "0",
+      "targetUserEmail": "superadmin@audit.com",
+      "changes": [
+        "email",
+        "name",
+        "role",
+        "department",
+        "isActive"
+      ]
+    },
+    "id": "activity-1759749313246-n3kaxb7h8"
+  },
+  {
+    "userId": "0",
+    "userName": "Innocentia",
+    "userRole": "super_admin",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:15:50.585Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759749350585",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759749350589-9jfjozoer"
+  },
+  {
+    "userId": "1759749269738",
+    "userName": "Chiedza Muzuva",
+    "userRole": "auditor",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:16:27.986Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759749387986",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759749387990-sbbtglx7a"
   }
 ]
