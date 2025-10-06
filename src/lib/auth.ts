@@ -6,8 +6,8 @@ import { User } from "@/types/user"
 // Define user roles
 export type UserRole = "super_admin" | "audit_manager" | "auditor" | "management" | "client" | "department"
 
-// Hash passwords for mock users (in production, these would be stored hashed)
-const mockPasswords: Record<string, string> = {
+// Default passwords for initial users (these will be replaced by actual user passwords from database)
+const defaultPasswords: Record<string, string> = {
   "superadmin@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
   "manager@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
   "auditor@audit.com": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi", // password
@@ -38,22 +38,33 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Verify password
-        const hashedPassword = mockPasswords[credentials.email]
-        if (!hashedPassword) {
-          return null
+        // Verify password - use actual user password from database
+        const userPassword = user.password
+        if (!userPassword) {
+          // Fallback to default passwords for initial users
+          const defaultPassword = defaultPasswords[credentials.email]
+          if (!defaultPassword) {
+            return null
+          }
+          
+          const isValidPassword = await bcrypt.compare(credentials.password, defaultPassword)
+          if (!isValidPassword) {
+            return null
+          }
+        } else {
+          // Use the actual password from the user record
+          const isValidPassword = await bcrypt.compare(credentials.password, userPassword)
+          if (!isValidPassword) {
+            return null
+          }
         }
 
-        const isValidPassword = await bcrypt.compare(credentials.password, hashedPassword)
-        if (!isValidPassword) {
-          return null
-        }
+        // Update last login with persistence
+        const { PersistentDatabase } = await import('./persistent-database')
+        await PersistentDatabase.updateUser(user.id, { lastLogin: new Date().toISOString() })
 
-        // Update last login
-        Database.updateUser(user.id, { lastLogin: new Date().toISOString() })
-
-        // Log login activity
-        Database.addActivity({
+        // Log login activity with persistence
+        await PersistentDatabase.addActivity({
           userId: user.id,
           userName: user.name,
           userRole: user.role,

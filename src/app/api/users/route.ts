@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions, isSuperAdmin, hasAdminAccess } from "@/lib/auth"
 import { Database } from "@/lib/database"
+import { PersistentDatabase } from "@/lib/persistent-database"
 import { PermissionManager } from "@/lib/permission-manager"
 import { checkPermissions } from "@/lib/permission-middleware"
 import bcrypt from "bcryptjs"
@@ -121,13 +122,17 @@ export async function POST(request: NextRequest) {
       isActive: true
     }
 
-    // Add user to database
-    const { InMemoryDatabase } = await import("@/lib/database")
-    InMemoryDatabase.users.push(newUser)
+    // Add user to database with persistence
+    const success = await PersistentDatabase.addUser(newUser)
+    
+    if (!success) {
+      return NextResponse.json({ error: "Failed to create user" }, { status: 500 })
+    }
+    
     const createdUser = newUser
 
-    // Log the activity
-    Database.addActivity({
+    // Log the activity with persistence
+    await PersistentDatabase.addActivity({
       userId: session.user.id,
       userName: session.user.name,
       userRole: session.user.role,

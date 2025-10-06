@@ -6,6 +6,7 @@ export interface User {
   department: string
   isActive: boolean
   permissions: string[]
+  password: string // Hashed password
   lastLogin?: string
   createdAt: string
   updatedAt: string

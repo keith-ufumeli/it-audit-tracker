@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions, isSuperAdmin, hasAdminAccess } from "@/lib/auth"
 import { Database } from "@/lib/database"
+import { PersistentDatabase } from "@/lib/persistent-database"
 import { PermissionManager } from "@/lib/permission-manager"
 import bcrypt from "bcryptjs"
 
@@ -100,29 +101,36 @@ export async function PUT(
       updateData.password = await bcrypt.hash(password, 10)
     }
 
-    const updatedUser = Database.updateUser(id, updateData)
+    const updatedUser = await PersistentDatabase.updateUser(id, updateData)
 
-    // Log the activity
-    Database.addActivity({
+    if (!updatedUser) {
+      return NextResponse.json({ error: "Failed to update user" }, { status: 500 })
+    }
+
+    // Log the activity with persistence
+    await PersistentDatabase.addActivity({
       userId: session.user.id,
       userName: session.user.name,
       userRole: session.user.role,
       action: "update_user",
-      description: `Updated user: ${(updatedUser as any).name} (${(updatedUser as any).email})`,
+      description: `Updated user: ${user.name} (${user.email})`,
       timestamp: new Date().toISOString(),
       ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1",
       userAgent: request.headers.get("user-agent") || "Unknown",
       severity: "info",
       resource: "user_management",
       metadata: {
-        targetUserId: (updatedUser as any).id,
-        targetUserEmail: (updatedUser as any).email,
+        targetUserId: user.id,
+        targetUserEmail: user.email,
         changes: Object.keys(updateData)
       }
     })
 
+    // Get updated user data
+    const updatedUserData = Database.getUserById(id)
+    
     // Remove password from response
-    const { password: _, ...userResponse } = updatedUser as any
+    const { password: _, ...userResponse } = updatedUserData as any
 
     return NextResponse.json({ user: userResponse })
   } catch (error) {
@@ -168,13 +176,13 @@ export async function DELETE(
     }
 
     // Mark user as inactive instead of deleting (since deleteUser doesn't exist in Database)
-    const updated = Database.updateUser(id, { isActive: false })
+    const updated = await PersistentDatabase.updateUser(id, { isActive: false })
     if (!updated) {
       return NextResponse.json({ error: "Failed to delete user" }, { status: 500 })
     }
 
-    // Log the activity
-    Database.addActivity({
+    // Log the activity with persistence
+    await PersistentDatabase.addActivity({
       userId: session.user.id,
       userName: session.user.name,
       userRole: session.user.role,

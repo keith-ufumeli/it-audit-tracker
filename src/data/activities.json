@@ -135,5 +135,46 @@
       ]
     },
     "id": "activity-1759454125275-1186ok80f"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "update_user",
+    "description": "Updated user: John Manager (manager@audit.com)",
+    "timestamp": "2025-10-06T10:06:59.435Z",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "severity": "info",
+    "resource": "user_management",
+    "metadata": {
+      "targetUserId": "1",
+      "targetUserEmail": "manager@audit.com",
+      "changes": [
+        "email",
+        "name",
+        "role",
+        "department",
+        "isActive"
+      ]
+    },
+    "id": "activity-1759745219440-8ycdb6xih"
+  },
+  {
+    "userId": "1",
+    "userName": "Keith",
+    "userRole": "audit_manager",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:04:35.529Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759748675529",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759748675534-wof6lyg0g"
   }
 ]
