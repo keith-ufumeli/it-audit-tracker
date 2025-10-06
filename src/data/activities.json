@@ -422,5 +422,22 @@
       "loginMethod": "credentials"
     },
     "id": "activity-1759761721748-wcrqktvxg"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T15:10:20.738Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759763420738",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759763420740-wd5pahysa"
   }
 ]
