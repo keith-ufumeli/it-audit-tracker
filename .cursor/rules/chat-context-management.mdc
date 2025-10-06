@@ -1,0 +1,131 @@
+---
+alwaysApply: true
+description: Chat context management and continuation guidelines
+---
+
+# Chat Context Management Rule
+
+## Context Monitoring
+Monitor chat context usage and provide guidance when approaching limits.
+
+## Context Thresholds
+- **80% Full**: Start summarizing key points and preparing for continuation
+- **90% Full**: Actively suggest continuing to new chat
+- **95% Full**: Strongly recommend new chat and provide summary
+
+## When to Continue to New Chat
+
+### Automatic Triggers
+- Chat context reaches 90% capacity
+- Complex multi-step tasks that would exceed context
+- Switching between major feature areas (e.g., frontend to backend)
+- After completing major milestones or features
+
+### Manual Triggers
+- User explicitly requests new chat
+- Starting a completely new feature or module
+- Switching from development to debugging/testing
+- Moving from implementation to documentation
+
+## Continuation Protocol
+
+### Before Starting New Chat
+1. **Summarize Current State**
+   - List completed tasks and features
+   - Note current working directory and active files
+   - Document any pending issues or next steps
+
+2. **Save Progress**
+   - Ensure all code changes are saved
+   - Commit work if appropriate
+   - Note any temporary files or configurations
+
+3. **Prepare Context for New Chat**
+   - List key files and their purposes
+   - Note current architecture decisions
+   - Include any relevant configuration details
+
+### Starting New Chat
+Begin new chat with:
+```
+Continuing from previous chat. Current project state:
+- [Brief summary of completed work]
+- [Current focus area]
+- [Key files: list main files being worked on]
+- [Next steps: what needs to be done next]
+```
+
+## Context Optimization Tips
+
+### For Current Chat
+- Use specific file references: [filename.ext](mdc:filename.ext)
+- Summarize long code blocks when possible
+- Focus on one major task at a time
+- Use bullet points for multiple items
+
+### For New Chat
+- Provide clear project overview
+- Reference specific files and their purposes
+- Include any architectural decisions made
+- Note any dependencies or requirements
+
+## Project-Specific Context
+
+### Current Project: IT Audit Tracker
+- **Type**: Next.js + TypeScript application
+- **Database**: JSON files (converting to persistent storage)
+- **Authentication**: NextAuth.js with role-based access
+- **Key Features**: User management, audit tracking, document management, reporting
+
+### Key Files to Reference
+- [src/lib/auth.ts](mdc:src/lib/auth.ts) - Authentication configuration
+- [src/lib/file-database.ts](mdc:src/lib/file-database.ts) - Persistent data storage
+- [src/app/api/users/route.ts](mdc:src/app/api/users/route.ts) - User management API
+- [src/data/users.json](mdc:src/data/users.json) - User data storage
+
+## Context Management Commands
+
+### Check Context Usage
+- Monitor token count in responses
+- Watch for truncated responses
+- Note when file content is summarized vs. shown in full
+
+### Optimize Context
+- Use file references instead of full content when possible
+- Summarize completed work regularly
+- Focus on current task rather than explaining entire codebase
+
+## Example Continuation Message
+
+```
+Starting new chat - continuing IT Audit Tracker development.
+
+**Previous Chat Summary:**
+- ✅ Fixed CRUD persistence issues
+- ✅ Resolved Turbopack HMR errors  
+- ✅ Fixed authentication system
+- ✅ Implemented client-server separation
+- ✅ Updated all API route imports
+
+**Current State:**
+- Working directory: C:\Users\keith.ufumeli\Documents\Github\personal-projects\web\it-audit-tracker
+- All build errors resolved
+- System fully functional with persistent data storage
+- Ready for new features or PHP conversion
+
+**Key Files:**
+- [src/lib/auth-server.ts](mdc:src/lib/auth-server.ts) - Server-side auth
+- [src/lib/file-database.ts](mdc:src/lib/file-database.ts) - Data persistence
+- [src/app/api/users/route.ts](mdc:src/app/api/users/route.ts) - User API
+
+**Next Steps:**
+- [User's next request or feature]
+```
+
+## Best Practices
+
+1. **Proactive Management**: Don't wait until context is full
+2. **Clear Handoffs**: Provide comprehensive summaries
+3. **File References**: Use proper mdc: syntax for file references
+4. **Focused Tasks**: Keep individual chats focused on specific goals
+5. **Progress Tracking**: Always note what's been completed vs. what's pending
