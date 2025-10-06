@@ -10,6 +10,11 @@
     box-sizing: border-box;
 }
 
+/* CDN Integration - External Libraries */
+/* Chart.js for data visualization */
+/* Bootstrap Icons for UI icons */
+/* Font Awesome for additional icons */
+
 html {
     font-size: 16px;
     line-height: 1.5;
@@ -724,7 +729,10 @@ a:hover {
 .cursor-pointer { cursor: pointer; }
 .cursor-not-allowed { cursor: not-allowed; }
 
-.select-none { user-select: none; }
+.select-none { 
+    -webkit-user-select: none;
+    user-select: none; 
+}
 
 .overflow-hidden { overflow: hidden; }
 .overflow-auto { overflow: auto; }

@@ -400,7 +400,7 @@ class Report {
             
             // Get audit documents
             $documentManager = new Document();
-            $documents = $documentManager->getAuditDocuments($auditId);
+            $documents = $documentManager->getAllDocuments(['audit_id' => $auditId]);
             
             // Generate report content based on type
             $content = $this->generateReportContent($audit, $findings, $documents, $reportType);

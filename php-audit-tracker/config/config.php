@@ -14,6 +14,7 @@ define('APP_NAME', 'IT Audit Tracker');
 define('APP_VERSION', '1.0.0');
 define('APP_ENV', 'development'); // development, staging, production
 define('APP_DEBUG', true);
+define('BASE_URL', 'http://localhost/php-audit-tracker');
 
 // Database Configuration
 define('DB_HOST', 'localhost');
@@ -24,7 +25,7 @@ define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', 'utf8mb4_unicode_ci');
 
 // Security Configuration
-define('SECRET_KEY', 'your-secret-key-here-change-in-production');
+define('SECRET_KEY', '3feef70c5714aaebad30bde3bdfab39886d832db27c62405ab3517a2f27f59b5');
 define('SESSION_NAME', 'IT_AUDIT_SESSION');
 define('SESSION_LIFETIME', 3600); // 1 hour
 define('PASSWORD_MIN_LENGTH', 8);

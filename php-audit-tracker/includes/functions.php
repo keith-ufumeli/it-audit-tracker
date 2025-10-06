@@ -514,3 +514,44 @@ function convertTimezone($date, $fromTz, $toTz) {
     $date->setTimezone(new DateTimeZone($toTz));
     return $date->format('Y-m-d H:i:s');
 }
+
+// Global manager instances
+function getAuth() {
+    static $auth = null;
+    if ($auth === null) {
+        $auth = new Auth();
+    }
+    return $auth;
+}
+
+function getUserManager() {
+    static $userManager = null;
+    if ($userManager === null) {
+        $userManager = new User();
+    }
+    return $userManager;
+}
+
+function getAuditManager() {
+    static $auditManager = null;
+    if ($auditManager === null) {
+        $auditManager = new Audit();
+    }
+    return $auditManager;
+}
+
+function getDocumentManager() {
+    static $documentManager = null;
+    if ($documentManager === null) {
+        $documentManager = new Document();
+    }
+    return $documentManager;
+}
+
+function getReportManager() {
+    static $reportManager = null;
+    if ($reportManager === null) {
+        $reportManager = new Report();
+    }
+    return $reportManager;
+}
