@@ -76,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const Sidebar = () => (
     <div className="flex flex-col h-full bg-card border-r shadow-sm">
       {/* Logo */}
-      <div className="p-6 border-b bg-gradient-to-r from-orange-50/50 to-orange-100/30">
+      <div className="p-6 border-b bg-gradient-to-r from-orange-50/50 to-orange-100/30 flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="h-11 w-11 rounded-xl bg-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-orange-200">
             <Image 
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href
           return (
@@ -127,7 +127,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* User Info */}
-      <div className="p-4 border-t bg-muted/30">
+      <div className="p-4 border-t bg-muted/30 flex-shrink-0">
         <div className="flex items-center space-x-3 p-3 rounded-xl bg-background border shadow-sm hover:shadow-md transition-all duration-200">
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
             <User className="h-5 w-5 text-white" />

@@ -269,5 +269,90 @@
       "loginMethod": "credentials"
     },
     "id": "activity-1759749387990-sbbtglx7a"
+  },
+  {
+    "userId": "1",
+    "userName": "Keith",
+    "userRole": "audit_manager",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:28:01.669Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759750081669",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759750081673-d6g80g43h"
+  },
+  {
+    "userId": "2",
+    "userName": "Jane Auditor",
+    "userRole": "auditor",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:42:21.902Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759750941902",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759750941905-dewvi5xt6"
+  },
+  {
+    "userId": "3",
+    "userName": "Bob Executive",
+    "userRole": "management",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:44:08.125Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759751048125",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759751048131-g2gpwq3jg"
+  },
+  {
+    "userId": "4",
+    "userName": "Alice Client",
+    "userRole": "client",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:45:35.724Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759751135724",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759751135728-5dna7dk31"
+  },
+  {
+    "userId": "4",
+    "userName": "Alice Client",
+    "userRole": "client",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T11:47:36.533Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759751256533",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759751256536-n597npj95"
   }
 ]
