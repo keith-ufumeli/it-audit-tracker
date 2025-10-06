@@ -354,5 +354,56 @@
       "loginMethod": "credentials"
     },
     "id": "activity-1759751256536-n597npj95"
+  },
+  {
+    "userId": "5",
+    "userName": "Charlie Department",
+    "userRole": "department",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T12:00:21.015Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759752021015",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759752021018-ykql6h54a"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T12:03:55.938Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759752235938",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759752235940-aa89nra08"
+  },
+  {
+    "userId": "0",
+    "userName": "Super Administrator",
+    "userRole": "super_admin",
+    "action": "login",
+    "description": "User logged into the system",
+    "timestamp": "2025-10-06T12:14:59.072Z",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "NextAuth.js",
+    "severity": "info",
+    "resource": "authentication",
+    "metadata": {
+      "sessionId": "sess_1759752899072",
+      "loginMethod": "credentials"
+    },
+    "id": "activity-1759752899075-lzzjn0e08"
   }
 ]

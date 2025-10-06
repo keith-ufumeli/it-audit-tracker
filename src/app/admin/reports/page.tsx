@@ -124,10 +124,19 @@ export default function ReportsPage() {
   }, [session, status, router, loadData]);
 
   const handleCreateReport = async () => {
-    if (!newReport.auditId || !newReport.title) {
+    if (!newReport.title) {
       toast({
         title: "Validation Error",
-        description: "Please fill in all required fields",
+        description: "Please enter a report title",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newReport.auditId) {
+      toast({
+        title: "Validation Error",
+        description: "No audits available for report creation",
         variant: "destructive",
       });
       return;
@@ -324,7 +333,16 @@ export default function ReportsPage() {
           {canSubmitReports && (
             <Dialog
               open={isCreateDialogOpen}
-              onOpenChange={setIsCreateDialogOpen}
+              onOpenChange={(open) => {
+                setIsCreateDialogOpen(open)
+                if (open && audits.length > 0) {
+                  // Auto-assign the first available audit
+                  setNewReport(prev => ({
+                    ...prev,
+                    auditId: audits[0].id
+                  }))
+                }
+              }}
             >
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -343,23 +361,17 @@ export default function ReportsPage() {
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="audit">Select Audit *</Label>
-                    <select
-                      id="audit"
-                      aria-label="Select audit for report"
-                      value={newReport.auditId}
-                      onChange={(e) =>
-                        setNewReport({ ...newReport, auditId: e.target.value })
-                      }
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background focus:ring-2 focus:ring-orange-500"
-                    >
-                      <option value="">Select an audit...</option>
-                      {audits.map((audit) => (
-                        <option key={audit.id} value={audit.id}>
-                          {audit.title}
-                        </option>
-                      ))}
-                    </select>
+                    <Label htmlFor="audit">Audit *</Label>
+                    <div className="w-full h-10 px-3 rounded-md border border-input bg-muted flex items-center text-sm text-muted-foreground">
+                      {audits.length > 0 ? (
+                        audits.find(audit => audit.id === newReport.auditId)?.title || "Auto-assigned audit"
+                      ) : (
+                        "No audits available"
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Audit will be automatically assigned from available audits
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="reportTitle">Report Title *</Label>
